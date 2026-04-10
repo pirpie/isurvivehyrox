@@ -536,7 +536,7 @@
         <div style={{ ...cardBase, padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Weakness Radar</div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Performance Radar</div>
               <div style={{ fontSize: '0.75rem', color: '#777', marginTop: '0.15rem' }}>
                 {profile.gender === 'male' ? 'Male' : 'Female'} · {getAgeGroup(profile.age)} · {profile.division || 'Open'}
               </div>
@@ -594,12 +594,6 @@
                 <div style={{ color: YELLOW, fontWeight: 800 }}>{tooltip.hasData ? `${tooltip.score}/100` : 'No data yet'}</div>
               </div>
             )}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', fontSize: '0.68rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
-            {[['🔰', 'Beginner', '#666'], ['💪', 'Intermediate', '#60a5fa'], ['✅', 'Advanced', '#4ade80'], ['🏆', 'Elite', '#FFD700']].map(([icon, label, col]) => (
-              <span key={label} style={{ color: col }}>{icon} {label}</span>
-            ))}
-            <span style={{ color: '#333' }}>· score 0 → 100</span>
           </div>
         </div>
       );
@@ -830,6 +824,51 @@
       const [error,     setError]     = useState('');
       const [success,   setSuccess]   = useState(false);
 
+      // Stopwatch
+      const [swRunning,  setSwRunning]  = useState(false);
+      const [swElapsed,  setSwElapsed]  = useState(0);   // ms
+      const swStart = React.useRef(null);
+      const swTick  = React.useRef(null);
+
+      const swBegin = () => {
+        swStart.current = Date.now() - swElapsed;
+        swTick.current  = setInterval(() => setSwElapsed(Date.now() - swStart.current), 100);
+        setSwRunning(true);
+      };
+      const swPause = () => {
+        clearInterval(swTick.current);
+        setSwRunning(false);
+      };
+      const swFinish = () => {
+        clearInterval(swTick.current);
+        setSwRunning(false);
+        // auto-fill + immediately log
+        const totalSecs = Math.round(swElapsed / 1000);
+        const m = Math.floor(totalSecs / 60);
+        const s = totalSecs % 60;
+        const filled = `${m}.${String(s).padStart(2, '0')}`;
+        setTimeInput(filled);
+        setError('');
+        // log immediately
+        if (totalSecs > 0) {
+          onAdd({ stationId: station.id, date, timeInSeconds: totalSecs });
+          setSuccess(true);
+          setTimeout(() => { setSuccess(false); setSwElapsed(0); setTimeInput(''); }, 2500);
+        }
+      };
+      const swReset = () => {
+        clearInterval(swTick.current);
+        setSwRunning(false);
+        setSwElapsed(0);
+        setTimeInput('');
+      };
+      React.useEffect(() => () => clearInterval(swTick.current), []);
+
+      const swSecs = Math.floor(swElapsed / 1000);
+      const swMins = Math.floor(swSecs / 60);
+      const swDisp = `${String(swMins).padStart(2,'0')}:${String(swSecs % 60).padStart(2,'0')}.${String(Math.floor((swElapsed % 1000) / 100))}`;
+
+
       const stationSessions = sessions.filter(s => s.stationId === station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
       const displaySessions = [...stationSessions].reverse();
       const pb       = stationSessions.length > 0 ? Math.min(...stationSessions.map(s => s.timeInSeconds)) : null;
@@ -872,32 +911,56 @@
               </div>
               <div>
                 <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time</div>
-                <input type="text" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="6:59 or 6.59" style={{ ...inputBase, width: 140, fontVariantNumeric: 'tabular-nums' }} onFocus={focus} onBlur={blur} />
+                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="6.59" style={{ ...inputBase, width: 140, fontVariantNumeric: 'tabular-nums' }} onFocus={focus} onBlur={blur} />
               </div>
               <button onClick={handleSubmit} style={{ background: success ? '#16a34a' : YELLOW, color: success ? '#fff' : '#000', border: 'none', padding: '0.75rem 1.25rem', borderRadius: 8, fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}>
                 {success ? '✓ Logged!' : '+ LOG SESSION'}
               </button>
             </div>
           </div>
+          {/* Stopwatch */}
+          <div style={{ ...cardBase, padding: '1.5rem', marginBottom: '1.5rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Stopwatch</div>
+            <div style={{ fontWeight: 900, fontSize: '3rem', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: success ? '#4ade80' : swRunning ? YELLOW : swElapsed > 0 ? '#aaa' : '#fff', lineHeight: 1, marginBottom: '1.25rem', fontFamily: 'monospace' }}>
+              {success ? '✓ Logged!' : swDisp}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
+              {!swRunning && swElapsed === 0 && !success && (
+                <button onClick={swBegin} style={{ background: YELLOW, color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 2.5rem', fontWeight: 800, fontSize: '1rem', cursor: 'pointer' }}>▶ Start</button>
+              )}
+              {swRunning && (
+                <>
+                  <button onClick={swPause} style={{ background: '#333', color: '#fff', border: '1px solid #444', borderRadius: 8, padding: '0.75rem 1.5rem', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer' }}>⏸ Pause</button>
+                  <button onClick={swFinish} style={{ background: '#4ade80', color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.5rem', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer' }}>⏹ Stop & Log</button>
+                </>
+              )}
+              {!swRunning && swElapsed > 0 && !success && (
+                <>
+                  <button onClick={swBegin} style={{ background: YELLOW, color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.25rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer' }}>▶ Resume</button>
+                  <button onClick={swFinish} style={{ background: '#4ade80', color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.25rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer' }}>⏹ Stop & Log</button>
+                  <button onClick={swReset} style={{ background: '#1a1a1a', color: '#666', border: '1px solid #333', borderRadius: 8, padding: '0.75rem 1rem', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>↺</button>
+                </>
+              )}
+            </div>
+          </div>
+
           {error && <p style={{ color: '#f87171', fontSize: '0.78rem', marginBottom: '0.75rem' }}>{error}</p>}
 
           {/* Stats row */}
           {stationSessions.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.7rem', marginBottom: '1.5rem' }}>
-              <StatCard label="Personal Best" value={formatTime(pb)} accent />
-              <StatCard label="Last Session"  value={formatTime(latest)} />
+              {/* PB card with vs-prev inline */}
+              <div style={{ ...cardBase, padding: '1.25rem' }}>
+                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Personal Best</div>
+                <div style={{ fontWeight: 900, fontSize: '1.9rem', color: YELLOW, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{formatTime(pb)}</div>
+                {vsPrev !== null && (
+                  <div style={{ fontSize: '0.72rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', marginTop: '0.35rem', fontWeight: 600 }}>
+                    {vsPrev < 0 ? `↑ ${formatTime(Math.abs(vsPrev))} faster` : vsPrev > 0 ? `↓ ${formatTime(Math.abs(vsPrev))} slower` : 'same as prev'}
+                  </div>
+                )}
+              </div>
+              <StatCard label="Last Session"   value={formatTime(latest)} />
               <StatCard label="Total Sessions" value={stationSessions.length} />
-              {vsPrev !== null && (
-                <div style={{ ...cardBase, padding: '1.25rem' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Previous</div>
-                  <div style={{ fontWeight: 900, fontSize: '1.9rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                    {vsPrev < 0 ? '-' : '+'}{formatTime(Math.abs(vsPrev))}
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>
-                    {vsPrev < 0 ? 'Faster 🔥' : vsPrev > 0 ? 'Slower' : 'Same'}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -922,8 +985,11 @@
                   return (
                     <div key={session.id} style={{ background: isLatest ? '#161616' : '#0d0d0d', border: `1px solid ${isLatest ? '#2a2a2a' : '#1a1a1a'}`, borderRadius: 8, padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.78rem', color: '#777' }}>{formatDate(session.date)}</div>
-                        <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.12rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#444', minWidth: '1.2rem' }}>#{displaySessions.length - i}</span>
+                          <span style={{ fontSize: '0.78rem', color: '#777' }}>{formatDate(session.date)}</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.12rem', paddingLeft: '1.7rem' }}>
                           {isLatest && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: '#000', background: YELLOW, padding: '0.1rem 0.3rem', borderRadius: 3 }}>LATEST</span>}
                           {isPB    && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: YELLOW, border: `1px solid ${YELLOW}`, padding: '0.1rem 0.3rem', borderRadius: 3 }}>PB</span>}
                         </div>
@@ -1187,13 +1253,16 @@
           {hasProfile && (
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               {[
-                profile.gender === 'male' ? '♂ Male' : '♀ Female',
+                profile.gender === 'male'
+                  ? <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ fontSize: '0.85rem', lineHeight: 1 }}>♂</span>Male</span>
+                  : <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ fontSize: '0.85rem', lineHeight: 1 }}>♀</span>Female</span>,
                 `${getAgeGroup(profile.age)} age group`,
                 profile.division ? (profile.division === 'pro' ? '⭐ Pro' : 'Open') : 'Open',
                 profile.weight ? `${profile.weight} kg` : null,
-              ].filter(Boolean).map(t => (
-                <span key={t} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>{t}</span>
-              ))}
+              ].filter(Boolean).map((t, i) => typeof t === 'string'
+                ? <span key={i} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>{t}</span>
+                : t
+              )}
             </div>
           )}
 
@@ -1208,7 +1277,10 @@
               {/* Weakest stations tips */}
               <div style={{ ...cardBase, padding: '1.25rem' }}>
                 <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Focus Areas</div>
-                <div style={{ fontSize: '0.75rem', color: '#777', marginBottom: '1rem' }}>Your 3 stations needing most work</div>
+                <div style={{ fontSize: '0.75rem', color: '#777', marginBottom: '0.5rem' }}>Your 3 lowest-scoring logged stations</div>
+                <div style={{ fontSize: '0.68rem', color: '#444', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 6, padding: '0.5rem 0.7rem', marginBottom: '1rem', lineHeight: 1.5 }}>
+                  Score = how close your PB is to Elite (0 = Beginner, 100 = Elite). Only stations you've logged appear here — log more stations to get a fuller picture.
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {stationsWithData
                     .sort((a, b) => (a.score ?? 100) - (b.score ?? 100))
