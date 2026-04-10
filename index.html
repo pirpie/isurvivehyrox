@@ -89,9 +89,9 @@
         { id:4,  stationId:'ski-erg',           date:'2026-04-01', timeInSeconds:261 },
         { id:22, stationId:'ski-erg',           date:'2026-04-07', timeInSeconds:255 },
         { id:24, stationId:'ski-erg',           date:'2026-03-30', timeInSeconds:268 },
-        { id:5,  stationId:'sled-push',         date:'2026-03-05', timeInSeconds:135 },
-        { id:6,  stationId:'sled-push',         date:'2026-03-18', timeInSeconds:118 },
-        { id:7,  stationId:'sled-push',         date:'2026-04-03', timeInSeconds:105 },
+        { id:5,  stationId:'sled-push',         date:'2026-03-05', timeInSeconds:290 },
+        { id:6,  stationId:'sled-push',         date:'2026-03-18', timeInSeconds:255 },
+        { id:7,  stationId:'sled-push',         date:'2026-04-03', timeInSeconds:215 },
         { id:8,  stationId:'row',               date:'2026-03-08', timeInSeconds:268 },
         { id:9,  stationId:'row',               date:'2026-03-22', timeInSeconds:254 },
         { id:10, stationId:'row',               date:'2026-04-05', timeInSeconds:241 },
@@ -108,8 +108,8 @@
         { id:19, stationId:'run-1km',           date:'2026-03-10', timeInSeconds:295 },
         { id:20, stationId:'run-1km',           date:'2026-03-28', timeInSeconds:278 },
         { id:21, stationId:'run-1km',           date:'2026-04-07', timeInSeconds:265 },
-        { id:26, stationId:'sled-pull',         date:'2026-03-14', timeInSeconds:112 },
-        { id:27, stationId:'sled-pull',         date:'2026-04-03', timeInSeconds:98  },
+        { id:26, stationId:'sled-pull',         date:'2026-03-14', timeInSeconds:395 },
+        { id:27, stationId:'sled-pull',         date:'2026-04-03', timeInSeconds:328 },
       ];
       try {
         localStorage.setItem(LS_PROFILE,  JSON.stringify(DEMO_PROFILE));
@@ -120,88 +120,99 @@
     // ─── Benchmark data ───────────────────────────────────────────────────────────
     // Base values are for Open 30-34 age group (seconds). All other groups scale via AGE_FACTORS.
 
-    // Station benchmarks derived from hyroxdatalab.com real competition data.
-    // avg = intermediate athlete times; elite ≈ top-10% ratio; beginner ≈ 50-75th percentile.
+    // Station benchmarks from HyroxDataLab (700,000+ race results, 2025-2026).
+    // Fields: elite = midpoint of elite range, advanced = advanced cutoff, intermediate = intermediate cutoff,
+    //         beginner = estimated from finish-time tier ratio (~intermediate × 1.15)
     const BASE_BENCHMARKS = {
       male: {
-        'ski-erg':           { elite: 203, avg: 267, beginner: 310 },
-        'sled-push':         { elite: 168, avg: 221, beginner: 256 },
-        'sled-pull':         { elite: 233, avg: 306, beginner: 355 },
-        'burpee-broad-jump': { elite: 242, avg: 319, beginner: 370 },
-        'row':               { elite: 216, avg: 284, beginner: 330 },
-        'farmers-carry':     { elite:  99, avg: 130, beginner: 151 },
-        'lunges':            { elite: 225, avg: 296, beginner: 343 },
-        'wallballs':         { elite: 320, avg: 421, beginner: 488 },
-        'run-1km':           { elite: 188, avg: 262, beginner: 352 },
+        //                         elite  adv   int   beg
+        'ski-erg':           { elite: 245, advanced: 260, intermediate: 267, beginner: 308 },
+        'sled-push':         { elite: 188, advanced: 206, intermediate: 221, beginner: 255 },
+        'sled-pull':         { elite: 254, advanced: 277, intermediate: 306, beginner: 352 },
+        'burpee-broad-jump': { elite: 259, advanced: 277, intermediate: 319, beginner: 367 },
+        'row':               { elite: 257, advanced: 273, intermediate: 284, beginner: 327 },
+        'farmers-carry':     { elite: 112, advanced: 119, intermediate: 130, beginner: 150 },
+        'lunges':            { elite: 247, advanced: 264, intermediate: 296, beginner: 341 },
+        'wallballs':         { elite: 347, advanced: 364, intermediate: 421, beginner: 485 },
+        'run-1km':           { elite: 188, advanced: 225, intermediate: 262, beginner: 315 },
       },
       female: {
-        'ski-erg':           { elite: 233, avg: 311, beginner: 358 },
-        'sled-push':         { elite: 167, avg: 222, beginner: 255 },
-        'sled-pull':         { elite: 251, avg: 334, beginner: 384 },
-        'burpee-broad-jump': { elite: 308, avg: 410, beginner: 472 },
-        'row':               { elite: 243, avg: 324, beginner: 373 },
-        'farmers-carry':     { elite: 109, avg: 145, beginner: 167 },
-        'lunges':            { elite: 226, avg: 301, beginner: 346 },
-        'wallballs':         { elite: 308, avg: 411, beginner: 473 },
-        'run-1km':           { elite: 238, avg: 328, beginner: 422 },
+        'ski-erg':           { elite: 285, advanced: 300, intermediate: 311, beginner: 358 },
+        'sled-push':         { elite: 188, advanced: 205, intermediate: 222, beginner: 256 },
+        'sled-pull':         { elite: 277, advanced: 299, intermediate: 334, beginner: 384 },
+        'burpee-broad-jump': { elite: 336, advanced: 357, intermediate: 410, beginner: 472 },
+        'row':               { elite: 298, advanced: 311, intermediate: 324, beginner: 373 },
+        'farmers-carry':     { elite: 128, advanced: 135, intermediate: 145, beginner: 167 },
+        'lunges':            { elite: 255, advanced: 270, intermediate: 301, beginner: 346 },
+        'wallballs':         { elite: 337, advanced: 353, intermediate: 411, beginner: 473 },
+        'run-1km':           { elite: 238, advanced: 285, intermediate: 328, beginner: 390 },
       },
     };
 
-    // Age multipliers calibrated from actual race averages (hyroxdatalab.com, 2025 European events).
-    // Baseline = 30-34 (factor 1.00). Older groups are slower (higher factor).
+    // Age multipliers calibrated from HyroxDataLab finish-time intermediate data.
+    // Baseline = 30-34 (factor 1.00). Older groups are generally slower (higher factor).
     const AGE_FACTORS = {
-      '16-24': 0.98, '25-29': 0.98, '30-34': 1.00,
-      '35-39': 1.01, '40-44': 1.03, '45-49': 1.07,
-      '50-54': 1.09, '55-59': 1.15, '60+':   1.18,
+      '16-24': 0.92, '25-29': 0.92, '30-34': 1.00,
+      '35-39': 1.00, '40-44': 1.02, '45-49': 1.02,
+      '50-54': 1.05, '55-59': 1.10, '60+':   1.11,
     };
 
     // ─── Training tips ────────────────────────────────────────────────────────────
 
     const TRAINING_TIPS = {
       'ski-erg': {
-        elite:    "Elite level! Focus on negative-split pacing — start controlled, push the last 200m. Add technique drills at high rate.",
-        average:  "Drive with legs first, finish with arms. Target 25–30 strokes/min. Do 5×200m intervals twice a week.",
-        beginner: "Build your base: 3×5min steady pace. Keep elbows high, hinge at hips on the catch, and breathe out on the pull.",
+        elite:        "Elite level! Focus on negative-split pacing — start controlled, push the last 200m. Add technique drills at high rate.",
+        advanced:     "Strong output! Train sub-4:20 intervals: 3×300m with 60s rest. Keep stroke rate at 28–32/min under fatigue.",
+        intermediate: "Drive with legs first, finish with arms. Target 25–30 strokes/min. Do 5×200m intervals twice a week.",
+        beginner:     "Build your base: 3×5min steady pace. Keep elbows high, hinge at hips on the catch, and breathe out on the pull.",
       },
       'sled-push': {
-        elite:    "Elite push! Perfect your explosive start: 3-step burst from zero. Practice transitions from run with minimal rest.",
-        average:  "Low hips + short quick steps = faster sled. Add heavy hip thrusts and incline sled drags to training.",
-        beginner: "Master 45° body lean first. Practice with lighter weight: 10×10m pushes focusing on leg drive, not upper body.",
+        elite:        "Elite push! Perfect your explosive start: 3-step burst from zero. Practice transitions from run with minimal rest.",
+        advanced:     "Shave seconds: practice sub-3:30 efforts with loaded sled. Focus on quick foot turnover, not stride length.",
+        intermediate: "Low hips + short quick steps = faster sled. Add heavy hip thrusts and incline sled drags to training.",
+        beginner:     "Master 45° body lean first. Practice with lighter weight: 10×10m pushes focusing on leg drive, not upper body.",
       },
       'sled-pull': {
-        elite:    "Elite pull! Polish rope-over-rope rhythm — keep rope low, close to body. Minimize hand-repositioning pauses.",
-        average:  "Build pulling power: bent-over rows + cable face pulls twice a week. Keep the sled moving — momentum helps.",
-        beginner: "Stay low and use lats, not biceps. Practice band pull-aparts + lat pulldowns to build the chain.",
+        elite:        "Elite pull! Polish rope-over-rope rhythm — keep rope low, close to body. Minimize hand-repositioning pauses.",
+        advanced:     "Target sub-4:40: maintain steady hand-over-hand rhythm without pausing. Add heavy cable rows to training.",
+        intermediate: "Build pulling power: bent-over rows + cable face pulls twice a week. Keep the sled moving — momentum helps.",
+        beginner:     "Stay low and use lats, not biceps. Practice band pull-aparts + lat pulldowns to build the chain.",
       },
       'burpee-broad-jump': {
-        elite:    "Top tier! Work on your landing: soft knees, immediate hip hinge into the next burpee. Chase continuous rhythm.",
-        average:  "Build jump endurance: 3×10 broad jumps weekly. Stay low at the bottom of the burpee — don't stand tall.",
-        beginner: "Split it into 20m chunks mentally. Practice burpees and broad jumps separately before combining them.",
+        elite:        "Top tier! Work on your landing: soft knees, immediate hip hinge into the next burpee. Chase continuous rhythm.",
+        advanced:     "Push for sub-4:40: increase jump distance per rep to reduce total reps needed. Train plyometric broad jumps.",
+        intermediate: "Build jump endurance: 3×10 broad jumps weekly. Stay low at the bottom of the burpee — don't stand tall.",
+        beginner:     "Split it into 20m chunks mentally. Practice burpees and broad jumps separately before combining them.",
       },
       'row': {
-        elite:    "Strong rowing! Maintain stroke rate under fatigue. Practice 4×500m at race pace with 90s rest.",
-        average:  "Nail the drive: legs → body swing → arms. Add 20-min steady-state rows to build aerobic efficiency.",
-        beginner: "Prioritize technique: sit tall, catch early, drive with legs. Avoid yanking with your back at the start.",
+        elite:        "Strong rowing! Maintain stroke rate under fatigue. Practice 4×500m at race pace with 90s rest.",
+        advanced:     "Break 4:33: hold a consistent 2:15/500m split. Train 3×600m at target pace with 90s rest.",
+        intermediate: "Nail the drive: legs → body swing → arms. Add 20-min steady-state rows to build aerobic efficiency.",
+        beginner:     "Prioritize technique: sit tall, catch early, drive with legs. Avoid yanking with your back at the start.",
       },
       'farmers-carry': {
-        elite:    "Grip champion! Work on breathing while loaded — practice nasal breathing under heavy carry.",
-        average:  "Build grip endurance: 3×30s dead hangs + farmer walks weekly. Walk tall — don't lean side-to-side.",
-        beginner: "Go lighter to nail posture first: shoulders back, core braced, short quick steps. Speed comes with time.",
+        elite:        "Grip champion! Work on breathing while loaded — practice nasal breathing under heavy carry.",
+        advanced:     "Push for sub-2:00: practice loaded walks at race weight focusing on quick, short steps and upright posture.",
+        intermediate: "Build grip endurance: 3×30s dead hangs + farmer walks weekly. Walk tall — don't lean side-to-side.",
+        beginner:     "Go lighter to nail posture first: shoulders back, core braced, short quick steps. Speed comes with time.",
       },
       'lunges': {
-        elite:    "Elite lunges! Maintain torso uprightness under fatigue. Add single-leg glute bridges for hip stability.",
-        average:  "Drive the front knee forward to keep momentum. Add weighted walking lunges to build quad endurance.",
-        beginner: "3×20 bodyweight walking lunges daily. Focus on knee tracking over toes and staying upright.",
+        elite:        "Elite lunges! Maintain torso uprightness under fatigue. Add single-leg glute bridges for hip stability.",
+        advanced:     "Target sub-4:25: keep a steady walking lunge rhythm without pausing. Train weighted walking lunges 2×/week.",
+        intermediate: "Drive the front knee forward to keep momentum. Add weighted walking lunges to build quad endurance.",
+        beginner:     "3×20 bodyweight walking lunges daily. Focus on knee tracking over toes and staying upright.",
       },
       'wallballs': {
-        elite:    "Unbroken beast! Focus on squat-to-throw timing — catch in a quarter squat to keep flow smooth.",
-        average:  "Practice sets of 15–20: improve hip drive into the throw. Train slightly lighter to build volume.",
-        beginner: "Break into sets of 10 with 10s rest. Catch in the squat — don't stand up between reps.",
+        elite:        "Unbroken beast! Focus on squat-to-throw timing — catch in a quarter squat to keep flow smooth.",
+        advanced:     "Target sub-6:05: practice sets of 25+ unbroken. Hip drive is everything — load your hips, not your arms.",
+        intermediate: "Practice sets of 15–20: improve hip drive into the throw. Train slightly lighter to build volume.",
+        beginner:     "Break into sets of 10 with 10s rest. Catch in the squat — don't stand up between reps.",
       },
       'run-1km': {
-        elite:    "Flyer! Maintain form when fatigued: high cadence (~180 steps/min), relaxed jaw and shoulders.",
-        average:  "3 runs/week with 1 interval session. Practice running off other stations — simulate the transition.",
-        beginner: "Run-walk intervals build base fast. Focus on mid-foot strike and keeping your arms at 90°.",
+        elite:        "Flyer! Maintain form when fatigued: high cadence (~180 steps/min), relaxed jaw and shoulders.",
+        advanced:     "Target sub-3:45/km: add one tempo run per week at race pace. Practice negative splits.",
+        intermediate: "3 runs/week with 1 interval session. Practice running off other stations — simulate the transition.",
+        beginner:     "Run-walk intervals build base fast. Focus on mid-foot strike and keeping your arms at 90°.",
       },
     };
 
@@ -270,17 +281,19 @@
       const ageGroup = getAgeGroup(age);
       const f = AGE_FACTORS[ageGroup] || 1.0;
       return {
-        elite:    Math.round(base.elite * f),
-        avg:      Math.round(base.avg * f),
-        beginner: Math.round(base.beginner * f),
+        elite:        Math.round(base.elite * f),
+        advanced:     Math.round(base.advanced * f),
+        intermediate: Math.round(base.intermediate * f),
+        beginner:     Math.round(base.beginner * f),
         ageGroup,
       };
     }
 
     function getTier(userTime, bm) {
       if (!bm || userTime == null) return null;
-      if (userTime <= bm.elite) return 'elite';
-      if (userTime <= bm.avg)   return 'average';
+      if (userTime <= bm.elite)        return 'elite';
+      if (userTime <= bm.advanced)     return 'advanced';
+      if (userTime <= bm.intermediate) return 'intermediate';
       return 'beginner';
     }
 
@@ -293,7 +306,7 @@
 
     function getPctVsAvg(userTime, bm) {
       if (!bm || userTime == null) return null;
-      return Math.round(Math.abs(userTime - bm.avg) / bm.avg * 100);
+      return Math.round(Math.abs(userTime - bm.intermediate) / bm.intermediate * 100);
     }
 
     // ─── Shared styles ────────────────────────────────────────────────────────────
@@ -310,9 +323,10 @@
     const cardBase = { background: '#111', border: '1px solid #222', borderRadius: 12 };
 
     const TIER_CONFIG = {
-      elite:    { icon: '🏆', label: 'Elite',    color: '#FFD700', bg: '#1c1600', border: '#4a3800' },
-      average:  { icon: '✅', label: 'Average',  color: '#4ade80', bg: '#0a1f0a', border: '#1a4a1a' },
-      beginner: { icon: '💪', label: 'Beginner', color: '#888',    bg: '#161616', border: '#2a2a2a' },
+      elite:        { icon: '🏆', label: 'Elite',        color: '#FFD700', bg: '#1c1600', border: '#4a3800' },
+      advanced:     { icon: '✅', label: 'Advanced',     color: '#4ade80', bg: '#0a1f0a', border: '#1a4a1a' },
+      intermediate: { icon: '💪', label: 'Intermediate', color: '#60a5fa', bg: '#0a0f1f', border: '#1a2a4a' },
+      beginner:     { icon: '🔰', label: 'Beginner',     color: '#888',    bg: '#161616', border: '#2a2a2a' },
     };
 
     // ─── Reusable components ──────────────────────────────────────────────────────
@@ -343,7 +357,7 @@
           border: `1px solid ${faster ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`,
           padding: '0.2rem 0.45rem', borderRadius: 4, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
         }}>
-          {faster ? '▼' : '▲'} {formatTime(Math.abs(delta))}
+          {faster ? '↑' : '↓'} {formatTime(Math.abs(delta))}
         </span>
       );
     }
@@ -581,8 +595,11 @@
               </div>
             )}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.72rem', color: '#888', marginTop: '0.25rem' }}>
-            <span>0 = Beginner</span><span>50 = Average</span><span>100 = Elite</span>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', fontSize: '0.68rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+            {[['🔰', 'Beginner', '#666'], ['💪', 'Intermediate', '#60a5fa'], ['✅', 'Advanced', '#4ade80'], ['🏆', 'Elite', '#FFD700']].map(([icon, label, col]) => (
+              <span key={label} style={{ color: col }}>{icon} {label}</span>
+            ))}
+            <span style={{ color: '#333' }}>· score 0 → 100</span>
           </div>
         </div>
       );
@@ -602,7 +619,7 @@
         const tier = getTier(pb, bm);
         const pct = getPctVsAvg(pb, bm);
         const tips = TRAINING_TIPS[station.id];
-        const tip = tips?.[tier] || tips?.average;
+        const tip = tips?.[tier] || tips?.intermediate;
         const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
         const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
         const score = bm ? getRadarScore(pb, bm) : null;
@@ -646,8 +663,8 @@
                         <span style={{ fontSize: '0.8rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
                       )}
                       {bm && pct != null && (
-                        <span style={{ fontSize: '0.72rem', color: pb <= bm.avg ? '#4ade80' : '#888', whiteSpace: 'nowrap' }}>
-                          {pb < bm.avg ? `${pct}% faster` : pb > bm.avg ? `${pct}% slower` : 'avg'}
+                        <span style={{ fontSize: '0.72rem', color: pb <= bm.intermediate ? '#4ade80' : '#888', whiteSpace: 'nowrap' }}>
+                          {pb < bm.intermediate ? (pct > 0 ? `${pct}% faster` : '~mid') : pb > bm.intermediate ? (pct > 0 ? `${pct}% slower` : '~mid') : 'mid'}
                         </span>
                       )}
                       <span style={{ fontWeight: 800, fontSize: '1rem', fontVariantNumeric: 'tabular-nums', color: YELLOW }}>{formatTime(pb)}</span>
@@ -671,16 +688,28 @@
                           <div style={{ fontSize: '0.85rem', color: '#bbb', lineHeight: 1.55 }}>{tip}</div>
                         </div>
                       )}
-                      {bm && (
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                          {[['Elite', bm.elite, '#FFD700'], ['Average', bm.avg, '#4ade80'], ['Beginner', bm.beginner, '#666']].map(([label, val, col]) => (
-                            <div key={label} style={{ background: '#111', border: '1px solid #222', borderRadius: 6, padding: '0.4rem 0.7rem', flex: 1, minWidth: 80 }}>
-                              <div style={{ fontSize: '0.62rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.15rem' }}>{label}</div>
-                              <div style={{ fontWeight: 700, fontSize: '0.85rem', color: col, fontVariantNumeric: 'tabular-nums' }}>{formatTime(val)}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {bm && (() => {
+                        const span = bm.beginner - bm.elite;
+                        const sMid = Math.round((bm.beginner - bm.intermediate) / span * 100);
+                        const sAdv = Math.round((bm.beginner - bm.advanced)     / span * 100);
+                        const tiers = [
+                          { label: 'Beginner',     val: bm.beginner,     col: '#666',    scoreRange: `0 – ${sMid - 1}` },
+                          { label: 'Intermediate', val: bm.intermediate, col: '#60a5fa', scoreRange: `${sMid} – ${sAdv - 1}` },
+                          { label: 'Advanced',     val: bm.advanced,     col: '#4ade80', scoreRange: `${sAdv} – 99` },
+                          { label: 'Elite',        val: bm.elite,        col: '#FFD700', scoreRange: '100' },
+                        ];
+                        return (
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {tiers.map(({ label, val, col, scoreRange }) => (
+                              <div key={label} style={{ background: '#111', border: '1px solid #222', borderRadius: 6, padding: '0.4rem 0.7rem', flex: 1, minWidth: 80 }}>
+                                <div style={{ fontSize: '0.62rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.15rem' }}>{label}</div>
+                                <div style={{ fontWeight: 700, fontSize: '0.85rem', color: col, fontVariantNumeric: 'tabular-nums' }}>{formatTime(val)}</div>
+                                <div style={{ fontSize: '0.6rem', color: '#444', marginTop: '0.2rem' }}>score {scoreRange}</div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
@@ -1039,7 +1068,7 @@
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontWeight: 800, fontSize: '0.95rem', color: faster ? '#4ade80' : '#f87171' }}>
-                        {faster ? '↑' : '↓'} {pct}%
+                        {faster ? '↑' : '↓'} {pct}% · {formatTime(Math.abs(delta))}
                       </div>
                       <div style={{ fontSize: '0.65rem', color: faster ? '#4ade80' : '#f87171' }}>
                         {faster ? 'faster' : 'slower'}
@@ -1093,8 +1122,32 @@
         );
       }
 
+      const QUOTES = [
+        "Every rep is a deposit in the bank of race day.",
+        "You're not just training your body — you're training your mind to never quit.",
+        "The sled doesn't care how tired you are. Neither should you.",
+        "Progress is made in the sessions nobody sees.",
+        "Race day is just another training day — you've already done the hard part.",
+        "Fatigue is temporary. A finish line crossed is forever.",
+        "You showed up. That's already more than most.",
+        "Train hard enough that race day feels like a relief.",
+        "Eight stations. Eight chances to prove something to yourself.",
+        "The only bad session is the one you didn't do.",
+        "Strong enough to start. Tough enough to finish.",
+        "Your future self is cheering for you right now.",
+      ];
+      const quote = QUOTES[Math.floor(new Date().getDate() % QUOTES.length)];
+
       return (
         <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+
+          {/* Greeting */}
+          <div>
+            <h2 style={{ fontWeight: 900, fontSize: '1.55rem', letterSpacing: '-0.03em', marginBottom: '0.4rem' }}>
+              Welcome back{profile.name ? `, ${profile.name}` : ''}. 👊
+            </h2>
+            <p style={{ fontSize: '0.88rem', color: '#666', fontStyle: 'italic', lineHeight: 1.5 }}>"{quote}"</p>
+          </div>
 
           {/* Summary stats */}
           {(() => {
@@ -1113,16 +1166,16 @@
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.7rem' }}>
                 <StatCard label="Total Sessions" value={totalSessions} />
                 <StatCard label="Stations Tracked" value={stationsComplete} suffix={`/ ${STATIONS.length}`} />
-                <StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={`${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} />
                 {stationsWithData.length > 0 && delta !== 0 && (
                   <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: '1.25rem' }}>
                     <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Prev Total</div>
-                    <div style={{ fontWeight: 900, fontSize: '1.9rem', color: delta < 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                    <div style={{ fontWeight: 900, fontSize: '1.9rem', color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
                       {delta < 0 ? '-' : '+'}{absDelta}m
                     </div>
                     <div style={{ fontSize: '0.72rem', color: delta < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>{delta < 0 ? 'faster overall' : 'slower overall'}</div>
                   </div>
                 )}
+                <StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={`${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} accent />
               </div>
             );
           })()}
@@ -1176,8 +1229,8 @@
                             </div>
                           </div>
                           {bm && pct != null && (
-                            <div style={{ fontSize: '0.72rem', color: pb <= bm.avg ? '#4ade80' : '#888', marginBottom: '0.35rem' }}>
-                              {pb < bm.avg ? `${pct}% faster than average` : `${pct}% slower than average`}
+                            <div style={{ fontSize: '0.72rem', color: pb <= bm.intermediate ? '#4ade80' : '#888', marginBottom: '0.35rem' }}>
+                              {pb < bm.intermediate ? (pct > 0 ? `${pct}% faster than intermediate` : '~intermediate') : pct > 0 ? `${pct}% slower than intermediate` : '~intermediate'}
                             </div>
                           )}
                           {tip && <div style={{ fontSize: '0.78rem', color: '#888', lineHeight: 1.5 }}>{tip.split('.')[0]}.</div>}
