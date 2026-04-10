@@ -1,2 +1,0 @@
-# isurvivehyrox
-Hyrox progress tracking
