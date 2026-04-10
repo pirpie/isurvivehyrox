@@ -5,6 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>isurvivehyrox — HYROX Training Tracker</title>
 
+  <!-- Favicon: yellow H on black -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23FFE600'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial Black,Arial,sans-serif' font-weight='900' font-size='22' fill='%23000'%3EH%3C/text%3E%3C/svg%3E" />
+
+  <!-- iPhone home screen icon (generated via canvas) -->
+  <script>
+    (function() {
+      var c = document.createElement('canvas'); c.width = c.height = 180;
+      var ctx = c.getContext('2d');
+      var r = 36;
+      ctx.beginPath(); ctx.moveTo(r,0); ctx.lineTo(180-r,0); ctx.quadraticCurveTo(180,0,180,r);
+      ctx.lineTo(180,180-r); ctx.quadraticCurveTo(180,180,180-r,180);
+      ctx.lineTo(r,180); ctx.quadraticCurveTo(0,180,0,180-r);
+      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+      ctx.closePath(); ctx.fillStyle='#FFE600'; ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='900 110px Arial Black,Arial,sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('H', 90, 98);
+      var link = document.createElement('link');
+      link.rel='apple-touch-icon'; link.href=c.toDataURL('image/png');
+      document.head.appendChild(link);
+    })();
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="isurvivehyrox" />
+  <meta name="theme-color" content="#FFE600" />
+
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
