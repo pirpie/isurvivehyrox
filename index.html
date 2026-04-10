@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>isurvivehyrox — HYROX Training Tracker</title>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --yellow: #FFE600; --bg: #0a0a0a; --card: #111;
+      --card2: #1a1a1a; --border: #222; --border2: #333;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    input, select, button { font-family: inherit; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+    select option { background: #1a1a1a; color: #fff; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.2s ease; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo } = React;
+
+    // ─── Station definitions ──────────────────────────────────────────────────────
+
+    const YELLOW = '#FFE600';
+
+    const STATIONS = [
+      { id: 'ski-erg',            name: 'Ski Erg',            short: 'Ski Erg',    detail: '1000m',    icon: '⛷️',  num: 1 },
+      { id: 'sled-push',          name: 'Sled Push',          short: 'Sled Push',  detail: '50m',      icon: '🏋️', num: 2 },
+      { id: 'sled-pull',          name: 'Sled Pull',          short: 'Sled Pull',  detail: '50m',      icon: '💪',  num: 3 },
+      { id: 'burpee-broad-jump',  name: 'Burpee Broad Jump',  short: 'Burpee BJ',  detail: '80m',      icon: '🤸',  num: 4 },
+      { id: 'row',                name: 'Row',                short: 'Row',        detail: '1000m',    icon: '🚣',  num: 5 },
+      { id: 'farmers-carry',      name: 'Farmers Carry',      short: 'Farmers',    detail: '200m',     icon: '🧑‍🌾', num: 6 },
+      { id: 'lunges',             name: 'Lunges',             short: 'Lunges',     detail: '100m',     icon: '🦵',  num: 7 },
+      { id: 'wallballs',          name: 'Wall Balls',         short: 'Wallballs',  detail: '100 reps', icon: '🏀',  num: 8 },
+      { id: 'run-1km',            name: '1km Run',            short: '1km Run',    detail: 'x8 segs',  icon: '🏃',  num: '↺' },
+    ];
+
+    const LS_PROFILE  = 'hyrox_profile';
+    const LS_SESSIONS = 'hyrox_sessions';
+
+    // ─── Demo mode (?demo in URL seeds mock data) ─────────────────────────────────
+    if (new URLSearchParams(location.search).has('demo')) {
+      const DEMO_PROFILE = { name: 'Alex Rower', gender: 'male', age: '34', weight: '78', division: 'open', competitionDate: '2026-06-14' };
+      const DEMO_SESSIONS = [
+        { id:1,  stationId:'ski-erg',           date:'2026-03-01', timeInSeconds:310 },
+        { id:2,  stationId:'ski-erg',           date:'2026-03-10', timeInSeconds:295 },
+        { id:3,  stationId:'ski-erg',           date:'2026-03-20', timeInSeconds:278 },
+        { id:4,  stationId:'ski-erg',           date:'2026-04-01', timeInSeconds:261 },
+        { id:22, stationId:'ski-erg',           date:'2026-04-07', timeInSeconds:255 },
+        { id:24, stationId:'ski-erg',           date:'2026-03-30', timeInSeconds:268 },
+        { id:5,  stationId:'sled-push',         date:'2026-03-05', timeInSeconds:135 },
+        { id:6,  stationId:'sled-push',         date:'2026-03-18', timeInSeconds:118 },
+        { id:7,  stationId:'sled-push',         date:'2026-04-03', timeInSeconds:105 },
+        { id:8,  stationId:'row',               date:'2026-03-08', timeInSeconds:268 },
+        { id:9,  stationId:'row',               date:'2026-03-22', timeInSeconds:254 },
+        { id:10, stationId:'row',               date:'2026-04-05', timeInSeconds:241 },
+        { id:23, stationId:'row',               date:'2026-04-08', timeInSeconds:238 },
+        { id:25, stationId:'row',               date:'2026-04-01', timeInSeconds:248 },
+        { id:11, stationId:'burpee-broad-jump', date:'2026-03-12', timeInSeconds:342 },
+        { id:12, stationId:'burpee-broad-jump', date:'2026-03-28', timeInSeconds:318 },
+        { id:13, stationId:'farmers-carry',     date:'2026-03-15', timeInSeconds:145 },
+        { id:14, stationId:'farmers-carry',     date:'2026-04-02', timeInSeconds:128 },
+        { id:15, stationId:'lunges',            date:'2026-03-20', timeInSeconds:298 },
+        { id:16, stationId:'lunges',            date:'2026-04-04', timeInSeconds:275 },
+        { id:17, stationId:'wallballs',         date:'2026-03-25', timeInSeconds:385 },
+        { id:18, stationId:'wallballs',         date:'2026-04-06', timeInSeconds:362 },
+        { id:19, stationId:'run-1km',           date:'2026-03-10', timeInSeconds:295 },
+        { id:20, stationId:'run-1km',           date:'2026-03-28', timeInSeconds:278 },
+        { id:21, stationId:'run-1km',           date:'2026-04-07', timeInSeconds:265 },
+        { id:26, stationId:'sled-pull',         date:'2026-03-14', timeInSeconds:112 },
+        { id:27, stationId:'sled-pull',         date:'2026-04-03', timeInSeconds:98  },
+      ];
+      try {
+        localStorage.setItem(LS_PROFILE,  JSON.stringify(DEMO_PROFILE));
+        localStorage.setItem(LS_SESSIONS, JSON.stringify(DEMO_SESSIONS));
+      } catch(e) {}
+    }
+
+    // ─── Benchmark data ───────────────────────────────────────────────────────────
+    // Base values are for Open 30-34 age group (seconds). All other groups scale via AGE_FACTORS.
+
+    const BASE_BENCHMARKS = {
+      male: {
+        'ski-erg':           { elite: 178, avg: 238, beginner: 318 },
+        'sled-push':         { elite:  55, avg:  90, beginner: 148 },
+        'sled-pull':         { elite:  48, avg:  78, beginner: 122 },
+        'burpee-broad-jump': { elite: 192, avg: 272, beginner: 382 },
+        'row':               { elite: 174, avg: 228, beginner: 302 },
+        'farmers-carry':     { elite:  68, avg: 108, beginner: 168 },
+        'lunges':            { elite: 142, avg: 222, beginner: 322 },
+        'wallballs':         { elite: 192, avg: 298, beginner: 428 },
+        'run-1km':           { elite: 188, avg: 262, beginner: 352 },
+      },
+      female: {
+        'ski-erg':           { elite: 204, avg: 278, beginner: 382 },
+        'sled-push':         { elite:  78, avg: 128, beginner: 198 },
+        'sled-pull':         { elite:  63, avg: 103, beginner: 158 },
+        'burpee-broad-jump': { elite: 232, avg: 328, beginner: 452 },
+        'row':               { elite: 210, avg: 270, beginner: 360 },
+        'farmers-carry':     { elite:  86, avg: 138, beginner: 212 },
+        'lunges':            { elite: 172, avg: 266, beginner: 386 },
+        'wallballs':         { elite: 232, avg: 358, beginner: 512 },
+        'run-1km':           { elite: 238, avg: 328, beginner: 422 },
+      },
+    };
+
+    // Multipliers applied to base times per age group (older = slower = higher factor)
+    const AGE_FACTORS = {
+      '16-24': 0.97, '25-29': 0.98, '30-34': 1.00,
+      '35-39': 1.05, '40-44': 1.11, '45-49': 1.18,
+      '50-54': 1.26, '55-59': 1.34, '60+':   1.44,
+    };
+
+    // ─── Training tips ────────────────────────────────────────────────────────────
+
+    const TRAINING_TIPS = {
+      'ski-erg': {
+        elite:    "Elite level! Focus on negative-split pacing — start controlled, push the last 200m. Add technique drills at high rate.",
+        average:  "Drive with legs first, finish with arms. Target 25–30 strokes/min. Do 5×200m intervals twice a week.",
+        beginner: "Build your base: 3×5min steady pace. Keep elbows high, hinge at hips on the catch, and breathe out on the pull.",
+      },
+      'sled-push': {
+        elite:    "Elite push! Perfect your explosive start: 3-step burst from zero. Practice transitions from run with minimal rest.",
+        average:  "Low hips + short quick steps = faster sled. Add heavy hip thrusts and incline sled drags to training.",
+        beginner: "Master 45° body lean first. Practice with lighter weight: 10×10m pushes focusing on leg drive, not upper body.",
+      },
+      'sled-pull': {
+        elite:    "Elite pull! Polish rope-over-rope rhythm — keep rope low, close to body. Minimize hand-repositioning pauses.",
+        average:  "Build pulling power: bent-over rows + cable face pulls twice a week. Keep the sled moving — momentum helps.",
+        beginner: "Stay low and use lats, not biceps. Practice band pull-aparts + lat pulldowns to build the chain.",
+      },
+      'burpee-broad-jump': {
+        elite:    "Top tier! Work on your landing: soft knees, immediate hip hinge into the next burpee. Chase continuous rhythm.",
+        average:  "Build jump endurance: 3×10 broad jumps weekly. Stay low at the bottom of the burpee — don't stand tall.",
+        beginner: "Split it into 20m chunks mentally. Practice burpees and broad jumps separately before combining them.",
+      },
+      'row': {
+        elite:    "Strong rowing! Maintain stroke rate under fatigue. Practice 4×500m at race pace with 90s rest.",
+        average:  "Nail the drive: legs → body swing → arms. Add 20-min steady-state rows to build aerobic efficiency.",
+        beginner: "Prioritize technique: sit tall, catch early, drive with legs. Avoid yanking with your back at the start.",
+      },
+      'farmers-carry': {
+        elite:    "Grip champion! Work on breathing while loaded — practice nasal breathing under heavy carry.",
+        average:  "Build grip endurance: 3×30s dead hangs + farmer walks weekly. Walk tall — don't lean side-to-side.",
+        beginner: "Go lighter to nail posture first: shoulders back, core braced, short quick steps. Speed comes with time.",
+      },
+      'lunges': {
+        elite:    "Elite lunges! Maintain torso uprightness under fatigue. Add single-leg glute bridges for hip stability.",
+        average:  "Drive the front knee forward to keep momentum. Add weighted walking lunges to build quad endurance.",
+        beginner: "3×20 bodyweight walking lunges daily. Focus on knee tracking over toes and staying upright.",
+      },
+      'wallballs': {
+        elite:    "Unbroken beast! Focus on squat-to-throw timing — catch in a quarter squat to keep flow smooth.",
+        average:  "Practice sets of 15–20: improve hip drive into the throw. Train slightly lighter to build volume.",
+        beginner: "Break into sets of 10 with 10s rest. Catch in the squat — don't stand up between reps.",
+      },
+      'run-1km': {
+        elite:    "Flyer! Maintain form when fatigued: high cadence (~180 steps/min), relaxed jaw and shoulders.",
+        average:  "3 runs/week with 1 interval session. Practice running off other stations — simulate the transition.",
+        beginner: "Run-walk intervals build base fast. Focus on mid-foot strike and keeping your arms at 90°.",
+      },
+    };
+
+    // ─── Utilities ────────────────────────────────────────────────────────────────
+
+    function parseTime(input) {
+      const s = String(input).trim();
+      if (s.includes(':')) {
+        const [m, sec] = s.split(':');
+        const mins = parseInt(m, 10), secs = parseInt(sec, 10);
+        if (!isNaN(mins) && !isNaN(secs) && secs < 60) return mins * 60 + secs;
+        return NaN;
+      }
+      const n = parseInt(s, 10);
+      return isNaN(n) ? NaN : n;
+    }
+
+    function formatTime(secs) {
+      if (secs == null || isNaN(secs)) return '--:--';
+      const t = Math.round(Math.abs(secs));
+      return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+    }
+
+    function formatDuration(secs) {
+      if (secs == null || isNaN(secs)) return '--:--:--';
+      const t = Math.round(Math.abs(secs));
+      const h = Math.floor(t / 3600);
+      const m = Math.floor((t % 3600) / 60);
+      const s = t % 60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function getDaysUntil(dateStr) {
+      if (!dateStr) return null;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      return Math.round((new Date(dateStr + 'T00:00:00') - today) / 86400000);
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      try { return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+      catch { return dateStr; }
+    }
+
+    function loadLS(key, fallback) {
+      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+      catch { return fallback; }
+    }
+
+    function today() { return new Date().toISOString().split('T')[0]; }
+
+    function getAgeGroup(age) {
+      const a = parseInt(age, 10);
+      if (isNaN(a)) return null;
+      if (a < 25) return '16-24'; if (a < 30) return '25-29'; if (a < 35) return '30-34';
+      if (a < 40) return '35-39'; if (a < 45) return '40-44'; if (a < 50) return '45-49';
+      if (a < 55) return '50-54'; if (a < 60) return '55-59'; return '60+';
+    }
+
+    function getBenchmark(gender, age, stationId) {
+      if (!gender || !age) return null;
+      const base = BASE_BENCHMARKS[gender]?.[stationId];
+      if (!base) return null;
+      const ageGroup = getAgeGroup(age);
+      const f = AGE_FACTORS[ageGroup] || 1.0;
+      return {
+        elite:    Math.round(base.elite * f),
+        avg:      Math.round(base.avg * f),
+        beginner: Math.round(base.beginner * f),
+        ageGroup,
+      };
+    }
+
+    function getTier(userTime, bm) {
+      if (!bm || userTime == null) return null;
+      if (userTime <= bm.elite) return 'elite';
+      if (userTime <= bm.avg)   return 'average';
+      return 'beginner';
+    }
+
+    function getRadarScore(userTime, bm) {
+      if (!bm || userTime == null) return 0;
+      if (userTime <= bm.elite)    return 100;
+      if (userTime >= bm.beginner) return 0;
+      return Math.round(100 * (bm.beginner - userTime) / (bm.beginner - bm.elite));
+    }
+
+    function getPctVsAvg(userTime, bm) {
+      if (!bm || userTime == null) return null;
+      return Math.round(Math.abs(userTime - bm.avg) / bm.avg * 100);
+    }
+
+    // ─── Shared styles ────────────────────────────────────────────────────────────
+
+    const inputBase = {
+      width: '100%', background: '#111', border: '1px solid #333',
+      borderRadius: 8, color: '#fff', padding: '0.75rem 1rem',
+      fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.15s', appearance: 'none',
+    };
+    const labelBase = {
+      display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#888',
+      marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+    };
+    const cardBase = { background: '#111', border: '1px solid #222', borderRadius: 12 };
+
+    const TIER_CONFIG = {
+      elite:    { icon: '🏆', label: 'Elite',    color: '#FFD700', bg: '#1c1600', border: '#4a3800' },
+      average:  { icon: '✅', label: 'Average',  color: '#4ade80', bg: '#0a1f0a', border: '#1a4a1a' },
+      beginner: { icon: '💪', label: 'Beginner', color: '#888',    bg: '#161616', border: '#2a2a2a' },
+    };
+
+    // ─── Reusable components ──────────────────────────────────────────────────────
+
+    function TierBadge({ tier }) {
+      if (!tier) return null;
+      const c = TIER_CONFIG[tier];
+      return (
+        <span style={{
+          fontSize: '0.68rem', fontWeight: 700, color: c.color,
+          background: c.bg, border: `1px solid ${c.border}`,
+          padding: '0.2rem 0.5rem', borderRadius: 4,
+          letterSpacing: '0.04em', whiteSpace: 'nowrap',
+        }}>
+          {c.icon} {c.label}
+        </span>
+      );
+    }
+
+    function ImprovementBadge({ delta }) {
+      if (delta == null) return null;
+      const faster = delta < 0;
+      return (
+        <span style={{
+          fontSize: '0.72rem', fontWeight: 700,
+          color: faster ? '#4ade80' : '#f87171',
+          background: faster ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)',
+          border: `1px solid ${faster ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`,
+          padding: '0.2rem 0.45rem', borderRadius: 4, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
+        }}>
+          {faster ? '▼' : '▲'} {formatTime(Math.abs(delta))}
+        </span>
+      );
+    }
+
+    function StatCard({ label, value, suffix, small, accent, sub }) {
+      return (
+        <div style={{ ...cardBase, padding: '1.25rem' }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{label}</div>
+          <div style={{ fontWeight: 900, fontSize: small ? '1.05rem' : '1.9rem', color: accent ? YELLOW : '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            {value}{suffix && <span style={{ fontSize: '0.85rem', color: '#888', fontWeight: 400, marginLeft: '0.25rem' }}>{suffix}</span>}
+          </div>
+          {sub && <div style={{ fontSize: '0.72rem', color: '#888', marginTop: '0.3rem' }}>{sub}</div>}
+        </div>
+      );
+    }
+
+    function TopBar({ profile, onEdit }) {
+      const days = profile.competitionDate ? getDaysUntil(profile.competitionDate) : null;
+      const raceMsg = days === null ? null
+        : days > 0  ? `🏁 ${days}d`
+        : days === 0 ? '🔥 Today'
+        : `✅ Done`;
+      return (
+        <div style={{ background: YELLOW, color: '#000', padding: '0 1rem' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '2.75rem' }}>
+            {/* Left: logo + name */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span style={{ fontWeight: 900, fontSize: '1rem', letterSpacing: '-0.02em' }}>isurvivehyrox</span>
+              {profile.name && <>
+                <span style={{ opacity: 0.35, fontWeight: 400 }}>|</span>
+                <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>{profile.name}</span>
+              </>}
+            </div>
+            {/* Right: days to race + edit */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {raceMsg && <span style={{ fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.06em' }}>{raceMsg}</span>}
+              <button onClick={onEdit} style={{ background: '#000', color: YELLOW, border: 'none', borderRadius: 4, padding: '0.3rem 0.75rem', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', letterSpacing: '0.05em' }}>Edit</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Station Line Chart (pure SVG) ───────────────────────────────────────────
+
+    function StationChart({ station, sessions }) {
+      const [tooltip, setTooltip] = useState(null);
+
+      const data = sessions
+        .filter(s => s.stationId === station.id)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .map((s, i) => ({ sessionNum: i + 1, time: s.timeInSeconds, date: s.date }));
+
+      if (data.length < 2) return (
+        <div style={{ ...cardBase, padding: '1.25rem' }}>
+          <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{station.name}</div>
+          <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.75rem' }}>{station.detail}</div>
+          <div style={{ color: '#777', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem 0', border: '1px dashed #1e1e1e', borderRadius: 8 }}>Log 2+ sessions to see chart</div>
+        </div>
+      );
+
+      const times = data.map(d => d.time);
+      const minT = Math.min(...times), maxT = Math.max(...times);
+
+      // SVG layout
+      const W = 400, H = 155;
+      const padL = 46, padR = 8, padT = 8, padB = 20;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+
+      // Lower time = higher position (line goes up as you improve)
+      const toY = t => maxT === minT
+        ? padT + plotH / 2
+        : padT + plotH * (t - minT) / (maxT - minT);
+      const toX = i => padL + (i / (data.length - 1)) * plotW;
+
+      // 3 y-axis ticks
+      const yTicks = maxT === minT
+        ? [minT]
+        : [maxT, Math.round((minT + maxT) / 2), minT];
+
+      const polyPts = data.map((d, i) => `${toX(i)},${toY(d.time)}`).join(' ');
+
+      return (
+        <div style={{ ...cardBase, padding: '1.25rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{station.name}</div>
+              <div style={{ fontSize: '0.72rem', color: '#777' }}>{station.detail}</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '0.62rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Best</div>
+              <div style={{ fontWeight: 800, color: YELLOW, fontSize: '0.9rem', fontVariantNumeric: 'tabular-nums' }}>{formatTime(minT)}</div>
+            </div>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
+              {/* Horizontal grid lines */}
+              {yTicks.map((t, i) => (
+                <line key={i} x1={padL} x2={W - padR} y1={toY(t)} y2={toY(t)} stroke="#1c1c1c" strokeWidth={1} />
+              ))}
+              {/* Y-axis labels */}
+              {yTicks.map((t, i) => (
+                <text key={i} x={padL - 4} y={toY(t) + 4} textAnchor="end" fill="#444" fontSize={9} fontFamily="monospace">{formatTime(t)}</text>
+              ))}
+              {/* X-axis labels */}
+              {data.map((d, i) => (
+                <text key={i} x={toX(i)} y={H - 4} textAnchor="middle" fill="#444" fontSize={9}>{d.sessionNum}</text>
+              ))}
+              {/* Line */}
+              <polyline points={polyPts} fill="none" stroke={YELLOW} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+              {/* Dots */}
+              {data.map((d, i) => (
+                <circle key={i} cx={toX(i)} cy={toY(d.time)} r={4} fill={YELLOW}
+                  onMouseEnter={e => setTooltip({ ...d, mx: e.clientX, my: e.clientY })}
+                  onMouseLeave={() => setTooltip(null)}
+                  style={{ cursor: 'crosshair' }}
+                />
+              ))}
+            </svg>
+            {tooltip && (
+              <div style={{ position: 'fixed', left: tooltip.mx + 14, top: tooltip.my - 14, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: '0.4rem 0.7rem', fontSize: '0.8rem', zIndex: 1000, pointerEvents: 'none' }}>
+                <div style={{ color: '#888', fontSize: '0.72rem', marginBottom: '0.1rem' }}>Session {tooltip.sessionNum} · {tooltip.date}</div>
+                <div style={{ color: YELLOW, fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{formatTime(tooltip.time)}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Weakness Radar Chart (pure SVG) ─────────────────────────────────────────
+
+    function WeaknessRadar({ sessions, profile }) {
+      const [tooltip, setTooltip] = useState(null);
+      const hasProfile = profile.gender && profile.age;
+
+      if (!hasProfile) return (
+        <div style={{ ...cardBase, padding: '2rem', textAlign: 'center', color: '#888' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>📡</div>
+          <div style={{ fontSize: '0.88rem', marginBottom: '0.4rem' }}>Radar analysis requires your profile.</div>
+          <div style={{ fontSize: '0.78rem', color: '#777' }}>Add your gender and age in Setup to unlock.</div>
+        </div>
+      );
+
+      const radarData = STATIONS.map(station => {
+        const ss = sessions.filter(s => s.stationId === station.id);
+        const pb = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
+        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        return { label: station.short, score: pb != null ? getRadarScore(pb, bm) : 0, hasData: pb != null };
+      });
+
+      const n = radarData.length;
+      const avgScore = Math.round(
+        radarData.filter(d => d.hasData).reduce((s, d) => s + d.score, 0) /
+        Math.max(1, radarData.filter(d => d.hasData).length)
+      );
+
+      // SVG polar helpers
+      const cx = 200, cy = 190, r = 120, labelR = 148;
+      const angleOf = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+      const polar = (radius, angle) => [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
+
+      // Grid ring polygon path
+      const ringPath = pct => {
+        const pts = radarData.map((_, i) => polar(r * pct, angleOf(i)));
+        return pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ') + ' Z';
+      };
+
+      // Data polygon
+      const dataPath = radarData.map((d, i) => {
+        const [x, y] = polar(r * (d.score / 100), angleOf(i));
+        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ') + ' Z';
+
+      return (
+        <div style={{ ...cardBase, padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Weakness Radar</div>
+              <div style={{ fontSize: '0.75rem', color: '#777', marginTop: '0.15rem' }}>
+                {profile.gender === 'male' ? 'Male' : 'Female'} · {getAgeGroup(profile.age)} · {profile.division || 'Open'}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '0.62rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Avg Score</div>
+              <div style={{ fontWeight: 900, fontSize: '1.4rem', color: avgScore >= 70 ? '#4ade80' : avgScore >= 40 ? YELLOW : '#f87171' }}>{avgScore}</div>
+            </div>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <svg viewBox="0 0 400 380" style={{ width: '100%', display: 'block' }}>
+              {/* Grid rings */}
+              {[0.33, 0.66, 1].map((pct, i) => (
+                <path key={i} d={ringPath(pct)} fill="none" stroke="#1e1e1e" strokeWidth={1} />
+              ))}
+              {/* Ring % labels at top spoke */}
+              {[{ pct: 0.33, label: '33' }, { pct: 0.66, label: '66' }, { pct: 1, label: '100' }].map(({ pct, label }) => (
+                <text key={label} x={cx + 3} y={cy - r * pct - 3} fill="#2e2e2e" fontSize={8} textAnchor="start">{label}</text>
+              ))}
+              {/* Spokes */}
+              {radarData.map((_, i) => {
+                const [ex, ey] = polar(r, angleOf(i));
+                return <line key={i} x1={cx} y1={cy} x2={ex.toFixed(1)} y2={ey.toFixed(1)} stroke="#1e1e1e" strokeWidth={1} />;
+              })}
+              {/* Data fill */}
+              <path d={dataPath} fill={YELLOW} fillOpacity={0.13} stroke={YELLOW} strokeWidth={2} strokeLinejoin="round" />
+              {/* Data dots + hover */}
+              {radarData.map((d, i) => {
+                const [dx, dy] = polar(r * (d.score / 100), angleOf(i));
+                return (
+                  <circle key={i} cx={dx.toFixed(1)} cy={dy.toFixed(1)} r={4}
+                    fill={d.hasData ? YELLOW : '#2a2a2a'} stroke={d.hasData ? 'none' : '#444'} strokeWidth={1}
+                    onMouseEnter={e => setTooltip({ label: d.label, score: d.score, hasData: d.hasData, mx: e.clientX, my: e.clientY })}
+                    onMouseLeave={() => setTooltip(null)}
+                    style={{ cursor: 'default' }}
+                  />
+                );
+              })}
+              {/* Station labels */}
+              {radarData.map((d, i) => {
+                const a = angleOf(i);
+                const [lx, ly] = polar(labelR, a);
+                const anchor = Math.cos(a) > 0.2 ? 'start' : Math.cos(a) < -0.2 ? 'end' : 'middle';
+                return (
+                  <text key={i} x={lx.toFixed(1)} y={(ly + 4).toFixed(1)}
+                    textAnchor={anchor} fill={d.hasData ? '#666' : '#333'}
+                    fontSize={9} fontFamily="-apple-system, Arial, sans-serif" fontWeight={600}
+                  >{d.label}</text>
+                );
+              })}
+            </svg>
+            {tooltip && (
+              <div style={{ position: 'fixed', left: tooltip.mx + 14, top: tooltip.my - 14, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: '0.4rem 0.7rem', fontSize: '0.8rem', zIndex: 1000, pointerEvents: 'none' }}>
+                <div style={{ color: '#888', fontSize: '0.72rem', marginBottom: '0.1rem' }}>{tooltip.label}</div>
+                <div style={{ color: YELLOW, fontWeight: 800 }}>{tooltip.hasData ? `${tooltip.score}/100` : 'No data yet'}</div>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.72rem', color: '#888', marginTop: '0.25rem' }}>
+            <span>0 = Beginner</span><span>50 = Average</span><span>100 = Elite</span>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Training Tips Section ────────────────────────────────────────────────────
+
+    function TrainingTips({ sessions, profile }) {
+      const [expanded, setExpanded] = useState(null);
+      const hasProfile = profile.gender && profile.age;
+
+      const analyses = STATIONS.map(station => {
+        const ss = sessions.filter(s => s.stationId === station.id);
+        if (ss.length === 0) return null;
+        const pb = Math.min(...ss.map(s => s.timeInSeconds));
+        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        const tier = getTier(pb, bm);
+        const pct = getPctVsAvg(pb, bm);
+        const tips = TRAINING_TIPS[station.id];
+        const tip = tips?.[tier] || tips?.average;
+        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
+        const score = bm ? getRadarScore(pb, bm) : null;
+        return { station, pb, bm, tier, pct, tip, trend, score };
+      }).filter(Boolean).sort((a, b) => (a.score ?? 100) - (b.score ?? 100));
+
+      if (analyses.length === 0) return null;
+
+      return (
+        <div>
+          <h3 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.02em', color: '#777' }}>
+            Station Analysis {hasProfile ? '' : <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 400, textTransform: 'none' }}>— add profile for tier benchmarks</span>}
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+            {analyses.map(({ station, pb, bm, tier, pct, tip, trend, score }) => {
+              const isOpen = expanded === station.id;
+              const c = tier ? TIER_CONFIG[tier] : null;
+              return (
+                <div key={station.id} style={{ ...cardBase, overflow: 'hidden', border: `1px solid ${isOpen ? '#2a2a2a' : '#1e1e1e'}` }}>
+                  {/* Row */}
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : station.id)}
+                    style={{
+                      width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                      padding: '0.75rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.45rem', textAlign: 'left',
+                    }}
+                  >
+                    {/* Top line: number + name + chevron */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <div style={{ width: 22, height: 22, borderRadius: '50%', background: tier ? `${c.color}15` : '#1a1a1a', border: `1px solid ${tier ? `${c.color}30` : '#2a2a2a'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 800, color: tier ? c.color : '#555', flexShrink: 0 }}>
+                        {station.num}
+                      </div>
+                      <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#ddd', flex: 1 }}>{station.name}</span>
+                      <span style={{ fontSize: '0.62rem', color: '#888' }}>{station.detail}</span>
+                      <span style={{ color: '#555', fontSize: '0.7rem', flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
+                    </div>
+
+                    {/* Bottom line: stats */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', paddingLeft: '1.7rem' }}>
+                      {trend != null && (
+                        <span style={{ fontSize: '0.8rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
+                      )}
+                      {bm && pct != null && (
+                        <span style={{ fontSize: '0.72rem', color: pb <= bm.avg ? '#4ade80' : '#888', whiteSpace: 'nowrap' }}>
+                          {pb < bm.avg ? `${pct}% faster` : pb > bm.avg ? `${pct}% slower` : 'avg'}
+                        </span>
+                      )}
+                      <span style={{ fontWeight: 800, fontSize: '1rem', fontVariantNumeric: 'tabular-nums', color: YELLOW }}>{formatTime(pb)}</span>
+                      {tier && <TierBadge tier={tier} />}
+                      {score != null && (
+                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#0f0f0f', border: '1px solid #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.63rem', fontWeight: 800, color: score >= 70 ? '#4ade80' : score >= 40 ? YELLOW : '#f87171' }}>
+                          {score}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Expanded tip + benchmark */}
+                  {isOpen && (
+                    <div style={{ borderTop: '1px solid #1a1a1a', padding: '0.85rem 1.1rem', background: '#0d0d0d' }}>
+                      {tip && (
+                        <div style={{ marginBottom: bm ? '0.85rem' : 0 }}>
+                          <div style={{ fontSize: '0.68rem', fontWeight: 700, color: tier ? c.color : '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>
+                            {tier ? `${c.icon} ${c.label} Tip` : '💡 Training Tip'}
+                          </div>
+                          <div style={{ fontSize: '0.85rem', color: '#bbb', lineHeight: 1.55 }}>{tip}</div>
+                        </div>
+                      )}
+                      {bm && (
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {[['Elite', bm.elite, '#FFD700'], ['Average', bm.avg, '#4ade80'], ['Beginner', bm.beginner, '#666']].map(([label, val, col]) => (
+                            <div key={label} style={{ background: '#111', border: '1px solid #222', borderRadius: 6, padding: '0.4rem 0.7rem', flex: 1, minWidth: 80 }}>
+                              <div style={{ fontSize: '0.62rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.15rem' }}>{label}</div>
+                              <div style={{ fontWeight: 700, fontSize: '0.85rem', color: col, fontVariantNumeric: 'tabular-nums' }}>{formatTime(val)}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Setup Page ───────────────────────────────────────────────────────────────
+
+    function SetupPage({ profile, onSave }) {
+      const [name,       setName]       = useState(profile.name || '');
+      const [date,       setDate]       = useState(profile.competitionDate || '');
+      const [gender,     setGender]     = useState(profile.gender || '');
+      const [age,        setAge]        = useState(profile.age || '');
+      const [weight,     setWeight]     = useState(profile.weight || '');
+      const [division,   setDivision]   = useState(profile.division || 'open');
+      const [saved,      setSaved]      = useState(false);
+
+      const ageGroup = getAgeGroup(age);
+      const days     = getDaysUntil(date);
+
+      const save = () => {
+        onSave({ name: name.trim(), competitionDate: date, gender, age, weight, division });
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      };
+
+      const focus = e => e.target.style.borderColor = YELLOW;
+      const blur  = e => e.target.style.borderColor = '#333';
+
+      const selectStyle = { ...inputBase, backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' fill=\'%23666\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'calc(100% - 12px) center', paddingRight: '2.25rem' };
+
+      return (
+        <div className="fade-in" style={{ maxWidth: 520 }}>
+          <h2 style={{ fontWeight: 900, fontSize: '1.6rem', marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>Athlete Setup</h2>
+          <p style={{ color: '#777', fontSize: '0.88rem', marginBottom: '2rem' }}>Configure your profile to unlock benchmark analysis and race countdown.</p>
+
+          {/* Section: Identity */}
+          <div style={{ marginBottom: '0.5rem', fontSize: '0.68rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Identity</div>
+          <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+            <div>
+              <label style={labelBase}>Athlete Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && save()} placeholder="Your name" style={inputBase} onFocus={focus} onBlur={blur} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={labelBase}>Gender</label>
+                <select value={gender} onChange={e => setGender(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
+                  <option value="">Select…</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label style={labelBase}>Age</label>
+                <input type="number" value={age} onChange={e => setAge(e.target.value)} placeholder="e.g. 32" min={16} max={99} style={inputBase} onFocus={focus} onBlur={blur} />
+                {ageGroup && <div style={{ fontSize: '0.72rem', color: YELLOW, marginTop: '0.35rem', fontWeight: 600 }}>Age group: {ageGroup}</div>}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={labelBase}>Weight (kg)</label>
+                <input type="number" value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 70" min={30} max={200} style={inputBase} onFocus={focus} onBlur={blur} />
+              </div>
+              <div>
+                <label style={labelBase}>Division</label>
+                <select value={division} onChange={e => setDivision(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
+                  <option value="open">Open</option>
+                  <option value="pro">Pro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Section: Race */}
+          <div style={{ marginBottom: '0.5rem', fontSize: '0.68rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Race</div>
+          <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1.5rem' }}>
+            <label style={labelBase}>Competition Date</label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} style={inputBase} onFocus={focus} onBlur={blur} />
+            {date && days !== null && (
+              <div style={{ marginTop: '0.6rem', padding: '0.65rem 1rem', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 8, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>{days > 0 ? '🏁' : days === 0 ? '🔥' : '✅'}</span>
+                <div>
+                  <div style={{ fontWeight: 700, color: days >= 0 ? YELLOW : '#aaa', fontSize: '0.88rem' }}>
+                    {days > 0 ? `${days} days to race day` : days === 0 ? 'Race day is today!' : `Race was ${Math.abs(days)} days ago`}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#888' }}>{formatDate(date)}</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={save}
+            disabled={!name.trim()}
+            style={{
+              background: saved ? '#16a34a' : YELLOW, color: saved ? '#fff' : '#000', border: 'none',
+              padding: '0.9rem', borderRadius: 8, fontWeight: 800, fontSize: '0.95rem',
+              cursor: name.trim() ? 'pointer' : 'not-allowed', opacity: name.trim() ? 1 : 0.5,
+              transition: 'all 0.2s', width: '100%', letterSpacing: '0.02em',
+            }}
+          >
+            {saved ? '✓ Saved!' : 'Save Profile'}
+          </button>
+
+        </div>
+      );
+    }
+
+    // ─── Station Detail Page ──────────────────────────────────────────────────────
+
+    function StationDetailPage({ station, sessions, onAdd, onDelete, onBack }) {
+      const [date,      setDate]      = useState(today());
+      const [timeInput, setTimeInput] = useState('');
+      const [error,     setError]     = useState('');
+      const [success,   setSuccess]   = useState(false);
+
+      const stationSessions = sessions.filter(s => s.stationId === station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
+      const displaySessions = [...stationSessions].reverse();
+      const pb       = stationSessions.length > 0 ? Math.min(...stationSessions.map(s => s.timeInSeconds)) : null;
+      const latest   = stationSessions.length > 0 ? stationSessions[stationSessions.length - 1].timeInSeconds : null;
+      const vsPrev   = stationSessions.length >= 2 ? stationSessions[stationSessions.length - 1].timeInSeconds - stationSessions[stationSessions.length - 2].timeInSeconds : null;
+
+      const handleSubmit = () => {
+        if (!timeInput.trim()) { setError('Please enter a time.'); return; }
+        const secs = parseTime(timeInput);
+        if (isNaN(secs) || secs <= 0) { setError('Invalid — use mm:ss or seconds'); return; }
+        setError('');
+        onAdd({ stationId: station.id, date, timeInSeconds: secs });
+        setTimeInput('');
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 2000);
+      };
+
+      const focus = e => e.target.style.borderColor = YELLOW;
+      const blur  = e => e.target.style.borderColor = '#333';
+
+      return (
+        <div className="fade-in">
+          {/* Back + header */}
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#777', cursor: 'pointer', fontSize: '0.82rem', marginBottom: '1.25rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            ← Back to Stations
+          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '2rem' }}>{station.icon}</span>
+              <div>
+                <h2 style={{ fontWeight: 900, fontSize: '1.6rem', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{station.name}</h2>
+                <div style={{ fontSize: '0.78rem', color: '#777', marginTop: '0.2rem' }}>{station.detail} · {station.num === '↺' ? 'Run between stations' : `Station ${station.num}`}</div>
+              </div>
+            </div>
+            {/* Log form inline */}
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Date</div>
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ ...inputBase, width: 'auto' }} onFocus={focus} onBlur={blur} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time</div>
+                <input type="text" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="mm:ss or secs" style={{ ...inputBase, width: 140, fontVariantNumeric: 'tabular-nums' }} onFocus={focus} onBlur={blur} />
+              </div>
+              <button onClick={handleSubmit} style={{ background: success ? '#16a34a' : YELLOW, color: success ? '#fff' : '#000', border: 'none', padding: '0.75rem 1.25rem', borderRadius: 8, fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}>
+                {success ? '✓ Logged!' : '+ LOG SESSION'}
+              </button>
+            </div>
+          </div>
+          {error && <p style={{ color: '#f87171', fontSize: '0.78rem', marginBottom: '0.75rem' }}>{error}</p>}
+
+          {/* Stats row */}
+          {stationSessions.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.7rem', marginBottom: '1.5rem' }}>
+              <StatCard label="Personal Best" value={formatTime(pb)} accent />
+              <StatCard label="Last Session"  value={formatTime(latest)} />
+              <StatCard label="Total Sessions" value={stationSessions.length} />
+              {vsPrev !== null && (
+                <div style={{ ...cardBase, padding: '1.25rem' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Previous</div>
+                  <div style={{ fontWeight: 900, fontSize: '1.9rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                    {vsPrev < 0 ? '-' : '+'}{formatTime(Math.abs(vsPrev))}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>
+                    {vsPrev < 0 ? 'Faster 🔥' : vsPrev > 0 ? 'Slower' : 'Same'}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Chart */}
+          {stationSessions.length >= 2 && (
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Progress Over Time</div>
+              <StationChart station={station} sessions={sessions} />
+            </div>
+          )}
+
+          {/* Session history */}
+          {displaySessions.length > 0 && (
+            <div>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Session History</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {displaySessions.map((session, i) => {
+                  const prevSession = displaySessions[i + 1];
+                  const delta = prevSession ? session.timeInSeconds - prevSession.timeInSeconds : null;
+                  const isPB = session.timeInSeconds === pb;
+                  const isLatest = i === 0;
+                  return (
+                    <div key={session.id} style={{ background: isLatest ? '#161616' : '#0d0d0d', border: `1px solid ${isLatest ? '#2a2a2a' : '#1a1a1a'}`, borderRadius: 8, padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.78rem', color: '#777' }}>{formatDate(session.date)}</div>
+                        <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.12rem' }}>
+                          {isLatest && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: '#000', background: YELLOW, padding: '0.1rem 0.3rem', borderRadius: 3 }}>LATEST</span>}
+                          {isPB    && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: YELLOW, border: `1px solid ${YELLOW}`, padding: '0.1rem 0.3rem', borderRadius: 3 }}>PB</span>}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+                        <span style={{ fontWeight: 800, fontSize: '1rem', fontVariantNumeric: 'tabular-nums' }}>{formatTime(session.timeInSeconds)}</span>
+                        <ImprovementBadge delta={delta} />
+                        <button onClick={() => onDelete(session.id)} style={{ background: 'none', border: 'none', color: '#2a2a2a', cursor: 'pointer', fontSize: '0.9rem', padding: '0.1rem 0.25rem', borderRadius: 4, transition: 'color 0.12s' }} onMouseEnter={e => e.target.style.color = '#f87171'} onMouseLeave={e => e.target.style.color = '#2a2a2a'} title="Delete">×</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ─── Log Page ─────────────────────────────────────────────────────────────────
+
+    function LogPage({ sessions, onAdd, onDelete }) {
+      const [selected, setSelected] = useState(null);
+
+      if (selected) {
+        const station = STATIONS.find(s => s.id === selected);
+        return <StationDetailPage station={station} sessions={sessions} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
+      }
+
+      return (
+        <div className="fade-in">
+          <h2 style={{ fontWeight: 900, fontSize: '1.6rem', marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>Log a Session</h2>
+          <p style={{ color: '#777', fontSize: '0.88rem', marginBottom: '1.75rem' }}>Select a station to log your time or view history.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.7rem' }}>
+            {STATIONS.map(station => {
+              const ss = sessions.filter(s => s.stationId === station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
+              const pb     = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
+              const latest = ss.length > 0 ? ss[ss.length - 1].timeInSeconds : null;
+              const trend  = ss.length >= 2 ? ss[ss.length - 1].timeInSeconds - ss[ss.length - 2].timeInSeconds : null;
+              return (
+                <button key={station.id} onClick={() => setSelected(station.id)}
+                  style={{ ...cardBase, padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', border: '1px solid #222', transition: 'border-color 0.15s', background: '#111' }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = YELLOW}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '1.3rem' }}>{station.icon}</span>
+                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{station.name}</span>
+                    </div>
+                    {trend !== null && (
+                      <span style={{ fontSize: '0.9rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.75rem' }}>{station.detail}</div>
+                  {pb !== null ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <div>
+                        <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>PB</div>
+                        <div style={{ fontWeight: 900, fontSize: '1.2rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(pb)}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sessions</div>
+                        <div style={{ fontWeight: 700, fontSize: '1rem' }}>{ss.length}</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: '0.78rem', color: '#444', fontStyle: 'italic' }}>No sessions yet</div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Weekly Progress ─────────────────────────────────────────────────────────
+
+    function WeeklyProgress({ sessions }) {
+      // Monday-anchored calendar weeks
+      const now = new Date();
+      const dow = now.getDay(); // 0 = Sun
+      const startThis = new Date(now);
+      startThis.setDate(now.getDate() - ((dow + 6) % 7));
+      startThis.setHours(0, 0, 0, 0);
+      const startLast = new Date(startThis);
+      startLast.setDate(startThis.getDate() - 7);
+
+      const inThis = s => { const d = new Date(s.date + 'T00:00:00'); return d >= startThis; };
+      const inLast = s => { const d = new Date(s.date + 'T00:00:00'); return d >= startLast && d < startThis; };
+
+      const rows = STATIONS.map(station => {
+        const tw = sessions.filter(s => s.stationId === station.id && inThis(s));
+        const lw = sessions.filter(s => s.stationId === station.id && inLast(s));
+        if (!tw.length || !lw.length) return null;
+        const bestThis = Math.min(...tw.map(s => s.timeInSeconds));
+        const bestLast = Math.min(...lw.map(s => s.timeInSeconds));
+        const delta = bestThis - bestLast;          // negative = faster = good
+        const pct   = Math.round(Math.abs(delta) / bestLast * 100);
+        return { station, bestThis, bestLast, delta, pct };
+      }).filter(Boolean);
+
+      if (!rows.length) return null;
+
+      const improved = rows.filter(r => r.delta < 0);
+      const avgPct   = improved.length
+        ? Math.round(improved.reduce((s, r) => s + r.pct, 0) / improved.length)
+        : 0;
+
+      const weekLabel = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const range = `${weekLabel(startLast)} – ${weekLabel(new Date(startThis.getTime() - 86400000))} vs ${weekLabel(startThis)} – ${weekLabel(now)}`;
+
+      return (
+        <div style={{ ...cardBase, padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.1rem' }}>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Weekly Progress</div>
+              <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '0.2rem' }}>{range}</div>
+            </div>
+            {improved.length > 0 && (
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>Avg gain</div>
+                <div style={{ fontWeight: 900, fontSize: '1.5rem', color: '#4ade80', lineHeight: 1 }}>+{avgPct}%</div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            {rows.map(({ station, bestThis, bestLast, delta, pct }) => {
+              const faster = delta < 0;
+              const barW   = Math.min(pct, 50); // cap bar at 50% visual
+              return (
+                <div key={station.id} style={{ padding: '0.6rem 0.85rem', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <span style={{ fontSize: '0.95rem', flexShrink: 0 }}>{station.icon}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.82rem', marginBottom: '0.15rem' }}>{station.name}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#777', fontVariantNumeric: 'tabular-nums' }}>
+                        {formatTime(bestLast)} → {formatTime(bestThis)}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: faster ? '#4ade80' : '#f87171' }}>
+                        {faster ? '↑' : '↓'} {pct}%
+                      </div>
+                      <div style={{ fontSize: '0.65rem', color: faster ? '#4ade80' : '#f87171' }}>
+                        {faster ? 'faster' : 'slower'}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Progress bar */}
+                  <div style={{ marginTop: '0.45rem', height: 3, background: '#1a1a1a', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${barW * 2}%`, background: faster ? '#4ade80' : '#f87171', borderRadius: 2, opacity: 0.6 }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Dashboard Page ───────────────────────────────────────────────────────────
+
+    function DashboardPage({ sessions, profile, onTabChange }) {
+      const totalSessions   = sessions.length;
+      const sortedByDate    = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const lastActive      = sortedByDate[0]?.date ?? null;
+      const days            = getDaysUntil(profile.competitionDate);
+      const hasProfile      = profile.gender && profile.age;
+
+      const stationData = useMemo(() => STATIONS.map(station => {
+        const ss = sessions.filter(s => s.stationId === station.id);
+        if (ss.length === 0) return { station, pb: null, count: 0, trend: null, bm: null, tier: null, score: null };
+        const pb = Math.min(...ss.map(s => s.timeInSeconds));
+        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
+        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        const tier = getTier(pb, bm);
+        const score = bm ? getRadarScore(pb, bm) : null;
+        return { station, pb, count: ss.length, trend, bm, tier, score };
+      }), [sessions, profile]);
+
+      const stationsWithData = stationData.filter(d => d.pb !== null);
+      const stationsComplete = stationsWithData.length;
+
+      if (totalSessions === 0) {
+        return (
+          <div className="fade-in" style={{ textAlign: 'center', padding: '5rem 1rem' }}>
+            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏋️</div>
+            <h2 style={{ fontWeight: 900, fontSize: '1.8rem', marginBottom: '0.75rem', letterSpacing: '-0.03em' }}>No sessions yet</h2>
+            <p style={{ color: '#777', fontSize: '0.9rem', marginBottom: '2rem' }}>Start logging training sessions to see your analysis here.</p>
+            <button onClick={() => onTabChange('log')} style={{ background: YELLOW, color: '#000', border: 'none', padding: '0.9rem 2rem', borderRadius: 8, fontWeight: 800, cursor: 'pointer', fontSize: '0.95rem' }}>Log First Session →</button>
+          </div>
+        );
+      }
+
+      return (
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+
+          {/* Summary stats */}
+          {(() => {
+            const totalPB = stationsWithData.reduce((sum, d) => sum + (d.station.id === 'run-1km' ? d.pb * 8 : d.pb), 0);
+            // Previous total: per station, PB from all sessions except the most recent one
+            const prevPB = stationsWithData.reduce((sum, d) => {
+              const ss = sessions.filter(s => s.stationId === d.station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
+              const withoutLatest = ss.slice(0, -1);
+              if (!withoutLatest.length) return sum + (d.station.id === 'run-1km' ? d.pb * 8 : d.pb);
+              const prev = Math.min(...withoutLatest.map(s => s.timeInSeconds));
+              return sum + (d.station.id === 'run-1km' ? prev * 8 : prev);
+            }, 0);
+            const delta = totalPB - prevPB; // negative = faster = improved
+            const absDelta = Math.abs(Math.round(delta / 60)); // in minutes
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.7rem' }}>
+                <StatCard label="Total Sessions" value={totalSessions} />
+                <StatCard label="Stations Tracked" value={stationsComplete} suffix={`/ ${STATIONS.length}`} />
+                <StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={`${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} />
+                {stationsWithData.length > 0 && delta !== 0 && (
+                  <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: '1.25rem' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Prev Total</div>
+                    <div style={{ fontWeight: 900, fontSize: '1.9rem', color: delta < 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                      {delta < 0 ? '-' : '+'}{absDelta}m
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: delta < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>{delta < 0 ? 'faster overall' : 'slower overall'}</div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Weekly Progress */}
+          <WeeklyProgress sessions={sessions} />
+
+          {/* Profile pill */}
+          {hasProfile && (
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {[
+                profile.gender === 'male' ? '♂ Male' : '♀ Female',
+                `${getAgeGroup(profile.age)} age group`,
+                profile.division ? (profile.division === 'pro' ? '⭐ Pro' : 'Open') : 'Open',
+                profile.weight ? `${profile.weight} kg` : null,
+              ].filter(Boolean).map(t => (
+                <span key={t} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>{t}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Station Analysis (enhanced PB table) */}
+          <TrainingTips sessions={sessions} profile={profile} />
+
+          {/* Radar + weakest tips row */}
+          {stationsWithData.length >= 3 && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 0.9fr)', gap: '1rem', alignItems: 'start' }}>
+              <WeaknessRadar sessions={sessions} profile={profile} />
+
+              {/* Weakest stations tips */}
+              <div style={{ ...cardBase, padding: '1.25rem' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Focus Areas</div>
+                <div style={{ fontSize: '0.75rem', color: '#777', marginBottom: '1rem' }}>Your 3 stations needing most work</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {stationsWithData
+                    .sort((a, b) => (a.score ?? 100) - (b.score ?? 100))
+                    .slice(0, 3)
+                    .map(({ station, pb, bm, tier, score }) => {
+                      const pct = getPctVsAvg(pb, bm);
+                      const tip = TRAINING_TIPS[station.id]?.[tier || 'beginner'];
+                      return (
+                        <div key={station.id} style={{ paddingBottom: '0.75rem', borderBottom: '1px solid #1a1a1a' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontSize: '0.85rem' }}>{station.icon}</span>
+                              <span style={{ fontWeight: 700, fontSize: '0.82rem' }}>{station.name}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                              {score != null && <span style={{ fontSize: '0.7rem', fontWeight: 700, color: score < 40 ? '#f87171' : YELLOW }}>{score}/100</span>}
+                              {tier && <TierBadge tier={tier} />}
+                            </div>
+                          </div>
+                          {bm && pct != null && (
+                            <div style={{ fontSize: '0.72rem', color: pb <= bm.avg ? '#4ade80' : '#888', marginBottom: '0.35rem' }}>
+                              {pb < bm.avg ? `${pct}% faster than average` : `${pct}% slower than average`}
+                            </div>
+                          )}
+                          {tip && <div style={{ fontSize: '0.78rem', color: '#888', lineHeight: 1.5 }}>{tip.split('.')[0]}.</div>}
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Progress Charts */}
+          {stationsWithData.length > 0 && (
+            <div>
+              <h3 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.02em', color: '#777' }}>Progress Charts</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '0.7rem' }}>
+                {stationsWithData.map(({ station }) => <StationChart key={station.id} station={station} sessions={sessions} />)}
+              </div>
+              <p style={{ marginTop: '0.6rem', fontSize: '0.72rem', color: '#2a2a2a', textAlign: 'right' }}>Y-axis reversed — line going up = faster ↑</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ─── Root App ─────────────────────────────────────────────────────────────────
+
+    function App() {
+      const [profile,  setProfile]  = useState(() => loadLS(LS_PROFILE, {}));
+      const [sessions, setSessions] = useState(() => loadLS(LS_SESSIONS, []));
+      const [tab,      setTab]      = useState(profile.name ? 'dashboard' : 'setup');
+
+      useEffect(() => { localStorage.setItem(LS_PROFILE,  JSON.stringify(profile));  }, [profile]);
+      useEffect(() => { localStorage.setItem(LS_SESSIONS, JSON.stringify(sessions)); }, [sessions]);
+
+      const addSession    = useCallback((s) => setSessions(prev => [...prev, { ...s, id: Date.now() + Math.random() }]), []);
+      const deleteSession = useCallback((id) => setSessions(prev => prev.filter(s => s.id !== id)), []);
+
+      return (
+        <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff' }}>
+          {/* Sticky top bar + nav */}
+          <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+            <TopBar profile={profile} onEdit={() => setTab('setup')} />
+            <nav style={{ background: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '0 1rem' }}>
+              <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex' }}>
+                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }].map(t => (
+                  <button key={t.id} onClick={() => setTab(t.id)}
+                    style={{ padding: '0.72rem 1.1rem', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? YELLOW : 'transparent'}`, color: tab === t.id ? YELLOW : '#555', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', fontSize: '0.86rem', transition: 'all 0.15s', outline: 'none', letterSpacing: '0.02em' }}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </nav>
+          </div>
+
+          <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
+            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={setProfile} />}
+            {tab === 'log'       && <LogPage      sessions={sessions} onAdd={addSession} onDelete={deleteSession} />}
+            {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
+          </main>
+
+          <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.7rem', color: '#444', marginBottom: '0.5rem' }}>isurvivehyrox · data stored locally in your browser</p>
+            <p style={{ fontSize: '0.82rem', color: '#666', marginBottom: '0.3rem' }}>Made with 💛 by Pie Prapawuttikul</p>
+            <p style={{ fontSize: '0.78rem', color: '#555' }}>If this saved your race · ☕ <a href="https://venmo.com/u/pirpie" target="_blank" style={{ color: YELLOW, textDecoration: 'none' }}>venmo.com/u/pirpie</a></p>
+          </div>
+        </div>
+      );
+    }
+
+    // Responsive log page grid
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@media (max-width: 680px) { .fade-in > div[style*="grid-template-columns: minmax"] { grid-template-columns: 1fr !important; } }`;
+    document.head.appendChild(styleEl);
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
