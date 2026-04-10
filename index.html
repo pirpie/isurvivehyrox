@@ -42,8 +42,8 @@
       --yellow: #FFE600; --bg: #0a0a0a; --card: #111;
       --card2: #1a1a1a; --border: #222; --border2: #333;
     }
-    html { scroll-behavior: smooth; }
-    body { background: #0a0a0a; color: #fff; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; overflow-x: hidden; }
     input, select, button { font-family: inherit; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
     select option { background: #1a1a1a; color: #fff; }
@@ -120,36 +120,39 @@
     // ─── Benchmark data ───────────────────────────────────────────────────────────
     // Base values are for Open 30-34 age group (seconds). All other groups scale via AGE_FACTORS.
 
+    // Station benchmarks derived from hyroxdatalab.com real competition data.
+    // avg = intermediate athlete times; elite ≈ top-10% ratio; beginner ≈ 50-75th percentile.
     const BASE_BENCHMARKS = {
       male: {
-        'ski-erg':           { elite: 178, avg: 238, beginner: 318 },
-        'sled-push':         { elite:  55, avg:  90, beginner: 148 },
-        'sled-pull':         { elite:  48, avg:  78, beginner: 122 },
-        'burpee-broad-jump': { elite: 192, avg: 272, beginner: 382 },
-        'row':               { elite: 174, avg: 228, beginner: 302 },
-        'farmers-carry':     { elite:  68, avg: 108, beginner: 168 },
-        'lunges':            { elite: 142, avg: 222, beginner: 322 },
-        'wallballs':         { elite: 192, avg: 298, beginner: 428 },
+        'ski-erg':           { elite: 203, avg: 267, beginner: 310 },
+        'sled-push':         { elite: 168, avg: 221, beginner: 256 },
+        'sled-pull':         { elite: 233, avg: 306, beginner: 355 },
+        'burpee-broad-jump': { elite: 242, avg: 319, beginner: 370 },
+        'row':               { elite: 216, avg: 284, beginner: 330 },
+        'farmers-carry':     { elite:  99, avg: 130, beginner: 151 },
+        'lunges':            { elite: 225, avg: 296, beginner: 343 },
+        'wallballs':         { elite: 320, avg: 421, beginner: 488 },
         'run-1km':           { elite: 188, avg: 262, beginner: 352 },
       },
       female: {
-        'ski-erg':           { elite: 204, avg: 278, beginner: 382 },
-        'sled-push':         { elite:  78, avg: 128, beginner: 198 },
-        'sled-pull':         { elite:  63, avg: 103, beginner: 158 },
-        'burpee-broad-jump': { elite: 232, avg: 328, beginner: 452 },
-        'row':               { elite: 210, avg: 270, beginner: 360 },
-        'farmers-carry':     { elite:  86, avg: 138, beginner: 212 },
-        'lunges':            { elite: 172, avg: 266, beginner: 386 },
-        'wallballs':         { elite: 232, avg: 358, beginner: 512 },
+        'ski-erg':           { elite: 233, avg: 311, beginner: 358 },
+        'sled-push':         { elite: 167, avg: 222, beginner: 255 },
+        'sled-pull':         { elite: 251, avg: 334, beginner: 384 },
+        'burpee-broad-jump': { elite: 308, avg: 410, beginner: 472 },
+        'row':               { elite: 243, avg: 324, beginner: 373 },
+        'farmers-carry':     { elite: 109, avg: 145, beginner: 167 },
+        'lunges':            { elite: 226, avg: 301, beginner: 346 },
+        'wallballs':         { elite: 308, avg: 411, beginner: 473 },
         'run-1km':           { elite: 238, avg: 328, beginner: 422 },
       },
     };
 
-    // Multipliers applied to base times per age group (older = slower = higher factor)
+    // Age multipliers calibrated from actual race averages (hyroxdatalab.com, 2025 European events).
+    // Baseline = 30-34 (factor 1.00). Older groups are slower (higher factor).
     const AGE_FACTORS = {
-      '16-24': 0.97, '25-29': 0.98, '30-34': 1.00,
-      '35-39': 1.05, '40-44': 1.11, '45-49': 1.18,
-      '50-54': 1.26, '55-59': 1.34, '60+':   1.44,
+      '16-24': 0.98, '25-29': 0.98, '30-34': 1.00,
+      '35-39': 1.01, '40-44': 1.03, '45-49': 1.07,
+      '50-54': 1.09, '55-59': 1.15, '60+':   1.18,
     };
 
     // ─── Training tips ────────────────────────────────────────────────────────────
@@ -206,8 +209,10 @@
 
     function parseTime(input) {
       const s = String(input).trim();
-      if (s.includes(':')) {
-        const [m, sec] = s.split(':');
+      // Support both "6:59" and "6.59" as 6 min 59 sec
+      const sep = s.includes(':') ? ':' : s.includes('.') ? '.' : null;
+      if (sep) {
+        const [m, sec] = s.split(sep);
         const mins = parseInt(m, 10), secs = parseInt(sec, 10);
         if (!isNaN(mins) && !isNaN(secs) && secs < 60) return mins * 60 + secs;
         return NaN;
@@ -838,7 +843,7 @@
               </div>
               <div>
                 <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time</div>
-                <input type="text" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="mm:ss or secs" style={{ ...inputBase, width: 140, fontVariantNumeric: 'tabular-nums' }} onFocus={focus} onBlur={blur} />
+                <input type="text" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="6:59 or 6.59" style={{ ...inputBase, width: 140, fontVariantNumeric: 'tabular-nums' }} onFocus={focus} onBlur={blur} />
               </div>
               <button onClick={handleSubmit} style={{ background: success ? '#16a34a' : YELLOW, color: success ? '#fff' : '#000', border: 'none', padding: '0.75rem 1.25rem', borderRadius: 8, fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}>
                 {success ? '✓ Logged!' : '+ LOG SESSION'}
@@ -1229,7 +1234,7 @@
           </div>
 
           <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
-            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={setProfile} />}
+            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (p.name) setTab('dashboard'); }} />}
             {tab === 'log'       && <LogPage      sessions={sessions} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
           </main>
