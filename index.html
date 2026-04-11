@@ -5,16 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>isurvivehyrox — HYROX Training Tracker</title>
 
-  <!-- Favicon: vix logo on yellow -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 175.04 175.04'><rect width='175.04' height='175.04' fill='%23FFE600'/><g transform='translate(0,25.2)'><path d='M0,29.7h20.66l14.83,43.51h.4l14.64-43.51h20.2l-24.37,57.3h-21.79L0,29.7Z'/><path d='M77.22,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM77.88,29.27h19.34v55.84h-19.34V29.27Z'/><path d='M104.31,29.7h20.66l14.83,43.51h.4l14.64-43.51h20.2l-24.37,57.3h-21.79l-24.57-57.3Z'/><path d='M97.22,80.82s-1.66,11.12,16.01,11.56l-3.87,14.24s-31.47.99-31.47-23.38l19.34-2.43Z'/><path d='M112.65,113.36s-10.53,4.3-24.65-.26c-12.46-4.03-19.06-11.78-19.06-11.78,0,0-.34,16.02,14.09,21.35,20.59,7.62,29.63-9.31,29.63-9.31Z'/></g></svg>" />
+  <!-- Favicon: swoosh mark on yellow (tight crop around the two curved paths) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='60 72 62 62'><rect x='60' y='72' width='62' height='62' fill='%23FFE600'/><path d='M97.22,80.82s-1.66,11.12,16.01,11.56l-3.87,14.24s-31.47.99-31.47-23.38l19.34-2.43Z'/><path d='M112.65,113.36s-10.53,4.3-24.65-.26c-12.46-4.03-19.06-11.78-19.06-11.78,0,0-.34,16.02,14.09,21.35,20.59,7.62,29.63-9.31,29.63-9.31Z'/></svg>" />
 
-  <!-- iPhone home screen icon (vix logo on yellow, via canvas) -->
+  <!-- iPhone home screen icon (swoosh mark on yellow, via canvas) -->
   <script>
     (function() {
-      var svgData = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 175.04 124.64'>" +
-        "<path d='M0,29.7h20.66l14.83,43.51h.4l14.64-43.51h20.2l-24.37,57.3h-21.79L0,29.7Z'/>" +
-        "<path d='M77.22,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM77.88,29.27h19.34v55.84h-19.34V29.27Z'/>" +
-        "<path d='M104.31,29.7h20.66l14.83,43.51h.4l14.64-43.51h20.2l-24.37,57.3h-21.79l-24.57-57.3Z'/>" +
+      var svgData = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='60 72 62 62'>" +
         "<path d='M97.22,80.82s-1.66,11.12,16.01,11.56l-3.87,14.24s-31.47.99-31.47-23.38l19.34-2.43Z'/>" +
         "<path d='M112.65,113.36s-10.53,4.3-24.65-.26c-12.46-4.03-19.06-11.78-19.06-11.78,0,0-.34,16.02,14.09,21.35,20.59,7.62,29.63-9.31,29.63-9.31Z'/>" +
         "</svg>";
@@ -24,10 +21,8 @@
       ctx.fillRect(0, 0, 180, 180);
       var img = new Image();
       img.onload = function() {
-        var pad = 18;
-        var w = 180 - pad * 2;
-        var h = w * (124.64 / 175.04);
-        ctx.drawImage(img, pad, (180 - h) / 2, w, h);
+        var pad = 10;
+        ctx.drawImage(img, pad, pad, 180 - pad * 2, 180 - pad * 2);
         var link = document.createElement('link');
         link.rel = 'apple-touch-icon'; link.href = c.toDataURL('image/png');
         document.head.appendChild(link);
