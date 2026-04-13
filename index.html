@@ -520,6 +520,139 @@
       );
     }
 
+    // ─── Total Time Analysis ──────────────────────────────────────────────────────
+
+    function TotalTimeAnalysis({ sessions, profile }) {
+      const [expanded, setExpanded] = useState(false);
+      if (!profile.gender || !profile.age) return null;
+      const gender = profile.gender || 'male';
+      const ageGroup = getAgeGroup(profile.age);
+      const af = AGE_FACTORS[ageGroup] || 1.0;
+      const bms = BASE_BENCHMARKS[gender] || BASE_BENCHMARKS.male;
+
+      const totalBMs = {};
+      ['elite','advanced','intermediate','beginner'].forEach(tier => {
+        let total = 0;
+        Object.entries(bms).forEach(([sid, bm]) => {
+          const val = Math.round(bm[tier] * af);
+          total += sid === 'run-1km' ? val * 8 : val;
+        });
+        totalBMs[tier] = total;
+      });
+
+      const runTotalFn = (ss) => {
+        if (!ss.length) return 0;
+        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (sorted.length >= 8) return sorted.slice(-8).reduce((s, r) => s + r.timeInSeconds, 0);
+        const avg = sorted.reduce((s, r) => s + r.timeInSeconds, 0) / sorted.length;
+        return Math.round(avg * 8);
+      };
+
+      const stationsWithData = STATIONS.map(st => {
+        const ss = sessions.filter(s => s.stationId === st.id);
+        if (!ss.length) return null;
+        const pb = st.id === 'run-1km' ? runTotalFn(ss) : Math.min(...ss.map(s => s.timeInSeconds));
+        return { st, pb };
+      }).filter(Boolean);
+
+      if (!stationsWithData.length) return null;
+
+      const totalPB = stationsWithData.reduce((sum, d) => sum + d.pb, 0);
+      const stationCount = stationsWithData.length;
+      const complete = stationCount === STATIONS.length;
+      const tier = getTier(totalPB, totalBMs);
+      const tc = tier ? TIER_CONFIG[tier] : null;
+      const pct = Math.round(Math.abs(totalPB - totalBMs.intermediate) / totalBMs.intermediate * 100);
+      const faster = totalPB < totalBMs.intermediate;
+
+      // How far to next tier
+      const tierOrder = ['elite','advanced','intermediate','beginner'];
+      const tierIdx = tierOrder.indexOf(tier);
+      const nextTier = tierIdx > 0 ? tierOrder[tierIdx - 1] : null;
+      const toNext = nextTier ? totalPB - totalBMs[nextTier] : null;
+
+      return (
+        <div style={{ ...cardBase, padding: '1.25rem', cursor: 'pointer' }} onClick={() => setExpanded(e => !e)}>
+          {/* Header row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Total Time Analysis</div>
+              <div style={{ fontSize: '0.7rem', color: '#555', marginTop: '0.15rem' }}>
+                {ageGroup} · {gender === 'male' ? 'Male' : 'Female'}{!complete ? ` · ${stationCount}/${STATIONS.length} stations` : ''}
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {tc && (
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.2rem 0.6rem', borderRadius: 20, whiteSpace: 'nowrap' }}>
+                  {tc.icon} {tc.label}
+                </span>
+              )}
+              <span style={{ fontSize: '0.75rem', color: '#555' }}>{expanded ? '▲' : '▼'}</span>
+            </div>
+          </div>
+
+          {/* Summary row — always visible */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.75rem' }}>
+            <div style={{ fontWeight: 900, fontSize: '1.9rem', letterSpacing: '-0.02em', lineHeight: 1 }}>{formatDuration(totalPB)}</div>
+            <div style={{ fontSize: '0.72rem', color: faster ? '#4ade80' : '#f87171' }}>
+              {pct}% {faster ? 'faster' : 'slower'} than intermediate
+            </div>
+          </div>
+          {toNext && (
+            <div style={{ fontSize: '0.7rem', color: '#555', marginTop: '0.3rem' }}>
+              {formatTime(toNext)} to reach <span style={{ color: TIER_CONFIG[nextTier].color }}>{TIER_CONFIG[nextTier].label}</span>
+            </div>
+          )}
+
+          {/* Expandable detail */}
+          {expanded && (
+            <div style={{ marginTop: '1rem', borderTop: '1px solid #1a1a1a', paddingTop: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                {['elite','advanced','intermediate','beginner'].map(t => {
+                  const tc2 = TIER_CONFIG[t];
+                  const isUser = tier === t;
+                  return (
+                    <div key={t} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.65rem', borderRadius: 8, background: isUser ? tc2.bg : '#0d0d0d', border: `1px solid ${isUser ? tc2.border : '#1a1a1a'}` }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: isUser ? tc2.color : '#555' }}>{tc2.icon} {tc2.label}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {isUser && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc2.color, opacity: 0.8 }}>you</span>}
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: isUser ? tc2.color : '#444', fontVariantNumeric: 'tabular-nums' }}>
+                          {t === 'beginner' ? '> ' : '≤ '}{formatDuration(totalBMs[t])}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* Per-station breakdown */}
+              <div style={{ marginTop: '1rem' }}>
+                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>Station breakdown</div>
+                {stationsWithData.map(({ st, pb }) => {
+                  const bm = getBenchmark(st.id, gender, ageGroup);
+                  const t = getTier(pb, bm);
+                  const tc3 = t ? TIER_CONFIG[t] : null;
+                  return (
+                    <div key={st.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem 0', borderBottom: '1px solid #151515' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#666' }}>{st.name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {tc3 && <span style={{ fontSize: '0.62rem', fontWeight: 700, color: tc3.color }}>{tc3.icon}</span>}
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#aaa', fontVariantNumeric: 'tabular-nums' }}>{formatTime(pb)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {!complete && (
+                <div style={{ fontSize: '0.68rem', color: '#555', marginTop: '0.75rem', padding: '0.4rem 0.65rem', background: '#0d0d0d', borderRadius: 6, border: '1px solid #1a1a1a' }}>
+                  ⚠ Log all {STATIONS.length} stations for a full race time comparison
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // ─── Weakness Radar Chart (pure SVG) ─────────────────────────────────────────
 
     function WeaknessRadar({ sessions, profile }) {
@@ -1321,8 +1454,8 @@
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               {[
                 profile.gender === 'male'
-                  ? <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ fontSize: '0.85rem', lineHeight: 1 }}>♂</span>Male</span>
-                  : <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ fontSize: '0.85rem', lineHeight: 1 }}>♀</span>Female</span>,
+                  ? <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>Male</span>
+                  : <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>Female</span>,
                 `${getAgeGroup(profile.age)} age group`,
                 profile.division ? (profile.division === 'pro' ? '⭐ Pro' : 'Open') : 'Open',
                 profile.weight ? `${profile.weight} kg` : null,
@@ -1332,6 +1465,9 @@
               )}
             </div>
           )}
+
+          {/* Total Time Analysis */}
+          <TotalTimeAnalysis sessions={sessions} profile={profile} />
 
           {/* Station Analysis (enhanced PB table) */}
           <TrainingTips sessions={sessions} profile={profile} />
