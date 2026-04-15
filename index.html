@@ -1201,6 +1201,346 @@
       );
     }
 
+    // ─── History / Calendar Page ─────────────────────────────────────────────────
+
+    const LS_STRENGTH = 'hyrox_strength';
+
+    function CalendarPage({ sessions, profile, onDelete }) {
+      const today = new Date();
+      const [viewYear,  setViewYear]  = useState(today.getFullYear());
+      const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
+      const [selectedDate, setSelectedDate] = useState(null);
+
+      // Strength log
+      const LS_CARDIO = 'hyrox_cardio';
+
+      const [strengthLog, setStrengthLog] = React.useState(() => { try { return JSON.parse(localStorage.getItem(LS_STRENGTH) || '[]'); } catch(e) { return []; } });
+      const [showStrengthForm, setShowStrengthForm] = React.useState(false);
+      const [strDate, setStrDate] = React.useState(today.toISOString().slice(0,10));
+      const [strType, setStrType] = React.useState('');
+      const [strDuration, setStrDuration] = React.useState('');
+
+      const [cardioLog, setCardioLog] = React.useState(() => { try { return JSON.parse(localStorage.getItem(LS_CARDIO) || '[]'); } catch(e) { return []; } });
+      const [showCardioForm, setShowCardioForm] = React.useState(false);
+      const [cdDate, setCdDate] = React.useState(today.toISOString().slice(0,10));
+      const [cdType, setCdType] = React.useState('');
+      const [cdDuration, setCdDuration] = React.useState('');
+
+      React.useEffect(() => { localStorage.setItem(LS_STRENGTH, JSON.stringify(strengthLog)); }, [strengthLog]);
+      React.useEffect(() => { localStorage.setItem(LS_CARDIO,   JSON.stringify(cardioLog));   }, [cardioLog]);
+
+      const addStrength = () => {
+        if (!strType || !strDuration) return;
+        setStrengthLog(prev => [...prev, { id: Date.now(), date: strDate, type: strType, duration: strDuration }]);
+        setShowStrengthForm(false);
+        setStrType(''); setStrDuration('');
+      };
+      const deleteStrength = (id) => setStrengthLog(prev => prev.filter(s => s.id !== id));
+
+      const addCardio = () => {
+        if (!cdType || !cdDuration) return;
+        setCardioLog(prev => [...prev, { id: Date.now(), date: cdDate, type: cdType, duration: cdDuration }]);
+        setShowCardioForm(false);
+        setCdType(''); setCdDuration('');
+      };
+      const deleteCardio = (id) => setCardioLog(prev => prev.filter(s => s.id !== id));
+
+      const strengthMap = useMemo(() => {
+        const map = {};
+        strengthLog.forEach(s => { if (!map[s.date]) map[s.date] = []; map[s.date].push(s); });
+        return map;
+      }, [strengthLog]);
+
+      const cardioMap = useMemo(() => {
+        const map = {};
+        cardioLog.forEach(s => { if (!map[s.date]) map[s.date] = []; map[s.date].push(s); });
+        return map;
+      }, [cardioLog]);
+
+      const gender   = profile.gender || 'male';
+      const ageGroup = getAgeGroup(profile.age);
+
+      // Map of "YYYY-MM-DD" → sessions[]
+      const sessionMap = useMemo(() => {
+        const map = {};
+        sessions.forEach(s => {
+          if (!map[s.date]) map[s.date] = [];
+          map[s.date].push(s);
+        });
+        return map;
+      }, [sessions]);
+
+      // Build calendar grid for current month
+      const firstDay = new Date(viewYear, viewMonth, 1);
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+      // Start week on Monday (0=Mon…6=Sun)
+      const startDow = (firstDay.getDay() + 6) % 7;
+      const cells = [];
+      for (let i = 0; i < startDow; i++) cells.push(null);
+      for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+      const pad = n => String(n).padStart(2, '0');
+      const dateKey = (d) => `${viewYear}-${pad(viewMonth + 1)}-${pad(d)}`;
+      const todayKey = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+
+      const monthLabel = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      const daysTrainedThisMonth = Object.keys(sessionMap).filter(k => k.startsWith(`${viewYear}-${pad(viewMonth + 1)}`)).length;
+      const totalDaysTrained = Object.keys(sessionMap).length;
+      const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+      const prevMonth = () => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); } else setViewMonth(m => m-1); setSelectedDate(null); };
+      const nextMonth = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); } else setViewMonth(m => m+1); setSelectedDate(null); };
+
+      const selectedSessions = selectedDate ? (sessionMap[selectedDate] || []) : [];
+      const fmtDateLong = (key) => new Date(key + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Days trained text */}
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>
+            Day <span style={{ fontWeight: 900, fontSize: '1.1rem', color: '#FFE600', margin: '0 0.3rem' }}>{totalDaysTrained}</span> Road to Hyrox
+          </div>
+
+          {/* Today's log buttons */}
+          {(() => {
+            const todayStr = today.toISOString().slice(0,10);
+            const loggedWeights = (strengthMap[todayStr] || []).length > 0;
+            const loggedCardio  = (cardioMap[todayStr]   || []).length > 0;
+            const loggedHyrox   = (sessionMap[todayStr]  || []).length > 0;
+            const didAnything   = loggedWeights || loggedCardio || loggedHyrox;
+            const restQuotes = [
+              "Rest is where champions are built.",
+              "Your muscles grow when you rest, not when you train.",
+              "Recovery is part of the plan.",
+              "Even the best athletes take rest days.",
+              "Tomorrow's performance starts with today's recovery.",
+            ];
+            const activeQuotes = [
+              "That's what champions are made of.",
+              "One more day closer.",
+              "You showed up. That's everything.",
+              "The work is done. Be proud.",
+              "Consistency beats perfection every time.",
+            ];
+            const quotePool = didAnything ? activeQuotes : restQuotes;
+            const quoteIndex = Math.floor(new Date(todayStr).getDate() % quotePool.length);
+            const quote = quotePool[quoteIndex];
+            const todayLabel = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            return (
+              <div style={{ ...cardBase, padding: '1rem 1.25rem' }}>
+                <div style={{ fontSize: '0.72rem', color: '#555', marginBottom: '0.25rem', fontWeight: 600 }}>{todayLabel}</div>
+                <div style={{ fontSize: '0.72rem', color: didAnything ? '#4ade80' : '#444', marginBottom: '0.75rem', fontStyle: 'italic' }}>{quote}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+                  <button onClick={() => { setStrDate(todayStr); setStrType(''); setStrDuration(''); setShowStrengthForm(true); }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', padding: '0.7rem 0.5rem', background: '#1a1a1a', border: `1px solid ${loggedWeights ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Weight</span>
+                    {loggedWeights && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓ done</span>}
+                  </button>
+                  <button onClick={() => { setCdDate(todayStr); setCdType(''); setCdDuration(''); setShowCardioForm(true); }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', padding: '0.7rem 0.5rem', background: '#1a1a1a', border: `1px solid ${loggedCardio ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Cardio</span>
+                    {loggedCardio && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓ done</span>}
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Weight training modal */}
+          {showStrengthForm && (
+            <div onClick={() => setShowStrengthForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Weight Training</div>
+
+                {/* Date */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
+                  <input type="date" value={strDate} onChange={e => setStrDate(e.target.value)} style={{ ...inputBase, width: '100%' }} />
+                </div>
+
+                {/* Type */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {['Upper Body', 'Lower Body'].map(t => (
+                      <button key={t} onClick={() => setStrType(t)} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${strType === t ? YELLOW : '#333'}`, background: strType === t ? '#1a1400' : '#1a1a1a', color: strType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Duration */}
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
+                  <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
+                      <button key={d} onClick={() => setStrDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${strDuration === d ? YELLOW : '#333'}`, background: strDuration === d ? '#1a1400' : '#1a1a1a', color: strDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={() => setShowStrengthForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>
+                    Cancel
+                  </button>
+                  <button onClick={addStrength} disabled={!strType || !strDuration}
+                    style={{ flex: 1, background: strType && strDuration ? YELLOW : '#222', color: strType && strDuration ? '#000' : '#555', border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: strType && strDuration ? 'pointer' : 'not-allowed' }}>
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* Cardio modal */}
+          {showCardioForm && (
+            <div onClick={() => setShowCardioForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Cardio</div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
+                  <input type="date" value={cdDate} onChange={e => setCdDate(e.target.value)} style={{ ...inputBase, width: '100%' }} />
+                </div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {['Run', 'Walk', 'Cycling', 'Other'].map(t => (
+                      <button key={t} onClick={() => setCdType(t)} style={{ flex: 1, padding: '0.5rem 0.25rem', borderRadius: 8, border: `1px solid ${cdType === t ? YELLOW : '#333'}`, background: cdType === t ? '#1a1400' : '#1a1a1a', color: cdType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
+                  <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
+                      <button key={d} onClick={() => setCdDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${cdDuration === d ? YELLOW : '#333'}`, background: cdDuration === d ? '#1a1400' : '#1a1a1a', color: cdDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={() => setShowCardioForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>Cancel</button>
+                  <button onClick={addCardio} disabled={!cdType || !cdDuration}
+                    style={{ flex: 1, background: cdType && cdDuration ? YELLOW : '#222', color: cdType && cdDuration ? '#000' : '#555', border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: cdType && cdDuration ? 'pointer' : 'not-allowed' }}>
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Month nav */}
+          <div style={{ ...cardBase, padding: '1.1rem 1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <button onClick={prevMonth} style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.1rem', cursor: 'pointer', padding: '0.2rem 0.5rem' }}>‹</button>
+              <span style={{ fontWeight: 800, fontSize: '0.95rem' }}>{monthLabel}</span>
+              <button onClick={nextMonth} style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.1rem', cursor: 'pointer', padding: '0.2rem 0.5rem' }}>›</button>
+            </div>
+
+            {/* Day-of-week headers */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', marginBottom: '4px' }}>
+              {DOW.map(d => (
+                <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', fontWeight: 700, color: '#444', padding: '0.2rem 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d}</div>
+              ))}
+            </div>
+
+            {/* Day cells */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px' }}>
+              {cells.map((day, i) => {
+                if (!day) return <div key={`e${i}`} />;
+                const key = dateKey(day);
+                const hasSessions = !!sessionMap[key];
+                const isToday = key === todayKey;
+                const isSelected = key === selectedDate;
+                return (
+                  <div key={key} onClick={() => setSelectedDate(isSelected ? null : key)}
+                    style={{
+                      textAlign: 'center', padding: '0.4rem 0.2rem', borderRadius: 8, cursor: hasSessions ? 'pointer' : 'default',
+                      background: isSelected ? YELLOW : hasSessions ? '#1a1400' : 'transparent',
+                      border: `1px solid ${isSelected ? YELLOW : isToday ? '#555' : hasSessions ? '#3a2e00' : 'transparent'}`,
+                      position: 'relative', transition: 'all 0.15s',
+                    }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: isToday || hasSessions ? 700 : 400, color: isSelected ? '#000' : hasSessions ? YELLOW : isToday ? '#fff' : '#444' }}>
+                      {day}
+                    </div>
+                    {hasSessions && !isSelected && (
+                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: YELLOW, margin: '2px auto 0' }} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Selected day detail */}
+          {selectedDate && (() => {
+            const strEntries = strengthMap[selectedDate] || [];
+            const hasAnything = selectedSessions.length > 0 || strEntries.length > 0;
+            return (
+            <div style={{ ...cardBase, overflow: 'hidden' }} className="fade-in">
+              <div style={{ padding: '0.9rem 1.1rem', borderBottom: '1px solid #1a1a1a' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{fmtDateLong(selectedDate)}</div>
+                {!hasAnything && <div style={{ fontSize: '0.75rem', color: '#444', marginTop: '0.3rem' }}>No sessions logged this day.</div>}
+              </div>
+              {selectedSessions.map((s, i) => {
+                const st = STATIONS.find(x => x.id === s.stationId);
+                const bm = getBenchmark(s.stationId, gender, ageGroup);
+                const tier = getTier(s.timeInSeconds, bm);
+                const tc = tier ? TIER_CONFIG[tier] : null;
+                return (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <span style={{ fontSize: '1rem' }}>{st?.icon || '🏋️'}</span>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{st?.name || s.stationId}</div>
+                        {st?.detail && <div style={{ fontSize: '0.65rem', color: '#555' }}>{st.detail}</div>}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      {tc && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.15rem 0.45rem', borderRadius: 12 }}>{tc.icon} {tc.label}</span>}
+                      <span style={{ fontWeight: 800, fontSize: '1rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(s.timeInSeconds)}</span>
+                      <button onClick={() => onDelete(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
+                    </div>
+                  </div>
+                );
+              })}
+              {strEntries.map((s) => (
+                <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <span style={{ fontSize: '1rem' }}>🏋️</span>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
+                      <div style={{ fontSize: '0.65rem', color: '#555' }}>Weight Training{s.duration ? ` · ${s.duration}` : ''}</div>
+                    </div>
+                  </div>
+                  <button onClick={() => deleteStrength(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
+                </div>
+              ))}
+              {(cardioMap[selectedDate] || []).map((s) => (
+                <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <span style={{ fontSize: '1rem' }}>🏃</span>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
+                      <div style={{ fontSize: '0.65rem', color: '#555' }}>Cardio{s.duration ? ` · ${s.duration}` : ''}</div>
+                    </div>
+                  </div>
+                  <button onClick={() => deleteCardio(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
+                </div>
+              ))}
+            </div>
+            );
+          })()}
+        </div>
+      );
+    }
+
     // ─── Log Page ─────────────────────────────────────────────────────────────────
 
     function LogPage({ sessions, onAdd, onDelete }) {
@@ -1369,6 +1709,19 @@
       const stationsWithData = stationData.filter(d => d.pb !== null);
       const stationsComplete = stationsWithData.length;
 
+      // Weekly stations: unique stations logged Mon–Sun of current week
+      const weeklyStations = useMemo(() => {
+        const now = new Date();
+        const dow = (now.getDay() + 6) % 7; // 0=Mon
+        const weekStart = new Date(now); weekStart.setDate(now.getDate() - dow); weekStart.setHours(0,0,0,0);
+        const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
+        const ids = new Set(sessions.filter(s => {
+          const d = new Date(s.date + 'T00:00:00');
+          return d >= weekStart && d < weekEnd;
+        }).map(s => s.stationId));
+        return ids.size;
+      }, [sessions]);
+
       if (totalSessions === 0) {
         return (
           <div className="fade-in" style={{ textAlign: 'center', padding: '5rem 1rem' }}>
@@ -1385,7 +1738,7 @@
         "You're not just training your body — you're training your mind to never quit.",
         "The sled doesn't care how tired you are. Neither should you.",
         "Progress is made in the sessions nobody sees.",
-        "Race day is just another training day — you've already done the hard part.",
+        "Race day is just another training day — you've already ✓ done the hard part.",
         "Fatigue is temporary. A finish line crossed is forever.",
         "You showed up. That's already more than most.",
         "Train hard enough that race day feels like a relief.",
@@ -1438,7 +1791,7 @@
             return (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.7rem' }}>
                 <StatCard label="Total Sessions" value={totalSessions} />
-                <StatCard label="Stations Tracked" value={stationsComplete} suffix={`/ ${STATIONS.length}`} />
+                <StatCard label="This Week" value={weeklyStations} suffix={`/ ${STATIONS.length}`} sub="stations" />
                 {stationsWithData.length > 0 && delta !== 0 && (
                   <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: '1.25rem' }}>
                     <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Prev Total</div>
@@ -1561,7 +1914,7 @@
             <TopBar profile={profile} onEdit={() => setTab('setup')} />
             <nav style={{ background: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '0 1rem' }}>
               <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex' }}>
-                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }].map(t => (
+                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }, { id: 'calendar', label: 'Journal' }].map(t => (
                   <button key={t.id} onClick={() => setTab(t.id)}
                     style={{ padding: '0.72rem 1.1rem', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? YELLOW : 'transparent'}`, color: tab === t.id ? YELLOW : '#555', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', fontSize: '0.86rem', transition: 'all 0.15s', outline: 'none', letterSpacing: '0.02em' }}>
                     {t.label}
@@ -1575,6 +1928,7 @@
             {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (p.name) setTab('dashboard'); }} />}
             {tab === 'log'       && <LogPage      sessions={sessions} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
+            {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
           </main>
 
           <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
