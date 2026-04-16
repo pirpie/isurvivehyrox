@@ -2114,7 +2114,7 @@
       const deleteSession = useCallback((id) => setSessions(prev => prev.filter(s => s.id !== id)), []);
 
       return (
-        <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff' }}>
+        <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', display: 'flex', flexDirection: 'column' }}>
           {/* Sticky top bar + nav */}
           <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
             <TopBar profile={profile} onEdit={() => setTab('setup')} />
@@ -2130,7 +2130,7 @@
             </nav>
           </div>
 
-          <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
+          <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem', flex: 1, width: '100%' }}>
             {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (typeof gtag !== 'undefined') gtag('event', 'profile_save', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null }); if (p.name) setTab('dashboard'); }} />}
             {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
@@ -2152,7 +2152,7 @@
                 </svg>
               </a>
             </div>
-            <p style={{ fontSize: '0.75rem', color: '#555' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://venmo.com/u/pirpie" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>venmo.com/u/pirpie</a></p>
+            <p style={{ fontSize: '0.75rem', color: '#555' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Support us</a> or <a href="https://venmo.com/u/pirpie" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Venmo</a> :)</p>
           </div>
         </div>
       );
