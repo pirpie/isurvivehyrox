@@ -176,6 +176,17 @@
       '50-54': 1.05, '55-59': 1.10, '60+':   1.11,
     };
 
+    // ─── Equipment weights per division / gender ─────────────────────────────────
+
+    const EQUIPMENT_WEIGHTS = {
+      'sled-push':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
+      'sled-pull':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
+      'farmers-carry':  { open: { male: '2×24kg', female: '2×16kg' }, pro: { male: '2×24kg', female: '2×16kg' }, '60+': { male: '2×16kg', female: '2×12kg' } },
+      'wallballs':      { open: { male: '9kg', female: '6kg' }, pro: { male: '9kg', female: '6kg' }, '60+': { male: '6kg', female: '4kg' } },
+      'lunges':         { open: { male: '20kg', female: '10kg' }, pro: { male: '20kg', female: '10kg' }, '60+': { male: '10kg', female: '5kg' } },
+    };
+
+
     // ─── Training tips ────────────────────────────────────────────────────────────
 
     const TRAINING_TIPS = {
@@ -951,6 +962,7 @@
                 <select value={division} onChange={e => setDivision(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
                   <option value="open">Open</option>
                   <option value="pro">Pro</option>
+                  <option value="60+">60+</option>
                 </select>
               </div>
             </div>
@@ -993,7 +1005,7 @@
 
     // ─── Station Detail Page ──────────────────────────────────────────────────────
 
-    function StationDetailPage({ station, sessions, onAdd, onDelete, onBack }) {
+    function StationDetailPage({ station, sessions, profile, onAdd, onDelete, onBack }) {
       const [date,      setDate]      = useState(today());
       const [timeInput, setTimeInput] = useState('');
       const [error,     setError]     = useState('');
@@ -1071,13 +1083,30 @@
             ← Back to Stations
           </button>
           {/* Station header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
             <span style={{ fontSize: '2rem' }}>{station.icon}</span>
             <div>
               <h2 style={{ fontWeight: 900, fontSize: '1.6rem', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{station.name}</h2>
               <div style={{ fontSize: '0.78rem', color: '#777', marginTop: '0.2rem' }}>{station.detail} · {station.num === '↺' ? 'Run between stations' : `Station ${station.num}`}</div>
             </div>
           </div>
+
+          {/* Equipment weight */}
+          {(() => {
+            const division = (profile && profile.division) || 'open';
+            const gender   = (profile && profile.gender)   || 'male';
+            const weight   = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
+            if (!weight) return null;
+            return (
+              <div style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.68rem', color: '#777', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Equipment</span>
+                  <span style={{ fontSize: '0.72rem', color: '#aaa', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.15rem 0.55rem', fontWeight: 600 }}>{weight}</span>
+                  <span style={{ fontSize: '0.65rem', color: '#444' }}>{division === '60+' ? '60+ div' : division === 'pro' ? 'Pro div' : 'Open div'} · {gender === 'male' ? 'Male' : 'Female'}</span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* 1km run note */}
           {station.id === 'run-1km' && (() => {
@@ -1226,6 +1255,10 @@
       const [cdType, setCdType] = React.useState('');
       const [cdDuration, setCdDuration] = React.useState('');
 
+      // Unified workout modal
+      const [showWorkoutForm, setShowWorkoutForm] = React.useState(false);
+      const [workoutCategory, setWorkoutCategory] = React.useState(''); // 'weight' | 'cardio'
+
       React.useEffect(() => { localStorage.setItem(LS_STRENGTH, JSON.stringify(strengthLog)); }, [strengthLog]);
       React.useEffect(() => { localStorage.setItem(LS_CARDIO,   JSON.stringify(cardioLog));   }, [cardioLog]);
 
@@ -1294,146 +1327,143 @@
       const selectedSessions = selectedDate ? (sessionMap[selectedDate] || []) : [];
       const fmtDateLong = (key) => new Date(key + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
+      // Daily view state
+      const [viewMode, setViewMode] = React.useState('day'); // 'day' | 'calendar'
+      const [dayDateStr, setDayDateStr] = React.useState(todayKey);
+
+      const prevDay = () => {
+        const d = new Date(dayDateStr + 'T00:00:00');
+        d.setDate(d.getDate() - 1);
+        setDayDateStr(d.toISOString().slice(0, 10));
+      };
+      const nextDay = () => {
+        const d = new Date(dayDateStr + 'T00:00:00');
+        d.setDate(d.getDate() + 1);
+        const next = d.toISOString().slice(0, 10);
+        if (next <= todayKey) setDayDateStr(next);
+      };
+
+      const restQuotes = [
+        "Rest is where champions are built.",
+        "Your muscles grow when you rest, not when you train.",
+        "Recovery is part of the plan.",
+        "Even the best athletes take rest days.",
+        "Tomorrow's performance starts with today's recovery.",
+      ];
+      const activeQuotes = [
+        "That's what champions are made of.",
+        "One more day closer.",
+        "You showed up. That's everything.",
+        "The work is done. Be proud.",
+        "Consistency beats perfection every time.",
+      ];
+
+      const dayLoggedWeights = (strengthMap[dayDateStr] || []).length > 0;
+      const dayLoggedCardio  = (cardioMap[dayDateStr]   || []).length > 0;
+      const dayLoggedHyrox   = (sessionMap[dayDateStr]  || []).length > 0;
+      const dayDidAnything   = dayLoggedWeights || dayLoggedCardio || dayLoggedHyrox;
+      const dayQuotePool = dayDidAnything ? activeQuotes : restQuotes;
+      const dayQuote = dayQuotePool[new Date(dayDateStr + 'T00:00:00').getDate() % dayQuotePool.length];
+      const dayLabel = new Date(dayDateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const isToday = dayDateStr === todayKey;
+
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* Days trained text */}
+          {/* Heading */}
           <div style={{ fontWeight: 900, fontSize: '1.55rem', letterSpacing: '-0.03em', color: '#fff' }}>
             Day <span style={{ color: '#FFE600', margin: '0 0.3rem' }}>{totalDaysTrained}</span> Road to Hyrox
           </div>
 
-          {/* Today's log buttons */}
-          {(() => {
-            const todayStr = today.toISOString().slice(0,10);
-            const loggedWeights = (strengthMap[todayStr] || []).length > 0;
-            const loggedCardio  = (cardioMap[todayStr]   || []).length > 0;
-            const loggedHyrox   = (sessionMap[todayStr]  || []).length > 0;
-            const didAnything   = loggedWeights || loggedCardio || loggedHyrox;
-            const restQuotes = [
-              "Rest is where champions are built.",
-              "Your muscles grow when you rest, not when you train.",
-              "Recovery is part of the plan.",
-              "Even the best athletes take rest days.",
-              "Tomorrow's performance starts with today's recovery.",
-            ];
-            const activeQuotes = [
-              "That's what champions are made of.",
-              "One more day closer.",
-              "You showed up. That's everything.",
-              "The work is done. Be proud.",
-              "Consistency beats perfection every time.",
-            ];
-            const quotePool = didAnything ? activeQuotes : restQuotes;
-            const quoteIndex = Math.floor(new Date(todayStr).getDate() % quotePool.length);
-            const quote = quotePool[quoteIndex];
-            const todayLabel = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            return (
-              <div style={{ ...cardBase, padding: '1rem 1.25rem' }}>
-                <div style={{ fontSize: '1rem', color: '#fff', marginBottom: '0.25rem', fontWeight: 700 }}>{todayLabel}</div>
-                <div style={{ fontSize: '0.72rem', color: didAnything ? '#4ade80' : '#444', marginBottom: '0.75rem', fontStyle: 'italic' }}>{quote}</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
-                  <button onClick={() => { setStrDate(todayStr); setStrType(''); setStrDuration(''); setShowStrengthForm(true); }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', padding: '0.7rem 0.5rem', background: '#1a1a1a', border: `1px solid ${loggedWeights ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer' }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Weight</span>
-                    {loggedWeights && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓ done</span>}
-                  </button>
-                  <button onClick={() => { setCdDate(todayStr); setCdType(''); setCdDuration(''); setShowCardioForm(true); }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', padding: '0.7rem 0.5rem', background: '#1a1a1a', border: `1px solid ${loggedCardio ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer' }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Cardio</span>
-                    {loggedCardio && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓ done</span>}
-                  </button>
-                </div>
+          {viewMode === 'day' ? (<>
+            {/* Day navigator card */}
+            <div style={{ ...cardBase, padding: '1rem 1.25rem' }}>
+              {/* Nav row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                <button onClick={prevDay} style={{ background: 'none', border: 'none', color: '#666', fontSize: '1.3rem', cursor: 'pointer', padding: '0 0.3rem', lineHeight: 1 }}>‹</button>
+                <div style={{ fontSize: '1rem', color: '#fff', fontWeight: 700 }}>{isToday ? `Today · ${dayLabel}` : dayLabel}</div>
+                <button onClick={nextDay} disabled={isToday} style={{ background: 'none', border: 'none', color: isToday ? '#333' : '#666', fontSize: '1.3rem', cursor: isToday ? 'default' : 'pointer', padding: '0 0.3rem', lineHeight: 1 }}>›</button>
               </div>
-            );
-          })()}
-
-          {/* Weight training modal */}
-          {showStrengthForm && (
-            <div onClick={() => setShowStrengthForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Weight Training</div>
-
-                {/* Date */}
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
-                  <input type="date" value={strDate} onChange={e => setStrDate(e.target.value)} style={{ ...inputBase, width: '100%' }} />
-                </div>
-
-                {/* Type */}
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {['Upper Body', 'Lower Body'].map(t => (
-                      <button key={t} onClick={() => setStrType(t)} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${strType === t ? YELLOW : '#333'}`, background: strType === t ? '#1a1400' : '#1a1a1a', color: strType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Duration */}
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
-                  <div style={{ display: 'flex', gap: '0.4rem' }}>
-                    {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
-                      <button key={d} onClick={() => setStrDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${strDuration === d ? YELLOW : '#333'}`, background: strDuration === d ? '#1a1400' : '#1a1a1a', color: strDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => setShowStrengthForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>
-                    Cancel
-                  </button>
-                  <button onClick={addStrength} disabled={!strType || !strDuration}
-                    style={{ flex: 1, background: strType && strDuration ? YELLOW : '#222', color: strType && strDuration ? '#000' : '#555', border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: strType && strDuration ? 'pointer' : 'not-allowed' }}>
-                    Save
-                  </button>
-                </div>
-              </div>
+              {/* Quote */}
+              <div style={{ fontSize: '0.72rem', color: dayDidAnything ? '#4ade80' : '#444', marginBottom: '0.75rem', fontStyle: 'italic', textAlign: 'center' }}>{dayQuote}</div>
+              {/* Log button */}
+              <button onClick={() => { setStrDate(dayDateStr); setStrType(''); setStrDuration(''); setCdType(''); setCdDuration(''); setWorkoutCategory(''); setShowWorkoutForm(true); }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', padding: '0.7rem', background: '#1a1a1a', border: `1px solid ${(dayLoggedWeights || dayLoggedCardio) ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer', width: '100%' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Workout</span>
+                {(dayLoggedWeights || dayLoggedCardio) && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓</span>}
+              </button>
             </div>
-          )}
-          {/* Cardio modal */}
-          {showCardioForm && (
-            <div onClick={() => setShowCardioForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Cardio</div>
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
-                  <input type="date" value={cdDate} onChange={e => setCdDate(e.target.value)} style={{ ...inputBase, width: '100%' }} />
+
+            {/* Sessions for this day */}
+            {(() => {
+              const daySessions = sessionMap[dayDateStr] || [];
+              const dayStrength = strengthMap[dayDateStr] || [];
+              const dayCardio   = cardioMap[dayDateStr]   || [];
+              const hasAnything = daySessions.length > 0 || dayStrength.length > 0 || dayCardio.length > 0;
+              if (!hasAnything) return (
+                <div style={{ fontSize: '0.75rem', color: '#333', textAlign: 'center', padding: '0.5rem 0' }}>No activity logged this day.</div>
+              );
+              return (
+                <div style={{ ...cardBase, overflow: 'hidden' }} className="fade-in">
+                  {daySessions.map((s) => {
+                    const st = STATIONS.find(x => x.id === s.stationId);
+                    const bm = getBenchmark(s.stationId, gender, ageGroup);
+                    const tier = getTier(s.timeInSeconds, bm);
+                    const tc = tier ? TIER_CONFIG[tier] : null;
+                    return (
+                      <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <span style={{ fontSize: '1rem' }}>{st?.icon || '🏋️'}</span>
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{st?.name || s.stationId}</div>
+                            {st?.detail && <div style={{ fontSize: '0.65rem', color: '#555' }}>{st.detail}</div>}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          {tc && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.15rem 0.45rem', borderRadius: 12 }}>{tc.icon} {tc.label}</span>}
+                          <span style={{ fontWeight: 800, fontSize: '1rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(s.timeInSeconds)}</span>
+                          <button onClick={() => onDelete(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {dayStrength.map((s) => (
+                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <span style={{ fontSize: '1rem' }}>🏋️</span>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
+                          <div style={{ fontSize: '0.65rem', color: '#555' }}>Weight Training{s.duration ? ` · ${s.duration}` : ''}</div>
+                        </div>
+                      </div>
+                      <button onClick={() => deleteStrength(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
+                    </div>
+                  ))}
+                  {dayCardio.map((s) => (
+                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <span style={{ fontSize: '1rem' }}>🏃</span>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
+                          <div style={{ fontSize: '0.65rem', color: '#555' }}>Cardio{s.duration ? ` · ${s.duration}` : ''}</div>
+                        </div>
+                      </div>
+                      <button onClick={() => deleteCardio(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {['Run', 'Walk', 'Cycling', 'Other'].map(t => (
-                      <button key={t} onClick={() => setCdType(t)} style={{ flex: 1, padding: '0.5rem 0.25rem', borderRadius: 8, border: `1px solid ${cdType === t ? YELLOW : '#333'}`, background: cdType === t ? '#1a1400' : '#1a1a1a', color: cdType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
-                  <div style={{ display: 'flex', gap: '0.4rem' }}>
-                    {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
-                      <button key={d} onClick={() => setCdDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${cdDuration === d ? YELLOW : '#333'}`, background: cdDuration === d ? '#1a1400' : '#1a1a1a', color: cdDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => setShowCardioForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>Cancel</button>
-                  <button onClick={addCardio} disabled={!cdType || !cdDuration}
-                    style={{ flex: 1, background: cdType && cdDuration ? YELLOW : '#222', color: cdType && cdDuration ? '#000' : '#555', border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: cdType && cdDuration ? 'pointer' : 'not-allowed' }}>
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+              );
+            })()}
+
+            {/* Calendar toggle */}
+            <button onClick={() => setViewMode('calendar')} style={{ background: 'none', border: '1px solid #2a2a2a', borderRadius: 8, color: '#555', fontSize: '0.78rem', fontWeight: 700, padding: '0.55rem', cursor: 'pointer', letterSpacing: '0.03em' }}>
+              📅 View Calendar
+            </button>
+
+          </>) : (<>
+            {/* Back to day view */}
+            <button onClick={() => { setViewMode('day'); setDayDateStr(todayKey); }} style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', padding: '0', textAlign: 'left', letterSpacing: '0.03em' }}>
+              ← Back to Today
+            </button>
 
           {/* Month nav */}
           <div style={{ ...cardBase, padding: '1.1rem 1.25rem' }}>
@@ -1537,19 +1567,118 @@
             </div>
             );
           })()}
+          </>)}
+
+          {/* Unified workout modal */}
+          {showWorkoutForm && (
+            <div onClick={() => setShowWorkoutForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Workout</div>
+
+                {/* Date */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
+                  <input type="date" value={strDate} onChange={e => { setStrDate(e.target.value); setCdDate(e.target.value); }} style={{ ...inputBase, width: '100%' }} />
+                </div>
+
+                {/* Category */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Category</div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {[{ val: 'weight', label: 'Weight' }, { val: 'cardio', label: 'Cardio' }].map(c => (
+                      <button key={c.val} onClick={() => { setWorkoutCategory(c.val); setStrType(''); setCdType(''); }} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${workoutCategory === c.val ? YELLOW : '#333'}`, background: workoutCategory === c.val ? '#1a1400' : '#1a1a1a', color: workoutCategory === c.val ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weight fields */}
+                {workoutCategory === 'weight' && (<>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      {['Upper Body', 'Lower Body'].map(t => (
+                        <button key={t} onClick={() => setStrType(t)} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${strType === t ? YELLOW : '#333'}`, background: strType === t ? '#1a1400' : '#1a1a1a', color: strType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
+                        <button key={d} onClick={() => setStrDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${strDuration === d ? YELLOW : '#333'}`, background: strDuration === d ? '#1a1400' : '#1a1a1a', color: strDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>)}
+
+                {/* Cardio fields */}
+                {workoutCategory === 'cardio' && (<>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      {['Run', 'Walk', 'Cycling', 'Other'].map(t => (
+                        <button key={t} onClick={() => setCdType(t)} style={{ flex: 1, padding: '0.5rem 0.25rem', borderRadius: 8, border: `1px solid ${cdType === t ? YELLOW : '#333'}`, background: cdType === t ? '#1a1400' : '#1a1a1a', color: cdType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
+                        <button key={d} onClick={() => setCdDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${cdDuration === d ? YELLOW : '#333'}`, background: cdDuration === d ? '#1a1400' : '#1a1a1a', color: cdDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>)}
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={() => setShowWorkoutForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>Cancel</button>
+                  <button
+                    onClick={() => {
+                      if (workoutCategory === 'weight') { addStrength(); setShowWorkoutForm(false); }
+                      else if (workoutCategory === 'cardio') { addCardio(); setShowWorkoutForm(false); }
+                    }}
+                    disabled={!(workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false)}
+                    style={{
+                      flex: 1,
+                      background: (workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false) ? YELLOW : '#222',
+                      color: (workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false) ? '#000' : '#555',
+                      border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer'
+                    }}>
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       );
     }
 
     // ─── Log Page ─────────────────────────────────────────────────────────────────
 
-    function LogPage({ sessions, onAdd, onDelete }) {
+    function LogPage({ sessions, profile, onAdd, onDelete }) {
       const [selected, setSelected] = useState(null);
 
       if (selected) {
         const station = STATIONS.find(s => s.id === selected);
-        return <StationDetailPage station={station} sessions={sessions} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
+        return <StationDetailPage station={station} sessions={sessions} profile={profile} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
       }
+
+      const division = (profile && profile.division) || 'open';
+      const gender   = (profile && profile.gender)   || 'male';
 
       return (
         <div className="fade-in">
@@ -1561,13 +1690,14 @@
               const pb     = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
               const latest = ss.length > 0 ? ss[ss.length - 1].timeInSeconds : null;
               const trend  = ss.length >= 2 ? ss[ss.length - 1].timeInSeconds - ss[ss.length - 2].timeInSeconds : null;
+              const weight = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
               return (
                 <button key={station.id} onClick={() => setSelected(station.id)}
                   style={{ ...cardBase, padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', border: '1px solid #222', transition: 'border-color 0.15s', background: '#111' }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = YELLOW}
                   onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ fontSize: '1.3rem' }}>{station.icon}</span>
                       <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{station.name}</span>
@@ -1576,7 +1706,12 @@
                       <span style={{ fontSize: '0.9rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
                     )}
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.75rem' }}>{station.detail}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.72rem', color: '#777' }}>{station.detail}</span>
+                    {weight && (
+                      <span style={{ fontSize: '0.65rem', color: '#888', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.1rem 0.45rem' }}>{weight}</span>
+                    )}
+                  </div>
                   {pb !== null ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                       <div>
@@ -1926,15 +2061,27 @@
 
           <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
             {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (p.name) setTab('dashboard'); }} />}
-            {tab === 'log'       && <LogPage      sessions={sessions} onAdd={addSession} onDelete={deleteSession} />}
+            {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
             {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
           </main>
 
           <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
             <p style={{ fontSize: '0.7rem', color: '#444', marginBottom: '0.5rem' }}>isurvivehyrox · data stored locally in your browser</p>
-            <p style={{ fontSize: '0.82rem', color: '#666', marginBottom: '0.3rem' }}>Made with 💛 by Pie Prapawuttikul</p>
-            <p style={{ fontSize: '0.78rem', color: '#555' }}>If this saved your race · ☕ <a href="https://venmo.com/u/pirpie" target="_blank" style={{ color: YELLOW, textDecoration: 'none' }}>venmo.com/u/pirpie</a></p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.82rem', color: '#666' }}>Made with 💛 by Pie Prapawuttikul</span>
+              <a href="https://linkedin.com/in/pirpie/" target="_blank" rel="noopener noreferrer" title="LinkedIn" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452H17.21v-5.569c0-1.328-.024-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.99V9h3.114v1.561h.046c.434-.822 1.492-1.689 3.07-1.689 3.284 0 3.89 2.163 3.89 4.976v6.604zM5.337 7.433a1.808 1.808 0 1 1 0-3.616 1.808 1.808 0 0 1 0 3.616zm1.558 13.019H3.78V9h3.115v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+              <a href="https://www.pirpie.com" target="_blank" rel="noopener noreferrer" title="Portfolio" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </a>
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#555' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://venmo.com/u/pirpie" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>venmo.com/u/pirpie</a></p>
           </div>
         </div>
       );
