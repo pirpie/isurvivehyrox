@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>isurvivehyrox — HYROX Training Tracker</title>
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D0BJRSWTY7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D0BJRSWTY7');
+  </script>
+
   <!-- Favicon: swoosh mark on yellow (tight crop around the two curved paths) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65.67 65.67'><rect width='65.67' height='65.67' fill='%23FFE600'/><g transform='translate(0,21.19)'><path d='M32.89,23.29c-13.33,0-23.88-3.3-32.89-11.1V0c6.52,5.57,20.18,9.89,32.82,9.89S59.04,5.57,65.67,0v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/></g></svg>" />
 
@@ -1749,7 +1758,7 @@
               const trend  = ss.length >= 2 ? ss[ss.length - 1].timeInSeconds - ss[ss.length - 2].timeInSeconds : null;
               const weight = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
               return (
-                <button key={station.id} onClick={() => setSelected(station.id)}
+                <button key={station.id} onClick={() => { setSelected(station.id); if (typeof gtag !== 'undefined') gtag('event', 'view_benchmark', { station_id: station.id }); }}
                   style={{ ...cardBase, padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', border: '1px solid #222', transition: 'border-color 0.15s', background: '#111' }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = YELLOW}
                   onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}
@@ -2098,7 +2107,10 @@
       useEffect(() => { localStorage.setItem(LS_PROFILE,  JSON.stringify(profile));  }, [profile]);
       useEffect(() => { localStorage.setItem(LS_SESSIONS, JSON.stringify(sessions)); }, [sessions]);
 
-      const addSession    = useCallback((s) => setSessions(prev => [...prev, { ...s, id: Date.now() + Math.random() }]), []);
+      const addSession    = useCallback((s) => {
+        setSessions(prev => [...prev, { ...s, id: Date.now() + Math.random() }]);
+        if (typeof gtag !== 'undefined') gtag('event', 'log_session', { station_id: s.stationId, time_seconds: s.timeInSeconds });
+      }, []);
       const deleteSession = useCallback((id) => setSessions(prev => prev.filter(s => s.id !== id)), []);
 
       return (
@@ -2119,7 +2131,7 @@
           </div>
 
           <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem' }}>
-            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (p.name) setTab('dashboard'); }} />}
+            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (typeof gtag !== 'undefined') gtag('event', 'profile_save', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null }); if (p.name) setTab('dashboard'); }} />}
             {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
             {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
