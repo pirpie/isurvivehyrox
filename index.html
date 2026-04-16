@@ -902,6 +902,30 @@
 
     // ─── Setup Page ───────────────────────────────────────────────────────────────
 
+    const COUNTRIES = [
+      { code: 'AU', name: 'Australia', flag: '🇦🇺' }, { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+      { code: 'BE', name: 'Belgium', flag: '🇧🇪' }, { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
+      { code: 'CA', name: 'Canada', flag: '🇨🇦' }, { code: 'CN', name: 'China', flag: '🇨🇳' },
+      { code: 'HR', name: 'Croatia', flag: '🇭🇷' }, { code: 'CZ', name: 'Czech Republic', flag: '🇨🇿' },
+      { code: 'DK', name: 'Denmark', flag: '🇩🇰' }, { code: 'FI', name: 'Finland', flag: '🇫🇮' },
+      { code: 'FR', name: 'France', flag: '🇫🇷' }, { code: 'DE', name: 'Germany', flag: '🇩🇪' },
+      { code: 'GR', name: 'Greece', flag: '🇬🇷' }, { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
+      { code: 'HU', name: 'Hungary', flag: '🇭🇺' }, { code: 'IN', name: 'India', flag: '🇮🇳' },
+      { code: 'ID', name: 'Indonesia', flag: '🇮🇩' }, { code: 'IE', name: 'Ireland', flag: '🇮🇪' },
+      { code: 'IL', name: 'Israel', flag: '🇮🇱' }, { code: 'IT', name: 'Italy', flag: '🇮🇹' },
+      { code: 'JP', name: 'Japan', flag: '🇯🇵' }, { code: 'MY', name: 'Malaysia', flag: '🇲🇾' },
+      { code: 'MX', name: 'Mexico', flag: '🇲🇽' }, { code: 'NL', name: 'Netherlands', flag: '🇳🇱' },
+      { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' }, { code: 'NO', name: 'Norway', flag: '🇳🇴' },
+      { code: 'PH', name: 'Philippines', flag: '🇵🇭' }, { code: 'PL', name: 'Poland', flag: '🇵🇱' },
+      { code: 'PT', name: 'Portugal', flag: '🇵🇹' }, { code: 'RO', name: 'Romania', flag: '🇷🇴' },
+      { code: 'SG', name: 'Singapore', flag: '🇸🇬' }, { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
+      { code: 'KR', name: 'South Korea', flag: '🇰🇷' }, { code: 'ES', name: 'Spain', flag: '🇪🇸' },
+      { code: 'SE', name: 'Sweden', flag: '🇸🇪' }, { code: 'CH', name: 'Switzerland', flag: '🇨🇭' },
+      { code: 'TH', name: 'Thailand', flag: '🇹🇭' }, { code: 'TR', name: 'Turkey', flag: '🇹🇷' },
+      { code: 'AE', name: 'UAE', flag: '🇦🇪' }, { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
+      { code: 'US', name: 'United States', flag: '🇺🇸' }, { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
+    ].sort((a, b) => a.name.localeCompare(b.name));
+
     function SetupPage({ profile, onSave }) {
       const [name,       setName]       = useState(profile.name || '');
       const [date,       setDate]       = useState(profile.competitionDate || '');
@@ -909,13 +933,21 @@
       const [age,        setAge]        = useState(profile.age || '');
       const [weight,     setWeight]     = useState(profile.weight || '');
       const [division,   setDivision]   = useState(profile.division || 'open');
+      const [country,    setCountry]    = useState(profile.country || '');
+      const [countrySearch, setCountrySearch] = useState('');
+      const [showCountryDrop, setShowCountryDrop] = useState(false);
       const [saved,      setSaved]      = useState(false);
+
+      const selectedCountry = COUNTRIES.find(c => c.code === country);
+      const filteredCountries = countrySearch
+        ? COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
+        : COUNTRIES;
 
       const ageGroup = getAgeGroup(age);
       const days     = getDaysUntil(date);
 
       const save = () => {
-        onSave({ name: name.trim(), competitionDate: date, gender, age, weight, division });
+        onSave({ name: name.trim(), competitionDate: date, gender, age, weight, division, country });
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
       };
@@ -965,6 +997,31 @@
                   <option value="60+">60+</option>
                 </select>
               </div>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <label style={labelBase}>Representing Country</label>
+              <div onClick={() => setShowCountryDrop(v => !v)}
+                style={{ ...inputBase, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', userSelect: 'none', borderColor: showCountryDrop ? YELLOW : '#333' }}>
+                {selectedCountry
+                  ? <><span style={{ fontSize: '1.1rem' }}>{selectedCountry.flag}</span><span style={{ color: '#ccc' }}>{selectedCountry.name}</span></>
+                  : <span style={{ color: '#444' }}>Select country…</span>}
+              </div>
+              {showCountryDrop && (
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, background: '#161616', border: '1px solid #333', borderRadius: 10, marginTop: 4, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
+                  <input autoFocus type="text" placeholder="Search…" value={countrySearch} onChange={e => setCountrySearch(e.target.value)}
+                    style={{ width: '100%', background: '#1a1a1a', border: 'none', borderBottom: '1px solid #222', color: '#ccc', padding: '0.6rem 0.9rem', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box' }} />
+                  <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                    {country && <div onClick={() => { setCountry(''); setShowCountryDrop(false); setCountrySearch(''); }}
+                      style={{ padding: '0.55rem 0.9rem', fontSize: '0.82rem', color: '#555', cursor: 'pointer' }}>— None</div>}
+                    {filteredCountries.map(c => (
+                      <div key={c.code} onClick={() => { setCountry(c.code); setShowCountryDrop(false); setCountrySearch(''); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 0.9rem', fontSize: '0.82rem', color: c.code === country ? YELLOW : '#ccc', background: c.code === country ? '#1a1400' : 'transparent', cursor: 'pointer' }}>
+                        <span style={{ fontSize: '1.1rem' }}>{c.flag}</span>{c.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1131,7 +1188,7 @@
               </div>
               <div>
                 <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time (mm.ss)</div>
-                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="6.59" style={{ ...inputBase, fontVariantNumeric: 'tabular-nums', fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
+                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="00.00" style={{ ...inputBase, fontVariantNumeric: 'tabular-nums', fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
               </div>
             </div>
             {(() => { const swActive = swElapsed > 0 && !success;
@@ -1890,7 +1947,7 @@
           {/* Greeting */}
           <div>
             <h2 style={{ fontWeight: 900, fontSize: '1.55rem', letterSpacing: '-0.03em', marginBottom: '0.4rem' }}>
-              Welcome back{profile.name ? `, ${profile.name}` : ''}. 👊
+              Welcome back{profile.name ? `, ${profile.name}` : ''}. {profile.country ? COUNTRIES.find(c => c.code === profile.country)?.flag : '👊'}
             </h2>
             <p style={{ fontSize: '0.88rem', color: '#666', fontStyle: 'italic', lineHeight: 1.5 }}>"{quote}"</p>
           </div>
@@ -1950,17 +2007,19 @@
           {/* Profile pill */}
           {hasProfile && (
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {[
-                profile.gender === 'male'
-                  ? <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>Male</span>
-                  : <span key="gender" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>Female</span>,
-                `${getAgeGroup(profile.age)} age group`,
-                profile.division ? (profile.division === 'pro' ? '⭐ Pro' : 'Open') : 'Open',
-                profile.weight ? `${profile.weight} kg` : null,
-              ].filter(Boolean).map((t, i) => typeof t === 'string'
-                ? <span key={i} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 }}>{t}</span>
-                : t
-              )}
+              {(() => {
+                const pillStyle = { fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 };
+                const countryObj = profile.country ? COUNTRIES.find(c => c.code === profile.country) : null;
+                return [
+                  profile.gender === 'male'
+                    ? <span key="gender" style={pillStyle}>Male</span>
+                    : <span key="gender" style={pillStyle}>Female</span>,
+                  <span key="age" style={pillStyle}>{getAgeGroup(profile.age)} age group</span>,
+                  <span key="div" style={pillStyle}>{profile.division === 'pro' ? '⭐ Pro' : profile.division === '60+' ? '60+' : 'Open'}</span>,
+                  profile.weight ? <span key="wt" style={pillStyle}>{profile.weight} kg</span> : null,
+                  countryObj ? <span key="country" style={{ ...pillStyle, fontSize: '1rem', padding: '0.15rem 0.5rem' }} title={countryObj.name}>{countryObj.flag}</span> : null,
+                ].filter(Boolean);
+              })()}
             </div>
           )}
 
