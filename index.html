@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>isurvivehyrox — HYROX Training Tracker</title>
+  <meta name="description" content="Track every HYROX station, benchmark your splits, and countdown to race day. Free, offline-first PWA." />
 
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D0BJRSWTY7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,37 +14,18 @@
     gtag('config', 'G-D0BJRSWTY7');
   </script>
 
-  <!-- Favicon: swoosh mark on yellow (tight crop around the two curved paths) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65.67 65.67'><rect width='65.67' height='65.67' fill='%23FFE600'/><g transform='translate(0,21.19)'><path d='M32.89,23.29c-13.33,0-23.88-3.3-32.89-11.1V0c6.52,5.57,20.18,9.89,32.82,9.89S59.04,5.57,65.67,0v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/></g></svg>" />
 
-  <!-- iPhone home screen icon (full wordmark on yellow, via canvas) -->
   <script>
     (function() {
-      var svgData = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 817.06 125.01'>" +
-        "<path d='M314.45,125.01c-13.33,0-23.88-3.3-32.89-11.1v-12.2c6.52,5.57,20.18,9.89,32.82,9.89s26.22-4.32,32.85-9.89v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/>" +
-        "<path d='M0,10.07C0,4.57,4.5,0,10.33,0s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07S0,15.56,0,10.07ZM.66,29.27h19.34v70.99H.66V29.27Z'/>" +
-        "<path d='M30,79.2l-.07-.6h18.87l.13.6c1.26,5.56,5.43,8.81,13.18,8.81,7.29,0,11.72-2.85,11.72-7.42v-.07c0-3.77-2.38-5.96-9.34-7.48l-12.05-2.52c-13.77-2.91-20.73-9.8-20.73-20.4v-.07c0-13.51,11.66-22.25,29.73-22.25s29.4,10,29.87,22.45v.66h-17.81l-.07-.53c-.66-5.1-4.83-8.94-11.99-8.94-6.69,0-10.86,2.98-10.86,7.55v.07c0,3.64,2.45,6.03,9.6,7.55l12.05,2.58c14.83,3.11,20.93,8.94,20.93,19.4v.07c0,13.91-12.78,23.05-31.06,23.05-19.67,0-30.59-9.07-32.12-22.52Z'/>" +
-        "<path d='M102.39,75.1V29.27h19.34v41.79c0,9.27,4.37,14.64,13.05,14.64s14.17-6.36,14.17-15.63V29.27h19.34v70.99h-19.34v-11.72h-.4c-3.64,8.15-10.93,13.18-21.65,13.18-15.63,0-24.5-10-24.5-26.62Z'/>" +
-        "<path d='M180.87,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/>" +
-        "<path d='M226.7,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/>" +
-        "<path d='M303.93,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM304.59,29.27h19.34v61.45h-19.34V29.27Z'/>" +
-        "<path d='M331.01,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/>" +
-        "<path d='M403.47,64.9v-.07c0-22.58,13.31-37.02,34.11-37.02s33.84,14.11,33.84,35.56v5.96h-48.87c.2,11.32,6.36,17.95,16.22,17.95,7.95,0,12.78-4.37,14.17-8.34l.13-.4h17.75l-.2.73c-2.19,10.46-11.99,22.45-32.25,22.45-21.72,0-34.9-14.11-34.9-36.82ZM422.74,57.15h30.13c-1.19-9.8-6.95-14.9-14.97-14.9s-13.91,5.3-15.17,14.9Z'/>" +
-        "<path d='M481.82,4.7h19.34v36.82h.4c3.64-8.81,11.12-13.71,21.79-13.71,15.36,0,24.9,10.73,24.9,27.88v44.57h-19.34v-40.59c0-9.93-4.9-15.83-13.71-15.83s-14.04,6.49-14.04,15.76v40.66h-19.34V4.7Z'/>" +
-        "<path d='M561.56,122.78v-14.37c1.39.26,3.64.66,6.49.66,5.76,0,8.94-1.66,10.66-6.49l.86-2.32-25.1-70.99h21.26l14.97,55.5h.53l15.03-55.5h20.4l-24.37,72.25c-5.56,16.75-15.1,22.12-30.86,22.12-3.77,0-7.62-.46-9.87-.86Z'/>" +
-        "<path d='M633.42,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/>" +
-        "<path d='M677.86,64.77v-.13c0-22.85,13.91-36.82,35.1-36.82s35.23,13.84,35.23,36.82v.13c0,23.18-13.71,36.95-35.16,36.95s-35.17-13.84-35.17-36.95ZM728.52,64.77v-.13c0-13.71-6.16-21.66-15.56-21.66s-15.43,7.95-15.43,21.66v.13c0,13.91,6.03,21.79,15.56,21.79s15.43-7.95,15.43-21.79Z'/>" +
-        "<path d='M770.58,64.9l-22.12-35.63h21.79l12.78,23.97h.4l12.58-23.97h21.06l-22.18,35.1,21.99,35.89h-20.99l-13.51-24.64h-.4l-13.31,24.64h-20.33l22.25-35.36Z'/>" +
-        "</svg>";
+      var svgData = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 817.06 125.01'><path d='M314.45,125.01c-13.33,0-23.88-3.3-32.89-11.1v-12.2c6.52,5.57,20.18,9.89,32.82,9.89s26.22-4.32,32.85-9.89v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/><path d='M0,10.07C0,4.57,4.5,0,10.33,0s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07S0,15.56,0,10.07ZM.66,29.27h19.34v70.99H.66V29.27Z'/><path d='M30,79.2l-.07-.6h18.87l.13.6c1.26,5.56,5.43,8.81,13.18,8.81,7.29,0,11.72-2.85,11.72-7.42v-.07c0-3.77-2.38-5.96-9.34-7.48l-12.05-2.52c-13.77-2.91-20.73-9.8-20.73-20.4v-.07c0-13.51,11.66-22.25,29.73-22.25s29.4,10,29.87,22.45v.66h-17.81l-.07-.53c-.66-5.1-4.83-8.94-11.99-8.94-6.69,0-10.86,2.98-10.86,7.55v.07c0,3.64,2.45,6.03,9.6,7.55l12.05,2.58c14.83,3.11,20.93,8.94,20.93,19.4v.07c0,13.91-12.78,23.05-31.06,23.05-19.67,0-30.59-9.07-32.12-22.52Z'/><path d='M102.39,75.1V29.27h19.34v41.79c0,9.27,4.37,14.64,13.05,14.64s14.17-6.36,14.17-15.63V29.27h19.34v70.99h-19.34v-11.72h-.4c-3.64,8.15-10.93,13.18-21.65,13.18-15.63,0-24.5-10-24.5-26.62Z'/><path d='M180.87,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/><path d='M226.7,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/><path d='M303.93,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM304.59,29.27h19.34v61.45h-19.34V29.27Z'/><path d='M331.01,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/><path d='M403.47,64.9v-.07c0-22.58,13.31-37.02,34.11-37.02s33.84,14.11,33.84,35.56v5.96h-48.87c.2,11.32,6.36,17.95,16.22,17.95,7.95,0,12.78-4.37,14.17-8.34l.13-.4h17.75l-.2.73c-2.19,10.46-11.99,22.45-32.25,22.45-21.72,0-34.9-14.11-34.9-36.82ZM422.74,57.15h30.13c-1.19-9.8-6.95-14.9-14.97-14.9s-13.91,5.3-15.17,14.9Z'/><path d='M481.82,4.7h19.34v36.82h.4c3.64-8.81,11.12-13.71,21.79-13.71,15.36,0,24.9,10.73,24.9,27.88v44.57h-19.34v-40.59c0-9.93-4.9-15.83-13.71-15.83s-14.04,6.49-14.04,15.76v40.66h-19.34V4.7Z'/><path d='M561.56,122.78v-14.37c1.39.26,3.64.66,6.49.66,5.76,0,8.94-1.66,10.66-6.49l.86-2.32-25.1-70.99h21.26l14.97,55.5h.53l15.03-55.5h20.4l-24.37,72.25c-5.56,16.75-15.1,22.12-30.86,22.12-3.77,0-7.62-.46-9.87-.86Z'/><path d='M633.42,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/><path d='M677.86,64.77v-.13c0-22.85,13.91-36.82,35.1-36.82s35.23,13.84,35.23,36.82v.13c0,23.18-13.71,36.95-35.16,36.95s-35.17-13.84-35.17-36.95ZM728.52,64.77v-.13c0-13.71-6.16-21.66-15.56-21.66s-15.43,7.95-15.43,21.66v.13c0,13.91,6.03,21.79,15.56,21.79s15.43-7.95,15.43-21.79Z'/><path d='M770.58,64.9l-22.12-35.63h21.79l12.78,23.97h.4l12.58-23.97h21.06l-22.18,35.1,21.99,35.89h-20.99l-13.51-24.64h-.4l-13.31,24.64h-20.33l22.25-35.36Z'/></svg>";
       var c = document.createElement('canvas'); c.width = c.height = 512;
       var ctx = c.getContext('2d');
       ctx.fillStyle = '#FFE600';
       ctx.fillRect(0, 0, 512, 512);
       var img = new Image();
       img.onload = function() {
-        var padX = 40;
-        var w = 512 - padX * 2;
-        var h = w * (125.01 / 817.06);
+        var padX = 40, w = 512 - padX * 2, h = w * (125.01 / 817.06);
         ctx.drawImage(img, padX, (512 - h) / 2, w, h);
         var link = document.createElement('link');
         link.rel = 'apple-touch-icon'; link.href = c.toDataURL('image/png');
@@ -53,2117 +34,739 @@
       img.src = 'data:image/svg+xml,' + encodeURIComponent(svgData);
     })();
   </script>
+
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="isurvivehyrox" />
   <meta name="theme-color" content="#FFE600" />
 
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --yellow: #FFE600; --bg: #0a0a0a; --card: #111;
-      --card2: #1a1a1a; --border: #222; --border2: #333;
+      --yellow: #FFE600;
+      --bg: #0a0a0a;
+      --card: #111;
+      --card2: #1a1a1a;
+      --border: #222;
+      --border2: #333;
     }
-    html { scroll-behavior: smooth; overflow-x: hidden; }
-    body { background: #0a0a0a; color: #fff; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; overflow-x: hidden; }
-    input, select, button { font-family: inherit; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
-    select option { background: #1a1a1a; color: #fff; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #111; }
     ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.2s ease; }
-    .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
-    @media (max-width: 600px) { .tier-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 56px;
+    }
+
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      border-radius: 6px;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 1.5rem 5rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--yellow);
+    }
+
+    .hero-sub {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      color: #777;
+      line-height: 1.75;
+      margin-bottom: 2.75rem;
+      max-width: 480px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--yellow);
+      color: #000;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      padding: 1rem 2.25rem;
+      border-radius: 8px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: #777;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover { border-color: #555; color: #ccc; }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ── Screenshots ── */
+    .screenshots {
+      width: 100%;
+      overflow: hidden;
+      padding: 3rem 0 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .screenshot-row {
+      width: 100%;
+      max-width: 860px;
+      padding: 0 1.5rem;
+    }
+
+    .screenshot-row img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* ── Section wrapper ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 0.65rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ── What is HYROX — collapsible ── */
+    .hyrox-explainer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .hyrox-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #555;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 0;
+    }
+    .hyrox-toggle:hover { border-color: #444; color: #aaa; }
+
+    .hyrox-toggle .toggle-icon {
+      margin-left: auto;
+      font-style: normal;
+      transition: transform 0.2s;
+      font-size: 0.75rem;
+    }
+    .hyrox-toggle[aria-expanded="true"] .toggle-icon { transform: rotate(180deg); }
+
+    .hyrox-body {
+      display: none;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 1.75rem;
+      background: var(--card);
+    }
+    .hyrox-body.open { display: block; }
+
+    .hyrox-body p {
+      font-size: 1rem;
+      color: #888;
+      line-height: 1.75;
+      max-width: 620px;
+    }
+
+    .hyrox-body p + p { margin-top: 0.75rem; }
+
+    .hyrox-stations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1.1rem;
+    }
+
+    .station-chip {
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      color: #888;
+      padding: 0.3rem 0.75rem;
+    }
+
+    .hyrox-kicker {
+      margin-top: 1.25rem;
+      font-size: 0.95rem;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 2.5rem;
+    }
+
+    @media (max-width: 580px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: var(--card);
+      padding: 2rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .feature-icon { font-size: 1.5rem; line-height: 1; margin-bottom: 0.25rem; }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.65;
+    }
+
+    /* ── How to use ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    @media (max-width: 580px) {
+      .how-grid { grid-template-columns: 1fr; }
+    }
+
+    .how-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .how-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .how-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .how-icon.ios { background: #1a1a2e; }
+    .how-icon.android { background: #0a1f0a; }
+
+    .how-platform { font-size: 0.9rem; font-weight: 700; }
+
+    .how-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .how-steps li {
+      display: flex;
+      gap: 0.7rem;
+      font-size: 0.84rem;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: var(--border2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .how-steps li b { color: #bbb; font-weight: 600; }
+
+    /* ── Yellow band ── */
+    .band-yellow {
+      background: var(--yellow);
+    }
+    .band-yellow .section-label { color: rgba(0,0,0,0.45); }
+    .band-yellow .section-title { color: #000; }
+    .band-yellow .features-grid { background: rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.12); }
+    .band-yellow .feature-card { background: #000; }
+    .band-yellow .feature-title { color: #fff; }
+    .band-yellow .feature-desc  { color: #666; }
+
+    /* ── Tinted band ── */
+    .band-tinted {
+      background: #111100;
+      border-top: 1px solid #252500;
+      border-bottom: 1px solid #252500;
+    }
+
+    /* ── Footer CTA ── */
+    .footer-cta {
+      text-align: center;
+      padding: 5rem 1.5rem;
+      background: var(--yellow);
+    }
+
+    .footer-cta h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      max-width: 520px;
+      margin: 0 auto 2rem;
+      color: #000;
+    }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #000;
+      color: var(--yellow);
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      padding: 1rem 2.25rem;
+      border-radius: 8px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-dark:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    /* ── Ko-fi ── */
+    .kofi-section {
+      border-top: 1px solid var(--border);
+      padding: 3rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    .kofi-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    .kofi-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #bbb;
+      margin-bottom: 0.25rem;
+    }
+
+    .kofi-desc {
+      font-size: 0.88rem;
+      color: #555;
+      max-width: 400px;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .kofi-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .kofi-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .footer-note { font-size: 0.75rem; color: #444; }
+
+    .footer-links { display: flex; gap: 1.25rem; }
+    .footer-links a {
+      font-size: 0.75rem;
+      color: #444;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #999; }
+
+    /* ── Fade-in ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero { animation: fadeUp 0.35s ease both; }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useCallback, useMemo } = React;
+<!-- ── Nav ── -->
+<nav>
+  <a href="/" class="nav-logo" aria-label="isurvivehyrox">
+    <svg width="128" height="20" viewBox="0 0 817.06 125.01" fill="#FFE600" xmlns="http://www.w3.org/2000/svg">
+      <path d='M314.45,125.01c-13.33,0-23.88-3.3-32.89-11.1v-12.2c6.52,5.57,20.18,9.89,32.82,9.89s26.22-4.32,32.85-9.89v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/>
+      <path d='M0,10.07C0,4.57,4.5,0,10.33,0s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07S0,15.56,0,10.07ZM.66,29.27h19.34v70.99H.66V29.27Z'/>
+      <path d='M30,79.2l-.07-.6h18.87l.13.6c1.26,5.56,5.43,8.81,13.18,8.81,7.29,0,11.72-2.85,11.72-7.42v-.07c0-3.77-2.38-5.96-9.34-7.48l-12.05-2.52c-13.77-2.91-20.73-9.8-20.73-20.4v-.07c0-13.51,11.66-22.25,29.73-22.25s29.4,10,29.87,22.45v.66h-17.81l-.07-.53c-.66-5.1-4.83-8.94-11.99-8.94-6.69,0-10.86,2.98-10.86,7.55v.07c0,3.64,2.45,6.03,9.6,7.55l12.05,2.58c14.83,3.11,20.93,8.94,20.93,19.4v.07c0,13.91-12.78,23.05-31.06,23.05-19.67,0-30.59-9.07-32.12-22.52Z'/>
+      <path d='M102.39,75.1V29.27h19.34v41.79c0,9.27,4.37,14.64,13.05,14.64s14.17-6.36,14.17-15.63V29.27h19.34v70.99h-19.34v-11.72h-.4c-3.64,8.15-10.93,13.18-21.65,13.18-15.63,0-24.5-10-24.5-26.62Z'/>
+      <path d='M180.87,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/>
+      <path d='M226.7,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/>
+      <path d='M303.93,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM304.59,29.27h19.34v61.45h-19.34V29.27Z'/>
+      <path d='M331.01,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z'/>
+      <path d='M403.47,64.9v-.07c0-22.58,13.31-37.02,34.11-37.02s33.84,14.11,33.84,35.56v5.96h-48.87c.2,11.32,6.36,17.95,16.22,17.95,7.95,0,12.78-4.37,14.17-8.34l.13-.4h17.75l-.2.73c-2.19,10.46-11.99,22.45-32.25,22.45-21.72,0-34.9-14.11-34.9-36.82ZM422.74,57.15h30.13c-1.19-9.8-6.95-14.9-14.97-14.9s-13.91,5.3-15.17,14.9Z'/>
+      <path d='M481.82,4.7h19.34v36.82h.4c3.64-8.81,11.12-13.71,21.79-13.71,15.36,0,24.9,10.73,24.9,27.88v44.57h-19.34v-40.59c0-9.93-4.9-15.83-13.71-15.83s-14.04,6.49-14.04,15.76v40.66h-19.34V4.7Z'/>
+      <path d='M561.56,122.78v-14.37c1.39.26,3.64.66,6.49.66,5.76,0,8.94-1.66,10.66-6.49l.86-2.32-25.1-70.99h21.26l14.97,55.5h.53l15.03-55.5h20.4l-24.37,72.25c-5.56,16.75-15.1,22.12-30.86,22.12-3.77,0-7.62-.46-9.87-.86Z'/>
+      <path d='M633.42,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z'/>
+      <path d='M677.86,64.77v-.13c0-22.85,13.91-36.82,35.1-36.82s35.23,13.84,35.23,36.82v.13c0,23.18-13.71,36.95-35.16,36.95s-35.17-13.84-35.17-36.95ZM728.52,64.77v-.13c0-13.71-6.16-21.66-15.56-21.66s-15.43,7.95-15.43,21.66v.13c0,13.91,6.03,21.79,15.56,21.79s15.43-7.95,15.43-21.79Z'/>
+      <path d='M770.58,64.9l-22.12-35.63h21.79l12.78,23.97h.4l12.58-23.97h21.06l-22.18,35.1,21.99,35.89h-20.99l-13.51-24.64h-.4l-13.31,24.64h-20.33l22.25-35.36Z'/>
+    </svg>
+  </a>
+  <a href="/app/" class="nav-cta">Open App →</a>
+</nav>
 
-    // ─── Station definitions ──────────────────────────────────────────────────────
+<!-- ── Hero ── -->
+<div class="hero">
+  <h1>Every emotion. Every station.<br><em>One finish line.</em></h1>
+  <p class="hero-sub">
+    (you'll survive. they all do.)
+  </p>
+  <div class="hero-actions">
+    <a href="/app/" class="btn-primary">Start Tracking — It's Free →</a>
+  </div>
+</div>
 
-    const YELLOW = '#FFE600';
+<hr class="divider" />
 
-    const STATIONS = [
-      { id: 'ski-erg',            name: 'Ski Erg',            short: 'Ski Erg',    detail: '1000m',    icon: '⛷️',  num: 1 },
-      { id: 'sled-push',          name: 'Sled Push',          short: 'Sled Push',  detail: '50m',      icon: '🏋️', num: 2 },
-      { id: 'sled-pull',          name: 'Sled Pull',          short: 'Sled Pull',  detail: '50m',      icon: '💪',  num: 3 },
-      { id: 'burpee-broad-jump',  name: 'Burpee Broad Jump',  short: 'Burpee BJ',  detail: '80m',      icon: '🤸',  num: 4 },
-      { id: 'row',                name: 'Row',                short: 'Row',        detail: '1000m',    icon: '🚣',  num: 5 },
-      { id: 'farmers-carry',      name: 'Farmers Carry',      short: 'Farmers',    detail: '200m',     icon: '🧑‍🌾', num: 6 },
-      { id: 'lunges',             name: 'Lunges',             short: 'Lunges',     detail: '100m',     icon: '🦵',  num: 7 },
-      { id: 'wallballs',          name: 'Wall Balls',         short: 'Wallballs',  detail: '100 reps', icon: '🏀',  num: 8 },
-      { id: 'run-1km',            name: '1km Run',            short: '1km Run',    detail: 'x8 segs',  icon: '🏃',  num: '↺' },
-    ];
+<!-- ── What is HYROX — collapsible ── -->
+<div class="hyrox-explainer" style="padding-top: 2rem; padding-bottom: 2rem;">
+  <button class="hyrox-toggle" aria-expanded="false" onclick="toggleHyrox(this)">
+    <span style="color:#666; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:700;">New to HYROX?</span>
+    <span style="color:#555; font-weight:400; margin-left:0.5rem;">Never heard of it? Here's the quick version.</span>
+    <span class="toggle-icon">▾</span>
+  </button>
+  <div class="hyrox-body" id="hyrox-body">
+    <p>HYROX is a global fitness race combining 8km of running with 8 functional workout stations.</p>
+    <div class="hyrox-stations">
+      <span class="station-chip">SkiErg</span>
+      <span class="station-chip">Sled Push</span>
+      <span class="station-chip">Sled Pull</span>
+      <span class="station-chip">Burpee Broad Jumps</span>
+      <span class="station-chip">Rowing</span>
+      <span class="station-chip">Farmers Carry</span>
+      <span class="station-chip">Sandbag Lunges</span>
+      <span class="station-chip">Wall Balls</span>
+    </div>
+    <p class="hyrox-kicker">It's not just a race. It's a test of everything. And the only way to get better is to track where you're losing time.</p>
+  </div>
+</div>
 
-    const LS_PROFILE  = 'hyrox_profile';
-    const LS_SESSIONS = 'hyrox_sessions';
+<div class="band-yellow">
 
-    // ─── Demo mode (?demo in URL seeds mock data) ─────────────────────────────────
-    if (new URLSearchParams(location.search).has('demo')) {
-      const DEMO_PROFILE = { name: 'Alex Rower', gender: 'male', age: '34', weight: '78', division: 'open', competitionDate: '2026-06-14' };
-      const DEMO_SESSIONS = [
-        { id:1,  stationId:'ski-erg',           date:'2026-03-01', timeInSeconds:310 },
-        { id:2,  stationId:'ski-erg',           date:'2026-03-10', timeInSeconds:295 },
-        { id:3,  stationId:'ski-erg',           date:'2026-03-20', timeInSeconds:278 },
-        { id:4,  stationId:'ski-erg',           date:'2026-04-01', timeInSeconds:261 },
-        { id:22, stationId:'ski-erg',           date:'2026-04-07', timeInSeconds:255 },
-        { id:24, stationId:'ski-erg',           date:'2026-03-30', timeInSeconds:268 },
-        { id:5,  stationId:'sled-push',         date:'2026-03-05', timeInSeconds:290 },
-        { id:6,  stationId:'sled-push',         date:'2026-03-18', timeInSeconds:255 },
-        { id:7,  stationId:'sled-push',         date:'2026-04-03', timeInSeconds:215 },
-        { id:8,  stationId:'row',               date:'2026-03-08', timeInSeconds:268 },
-        { id:9,  stationId:'row',               date:'2026-03-22', timeInSeconds:254 },
-        { id:10, stationId:'row',               date:'2026-04-05', timeInSeconds:241 },
-        { id:23, stationId:'row',               date:'2026-04-08', timeInSeconds:238 },
-        { id:25, stationId:'row',               date:'2026-04-01', timeInSeconds:248 },
-        { id:11, stationId:'burpee-broad-jump', date:'2026-03-12', timeInSeconds:342 },
-        { id:12, stationId:'burpee-broad-jump', date:'2026-03-28', timeInSeconds:318 },
-        { id:13, stationId:'farmers-carry',     date:'2026-03-15', timeInSeconds:145 },
-        { id:14, stationId:'farmers-carry',     date:'2026-04-02', timeInSeconds:128 },
-        { id:15, stationId:'lunges',            date:'2026-03-20', timeInSeconds:298 },
-        { id:16, stationId:'lunges',            date:'2026-04-04', timeInSeconds:275 },
-        { id:17, stationId:'wallballs',         date:'2026-03-25', timeInSeconds:385 },
-        { id:18, stationId:'wallballs',         date:'2026-04-06', timeInSeconds:362 },
-        { id:19, stationId:'run-1km',           date:'2026-03-10', timeInSeconds:295 },
-        { id:20, stationId:'run-1km',           date:'2026-03-28', timeInSeconds:278 },
-        { id:21, stationId:'run-1km',           date:'2026-04-07', timeInSeconds:265 },
-        { id:26, stationId:'sled-pull',         date:'2026-03-14', timeInSeconds:395 },
-        { id:27, stationId:'sled-pull',         date:'2026-04-03', timeInSeconds:328 },
-      ];
-      try {
-        localStorage.setItem(LS_PROFILE,  JSON.stringify(DEMO_PROFILE));
-        localStorage.setItem(LS_SESSIONS, JSON.stringify(DEMO_SESSIONS));
-      } catch(e) {}
+<!-- ── Features ── -->
+<div class="section">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Built to make you faster.</h2>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Track all 8 stations</div>
+      <div class="feature-desc">Log your times after every session. See yourself get faster week by week.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">Visualize your progress</div>
+      <div class="feature-desc">Charts that show improvement over time — so you know your training is actually working.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Real benchmarks</div>
+      <div class="feature-desc">Compare against 700,000+ real HYROX race results. Know if you're Beginner, Intermediate, Advanced, or Elite — for your age and gender.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-title">Race day countdown</div>
+      <div class="feature-desc">Your race date. Always front and center. Every session logged is one step closer.</div>
+    </div>
+  </div>
+  <img src="985shots_so.png" alt="isurvivehyrox app screens" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;margin-top:2.5rem" />
+</div>
+
+</div>
+
+<div class="band-tinted">
+<!-- ── How to use ── -->
+<div class="section">
+  <div class="section-label">How to use</div>
+  <h2 class="section-title">No download. No login.<br>No subscription.</h2>
+  <p style="color:#666; font-size:1rem; line-height:1.65; margin-top:0.5rem;">
+    Open the app → Set your race date → Start logging your sessions.<br>
+    <span style="color:#555;">Want it on your home screen? Install it like an app — completely free.</span>
+  </p>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-header">
+        <div class="how-icon ios">🍎</div>
+        <div class="how-platform">iPhone / iPad</div>
+      </div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Open in <b>Safari</b> (not Chrome)</span></li>
+        <li><span class="step-num">2</span><span>Tap the <b>Share</b> icon ↑ at the bottom</span></li>
+        <li><span class="step-num">3</span><span>Tap <b>"Add to Home Screen"</b></span></li>
+        <li><span class="step-num">4</span><span>Tap <b>Add</b> — done</span></li>
+      </ol>
+    </div>
+    <div class="how-card">
+      <div class="how-header">
+        <div class="how-icon android">🤖</div>
+        <div class="how-platform">Android</div>
+      </div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Open in <b>Chrome</b></span></li>
+        <li><span class="step-num">2</span><span>Tap the <b>⋮ menu</b> (top right)</span></li>
+        <li><span class="step-num">3</span><span>Tap <b>"Add to Home screen"</b></span></li>
+        <li><span class="step-num">4</span><span>Tap <b>Add</b> — done</span></li>
+      </ol>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── Footer CTA ── -->
+<div class="footer-cta">
+  <h2>Ready to stop guessing<br>and start tracking?</h2>
+  <a href="/app/" class="btn-dark">Open App →</a>
+</div>
+
+<!-- ── Ko-fi ── -->
+<div class="kofi-section">
+  <span class="kofi-label">Support the project</span>
+  <div class="kofi-title">Keep it free &amp; improving</div>
+  <p class="kofi-desc">No VC. No team. Just Pie &amp; Mungkorn.<br>A coffee keeps us going and building what's next.</p>
+  <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener" class="kofi-btn">
+    ☕ Buy us a coffee
+  </a>
+  <p style="margin-top:1.25rem; font-size:0.82rem; color:#444;">
+    Open to partnerships &amp; funding →
+    <a href="mailto:pirpiep@gmail.com" style="color:#666; text-decoration:none; border-bottom: 1px solid #333;">pirpiep@gmail.com</a>
+  </p>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <span class="footer-note">© 2025 isurvivehyrox — not affiliated with HYROX GmbH</span>
+  <div class="footer-links">
+    <a href="/app/">Open App</a>
+    <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener">Ko-fi</a>
+  </div>
+</footer>
+
+<script>
+  function toggleHyrox(btn) {
+    var body = document.getElementById('hyrox-body');
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    body.classList.toggle('open', !open);
+    if (!open) {
+      btn.style.borderRadius = '8px 8px 0 0';
+      btn.style.borderBottomColor = 'transparent';
+    } else {
+      btn.style.borderRadius = '8px';
+      btn.style.borderBottomColor = '';
+    }
+  }
+
+  (function() {
+    function reveal(el, delayMs) {
+      el.classList.add('reveal');
+      if (delayMs) el.style.transitionDelay = delayMs + 'ms';
     }
 
-    // ─── Benchmark data ───────────────────────────────────────────────────────────
-    // Base values are for Open 30-34 age group (seconds). All other groups scale via AGE_FACTORS.
-
-    // Station benchmarks from HyroxDataLab (700,000+ race results, 2025-2026).
-    // Fields: elite = midpoint of elite range, advanced = advanced cutoff, intermediate = intermediate cutoff,
-    //         beginner = estimated from finish-time tier ratio (~intermediate × 1.15)
-    const BASE_BENCHMARKS = {
-      male: {
-        //                         elite  adv   int   beg
-        'ski-erg':           { elite: 245, advanced: 260, intermediate: 267, beginner: 308 },
-        'sled-push':         { elite: 188, advanced: 206, intermediate: 221, beginner: 255 },
-        'sled-pull':         { elite: 254, advanced: 277, intermediate: 306, beginner: 352 },
-        'burpee-broad-jump': { elite: 259, advanced: 277, intermediate: 319, beginner: 367 },
-        'row':               { elite: 257, advanced: 273, intermediate: 284, beginner: 327 },
-        'farmers-carry':     { elite: 112, advanced: 119, intermediate: 130, beginner: 150 },
-        'lunges':            { elite: 247, advanced: 264, intermediate: 296, beginner: 341 },
-        'wallballs':         { elite: 347, advanced: 364, intermediate: 421, beginner: 485 },
-        'run-1km':           { elite: 188, advanced: 225, intermediate: 262, beginner: 315 },
-      },
-      female: {
-        'ski-erg':           { elite: 285, advanced: 300, intermediate: 311, beginner: 358 },
-        'sled-push':         { elite: 188, advanced: 205, intermediate: 222, beginner: 256 },
-        'sled-pull':         { elite: 277, advanced: 299, intermediate: 334, beginner: 384 },
-        'burpee-broad-jump': { elite: 336, advanced: 357, intermediate: 410, beginner: 472 },
-        'row':               { elite: 298, advanced: 311, intermediate: 324, beginner: 373 },
-        'farmers-carry':     { elite: 128, advanced: 135, intermediate: 145, beginner: 167 },
-        'lunges':            { elite: 255, advanced: 270, intermediate: 301, beginner: 346 },
-        'wallballs':         { elite: 337, advanced: 353, intermediate: 411, beginner: 473 },
-        'run-1km':           { elite: 238, advanced: 285, intermediate: 328, beginner: 390 },
-      },
-    };
-
-    // Age multipliers calibrated from HyroxDataLab finish-time intermediate data.
-    // Baseline = 30-34 (factor 1.00). Older groups are generally slower (higher factor).
-    const AGE_FACTORS = {
-      '16-24': 0.92, '25-29': 0.92, '30-34': 1.00,
-      '35-39': 1.00, '40-44': 1.02, '45-49': 1.02,
-      '50-54': 1.05, '55-59': 1.10, '60+':   1.11,
-    };
-
-    // ─── Equipment weights per division / gender ─────────────────────────────────
-
-    const EQUIPMENT_WEIGHTS = {
-      'sled-push':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
-      'sled-pull':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
-      'farmers-carry':  { open: { male: '2×24kg', female: '2×16kg' }, pro: { male: '2×24kg', female: '2×16kg' }, '60+': { male: '2×16kg', female: '2×12kg' } },
-      'wallballs':      { open: { male: '9kg', female: '6kg' }, pro: { male: '9kg', female: '6kg' }, '60+': { male: '6kg', female: '4kg' } },
-      'lunges':         { open: { male: '20kg', female: '10kg' }, pro: { male: '20kg', female: '10kg' }, '60+': { male: '10kg', female: '5kg' } },
-    };
-
-
-    // ─── Training tips ────────────────────────────────────────────────────────────
-
-    const TRAINING_TIPS = {
-      'ski-erg': {
-        elite:        "Elite level! Focus on negative-split pacing — start controlled, push the last 200m. Add technique drills at high rate.",
-        advanced:     "Strong output! Train sub-4:20 intervals: 3×300m with 60s rest. Keep stroke rate at 28–32/min under fatigue.",
-        intermediate: "Drive with legs first, finish with arms. Target 25–30 strokes/min. Do 5×200m intervals twice a week.",
-        beginner:     "Build your base: 3×5min steady pace. Keep elbows high, hinge at hips on the catch, and breathe out on the pull.",
-      },
-      'sled-push': {
-        elite:        "Elite push! Perfect your explosive start: 3-step burst from zero. Practice transitions from run with minimal rest.",
-        advanced:     "Shave seconds: practice sub-3:30 efforts with loaded sled. Focus on quick foot turnover, not stride length.",
-        intermediate: "Low hips + short quick steps = faster sled. Add heavy hip thrusts and incline sled drags to training.",
-        beginner:     "Master 45° body lean first. Practice with lighter weight: 10×10m pushes focusing on leg drive, not upper body.",
-      },
-      'sled-pull': {
-        elite:        "Elite pull! Polish rope-over-rope rhythm — keep rope low, close to body. Minimize hand-repositioning pauses.",
-        advanced:     "Target sub-4:40: maintain steady hand-over-hand rhythm without pausing. Add heavy cable rows to training.",
-        intermediate: "Build pulling power: bent-over rows + cable face pulls twice a week. Keep the sled moving — momentum helps.",
-        beginner:     "Stay low and use lats, not biceps. Practice band pull-aparts + lat pulldowns to build the chain.",
-      },
-      'burpee-broad-jump': {
-        elite:        "Top tier! Work on your landing: soft knees, immediate hip hinge into the next burpee. Chase continuous rhythm.",
-        advanced:     "Push for sub-4:40: increase jump distance per rep to reduce total reps needed. Train plyometric broad jumps.",
-        intermediate: "Build jump endurance: 3×10 broad jumps weekly. Stay low at the bottom of the burpee — don't stand tall.",
-        beginner:     "Split it into 20m chunks mentally. Practice burpees and broad jumps separately before combining them.",
-      },
-      'row': {
-        elite:        "Strong rowing! Maintain stroke rate under fatigue. Practice 4×500m at race pace with 90s rest.",
-        advanced:     "Break 4:33: hold a consistent 2:15/500m split. Train 3×600m at target pace with 90s rest.",
-        intermediate: "Nail the drive: legs → body swing → arms. Add 20-min steady-state rows to build aerobic efficiency.",
-        beginner:     "Prioritize technique: sit tall, catch early, drive with legs. Avoid yanking with your back at the start.",
-      },
-      'farmers-carry': {
-        elite:        "Grip champion! Work on breathing while loaded — practice nasal breathing under heavy carry.",
-        advanced:     "Push for sub-2:00: practice loaded walks at race weight focusing on quick, short steps and upright posture.",
-        intermediate: "Build grip endurance: 3×30s dead hangs + farmer walks weekly. Walk tall — don't lean side-to-side.",
-        beginner:     "Go lighter to nail posture first: shoulders back, core braced, short quick steps. Speed comes with time.",
-      },
-      'lunges': {
-        elite:        "Elite lunges! Maintain torso uprightness under fatigue. Add single-leg glute bridges for hip stability.",
-        advanced:     "Target sub-4:25: keep a steady walking lunge rhythm without pausing. Train weighted walking lunges 2×/week.",
-        intermediate: "Drive the front knee forward to keep momentum. Add weighted walking lunges to build quad endurance.",
-        beginner:     "3×20 bodyweight walking lunges daily. Focus on knee tracking over toes and staying upright.",
-      },
-      'wallballs': {
-        elite:        "Unbroken beast! Focus on squat-to-throw timing — catch in a quarter squat to keep flow smooth.",
-        advanced:     "Target sub-6:05: practice sets of 25+ unbroken. Hip drive is everything — load your hips, not your arms.",
-        intermediate: "Practice sets of 15–20: improve hip drive into the throw. Train slightly lighter to build volume.",
-        beginner:     "Break into sets of 10 with 10s rest. Catch in the squat — don't stand up between reps.",
-      },
-      'run-1km': {
-        elite:        "Flyer! Maintain form when fatigued: high cadence (~180 steps/min), relaxed jaw and shoulders.",
-        advanced:     "Target sub-3:45/km: add one tempo run per week at race pace. Practice negative splits.",
-        intermediate: "3 runs/week with 1 interval session. Practice running off other stations — simulate the transition.",
-        beginner:     "Run-walk intervals build base fast. Focus on mid-foot strike and keeping your arms at 90°.",
-      },
-    };
-
-    // ─── Utilities ────────────────────────────────────────────────────────────────
-
-    function parseTime(input) {
-      const s = String(input).trim();
-      // Support both "6:59" and "6.59" as 6 min 59 sec
-      const sep = s.includes(':') ? ':' : s.includes('.') ? '.' : null;
-      if (sep) {
-        const [m, sec] = s.split(sep);
-        const mins = parseInt(m, 10), secs = parseInt(sec, 10);
-        if (!isNaN(mins) && !isNaN(secs) && secs < 60) return mins * 60 + secs;
-        return NaN;
-      }
-      const n = parseInt(s, 10);
-      return isNaN(n) ? NaN : n;
-    }
-
-    function formatTime(secs) {
-      if (secs == null || isNaN(secs)) return '--:--';
-      const t = Math.round(Math.abs(secs));
-      return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
-    }
-
-    function formatDuration(secs) {
-      if (secs == null || isNaN(secs)) return '--:--:--';
-      const t = Math.round(Math.abs(secs));
-      const h = Math.floor(t / 3600);
-      const m = Math.floor((t % 3600) / 60);
-      const s = t % 60;
-      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    }
-
-    function getDaysUntil(dateStr) {
-      if (!dateStr) return null;
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      return Math.round((new Date(dateStr + 'T00:00:00') - today) / 86400000);
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '—';
-      try { return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
-      catch { return dateStr; }
-    }
-
-    function loadLS(key, fallback) {
-      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-      catch { return fallback; }
-    }
-
-    function today() { return new Date().toISOString().split('T')[0]; }
-
-    function getAgeGroup(age) {
-      const a = parseInt(age, 10);
-      if (isNaN(a)) return null;
-      if (a < 25) return '16-24'; if (a < 30) return '25-29'; if (a < 35) return '30-34';
-      if (a < 40) return '35-39'; if (a < 45) return '40-44'; if (a < 50) return '45-49';
-      if (a < 55) return '50-54'; if (a < 60) return '55-59'; return '60+';
-    }
-
-    function getBenchmark(gender, age, stationId) {
-      if (!gender || !age) return null;
-      const base = BASE_BENCHMARKS[gender]?.[stationId];
-      if (!base) return null;
-      const ageGroup = getAgeGroup(age);
-      const f = AGE_FACTORS[ageGroup] || 1.0;
-      return {
-        elite:        Math.round(base.elite * f),
-        advanced:     Math.round(base.advanced * f),
-        intermediate: Math.round(base.intermediate * f),
-        beginner:     Math.round(base.beginner * f),
-        ageGroup,
-      };
-    }
-
-    function getTier(userTime, bm) {
-      if (!bm || userTime == null) return null;
-      if (userTime <= bm.elite)        return 'elite';
-      if (userTime <= bm.advanced)     return 'advanced';
-      if (userTime <= bm.intermediate) return 'intermediate';
-      return 'beginner';
-    }
-
-    function getRadarScore(userTime, bm) {
-      if (!bm || userTime == null) return 0;
-      if (userTime <= bm.elite)    return 100;
-      if (userTime >= bm.beginner) return 0;
-      return Math.round(100 * (bm.beginner - userTime) / (bm.beginner - bm.elite));
-    }
-
-    function getPctVsAvg(userTime, bm) {
-      if (!bm || userTime == null) return null;
-      return Math.round(Math.abs(userTime - bm.intermediate) / bm.intermediate * 100);
-    }
-
-    // ─── Shared styles ────────────────────────────────────────────────────────────
-
-    const inputBase = {
-      width: '100%', background: '#111', border: '1px solid #333',
-      borderRadius: 8, color: '#fff', padding: '0.75rem 1rem',
-      fontSize: '1rem', outline: 'none', transition: 'border-color 0.15s', appearance: 'none',
-    };
-    const labelBase = {
-      display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#888',
-      marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase',
-    };
-    const cardBase = { background: '#111', border: '1px solid #222', borderRadius: 12 };
-
-    const TIER_CONFIG = {
-      elite:        { icon: '🏆', label: 'Elite',        color: '#FFD700', bg: '#1c1600', border: '#4a3800' },
-      advanced:     { icon: '✅', label: 'Advanced',     color: '#4ade80', bg: '#0a1f0a', border: '#1a4a1a' },
-      intermediate: { icon: '💪', label: 'Intermediate', color: '#60a5fa', bg: '#0a0f1f', border: '#1a2a4a' },
-      beginner:     { icon: '🔰', label: 'Beginner',     color: '#888',    bg: '#161616', border: '#2a2a2a' },
-    };
-
-    // ─── Reusable components ──────────────────────────────────────────────────────
-
-    function TierBadge({ tier }) {
-      if (!tier) return null;
-      const c = TIER_CONFIG[tier];
-      return (
-        <span style={{
-          fontSize: '0.68rem', fontWeight: 700, color: c.color,
-          background: c.bg, border: `1px solid ${c.border}`,
-          padding: '0.2rem 0.5rem', borderRadius: 4,
-          letterSpacing: '0.04em', whiteSpace: 'nowrap',
-        }}>
-          {c.icon} {c.label}
-        </span>
-      );
-    }
-
-    function ImprovementBadge({ delta }) {
-      if (delta == null) return null;
-      const faster = delta < 0;
-      return (
-        <span style={{
-          fontSize: '0.72rem', fontWeight: 700,
-          color: faster ? '#4ade80' : '#f87171',
-          background: faster ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)',
-          border: `1px solid ${faster ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`,
-          padding: '0.2rem 0.45rem', borderRadius: 4, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
-        }}>
-          {faster ? '↑' : '↓'} {formatTime(Math.abs(delta))}
-        </span>
-      );
-    }
-
-    function StatCard({ label, value, suffix, small, accent, sub }) {
-      return (
-        <div style={{ ...cardBase, padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{label}</div>
-          <div style={{ fontWeight: 900, fontSize: small ? '1.05rem' : '1.9rem', color: accent ? YELLOW : '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-            {value}{suffix && <span style={{ fontSize: '0.85rem', color: '#888', fontWeight: 400, marginLeft: '0.25rem' }}>{suffix}</span>}
-          </div>
-          {sub && <div style={{ fontSize: '0.72rem', color: '#888', marginTop: '0.3rem' }}>{sub}</div>}
-        </div>
-      );
-    }
-
-    function TopBar({ profile, onEdit }) {
-      const days = profile.competitionDate ? getDaysUntil(profile.competitionDate) : null;
-      const raceMsg = days === null ? null
-        : days > 0  ? `🏁 ${days}d`
-        : days === 0 ? '🔥 Today'
-        : `✅ Done`;
-      return (
-        <div style={{ background: YELLOW, color: '#000', padding: '0 1rem' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '2.75rem' }}>
-            {/* Left: logo + name */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 817.06 125.01" style={{ height: '1rem', width: 'auto', display: 'block', fill: '#000', marginTop: '0.2rem' }} aria-label="isurvivehyrox">
-                <path d="M314.45,125.01c-13.33,0-23.88-3.3-32.89-11.1v-12.2c6.52,5.57,20.18,9.89,32.82,9.89s26.22-4.32,32.85-9.89v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z"/>
-                <path d="M0,10.07C0,4.57,4.5,0,10.33,0s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07S0,15.56,0,10.07ZM.66,29.27h19.34v70.99H.66V29.27Z"/>
-                <path d="M30,79.2l-.07-.6h18.87l.13.6c1.26,5.56,5.43,8.81,13.18,8.81,7.29,0,11.72-2.85,11.72-7.42v-.07c0-3.77-2.38-5.96-9.34-7.48l-12.05-2.52c-13.77-2.91-20.73-9.8-20.73-20.4v-.07c0-13.51,11.66-22.25,29.73-22.25s29.4,10,29.87,22.45v.66h-17.81l-.07-.53c-.66-5.1-4.83-8.94-11.99-8.94-6.69,0-10.86,2.98-10.86,7.55v.07c0,3.64,2.45,6.03,9.6,7.55l12.05,2.58c14.83,3.11,20.93,8.94,20.93,19.4v.07c0,13.91-12.78,23.05-31.06,23.05-19.67,0-30.59-9.07-32.12-22.52Z"/>
-                <path d="M102.39,75.1V29.27h19.34v41.79c0,9.27,4.37,14.64,13.05,14.64s14.17-6.36,14.17-15.63V29.27h19.34v70.99h-19.34v-11.72h-.4c-3.64,8.15-10.93,13.18-21.65,13.18-15.63,0-24.5-10-24.5-26.62Z"/>
-                <path d="M180.87,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z"/>
-                <path d="M226.7,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z"/>
-                <path d="M303.93,10.07c0-5.5,4.5-10.07,10.33-10.07s10.33,4.57,10.33,10.07-4.5,10.07-10.33,10.07-10.33-4.57-10.33-10.07ZM304.59,29.27h19.34v61.45h-19.34V29.27Z"/>
-                <path d="M331.01,29.27h20.66l14.83,53.91h.4l14.64-53.91h20.2l-24.37,70.99h-21.79l-24.57-70.99Z"/>
-                <path d="M403.47,64.9v-.07c0-22.58,13.31-37.02,34.11-37.02s33.84,14.11,33.84,35.56v5.96h-48.87c.2,11.32,6.36,17.95,16.22,17.95,7.95,0,12.78-4.37,14.17-8.34l.13-.4h17.75l-.2.73c-2.19,10.46-11.99,22.45-32.25,22.45-21.72,0-34.9-14.11-34.9-36.82ZM422.74,57.15h30.13c-1.19-9.8-6.95-14.9-14.97-14.9s-13.91,5.3-15.17,14.9Z"/>
-                <path d="M481.82,4.7h19.34v36.82h.4c3.64-8.81,11.12-13.71,21.79-13.71,15.36,0,24.9,10.73,24.9,27.88v44.57h-19.34v-40.59c0-9.93-4.9-15.83-13.71-15.83s-14.04,6.49-14.04,15.76v40.66h-19.34V4.7Z"/>
-                <path d="M561.56,122.78v-14.37c1.39.26,3.64.66,6.49.66,5.76,0,8.94-1.66,10.66-6.49l.86-2.32-25.1-70.99h21.26l14.97,55.5h.53l15.03-55.5h20.4l-24.37,72.25c-5.56,16.75-15.1,22.12-30.86,22.12-3.77,0-7.62-.46-9.87-.86Z"/>
-                <path d="M633.42,29.27h19.34v12.38h.4c2.12-8.74,7.88-13.84,16.16-13.84,2.12,0,4.11.33,5.56.73v17.02c-1.59-.66-4.24-1.06-7.02-1.06-9.54,0-15.1,5.69-15.1,16.03v39.73h-19.34V29.27Z"/>
-                <path d="M677.86,64.77v-.13c0-22.85,13.91-36.82,35.1-36.82s35.23,13.84,35.23,36.82v.13c0,23.18-13.71,36.95-35.16,36.95s-35.17-13.84-35.17-36.95ZM728.52,64.77v-.13c0-13.71-6.16-21.66-15.56-21.66s-15.43,7.95-15.43,21.66v.13c0,13.91,6.03,21.79,15.56,21.79s15.43-7.95,15.43-21.79Z"/>
-                <path d="M770.58,64.9l-22.12-35.63h21.79l12.78,23.97h.4l12.58-23.97h21.06l-22.18,35.1,21.99,35.89h-20.99l-13.51-24.64h-.4l-13.31,24.64h-20.33l22.25-35.36Z"/>
-              </svg>
-              {profile.name && <>
-                <span style={{ opacity: 0.35, fontWeight: 400, marginTop: '0.2rem' }}>|</span>
-                <span style={{ fontWeight: 600, fontSize: '0.88rem', marginTop: '0.2rem' }}>{profile.name}</span>
-              </>}
-            </div>
-            {/* Right: days to race + edit */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              {raceMsg && <span style={{ fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.06em' }}>{raceMsg}</span>}
-              <button onClick={onEdit} style={{ background: '#000', color: YELLOW, border: 'none', borderRadius: 4, padding: '0.3rem 0.75rem', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', letterSpacing: '0.05em' }}>Edit</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Station Line Chart (pure SVG) ───────────────────────────────────────────
-
-    function StationChart({ station, sessions }) {
-      const [tooltip, setTooltip] = useState(null);
-
-      const data = sessions
-        .filter(s => s.stationId === station.id)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .map((s, i) => ({ sessionNum: i + 1, time: s.timeInSeconds, date: s.date }));
-
-      if (data.length < 2) return (
-        <div style={{ ...cardBase, padding: '1.25rem' }}>
-          <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{station.name}</div>
-          <div style={{ fontSize: '0.72rem', color: '#777', marginBottom: '0.75rem' }}>{station.detail}</div>
-          <div style={{ color: '#777', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem 0', border: '1px dashed #1e1e1e', borderRadius: 8 }}>Log 2+ sessions to see chart</div>
-        </div>
-      );
-
-      const times = data.map(d => d.time);
-      const minT = Math.min(...times), maxT = Math.max(...times);
-
-      // SVG layout
-      const W = 400, H = 155;
-      const padL = 46, padR = 8, padT = 8, padB = 20;
-      const plotW = W - padL - padR, plotH = H - padT - padB;
-
-      // Lower time = higher position (line goes up as you improve)
-      const toY = t => maxT === minT
-        ? padT + plotH / 2
-        : padT + plotH * (t - minT) / (maxT - minT);
-      const toX = i => padL + (i / (data.length - 1)) * plotW;
-
-      // 3 y-axis ticks
-      const yTicks = maxT === minT
-        ? [minT]
-        : [maxT, Math.round((minT + maxT) / 2), minT];
-
-      const polyPts = data.map((d, i) => `${toX(i)},${toY(d.time)}`).join(' ');
-
-      return (
-        <div style={{ ...cardBase, padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{station.name}</div>
-              <div style={{ fontSize: '0.72rem', color: '#777' }}>{station.detail}</div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.62rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Best</div>
-              <div style={{ fontWeight: 800, color: YELLOW, fontSize: '0.9rem', fontVariantNumeric: 'tabular-nums' }}>{formatTime(minT)}</div>
-            </div>
-          </div>
-          <div style={{ position: 'relative' }}>
-            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
-              {/* Horizontal grid lines */}
-              {yTicks.map((t, i) => (
-                <line key={i} x1={padL} x2={W - padR} y1={toY(t)} y2={toY(t)} stroke="#1c1c1c" strokeWidth={1} />
-              ))}
-              {/* Y-axis labels */}
-              {yTicks.map((t, i) => (
-                <text key={i} x={padL - 4} y={toY(t) + 4} textAnchor="end" fill="#444" fontSize={9} fontFamily="monospace">{formatTime(t)}</text>
-              ))}
-              {/* X-axis labels */}
-              {data.map((d, i) => (
-                <text key={i} x={toX(i)} y={H - 4} textAnchor="middle" fill="#444" fontSize={9}>{d.sessionNum}</text>
-              ))}
-              {/* Line */}
-              <polyline points={polyPts} fill="none" stroke={YELLOW} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
-              {/* Dots */}
-              {data.map((d, i) => (
-                <circle key={i} cx={toX(i)} cy={toY(d.time)} r={4} fill={YELLOW}
-                  onMouseEnter={e => setTooltip({ ...d, mx: e.clientX, my: e.clientY })}
-                  onMouseLeave={() => setTooltip(null)}
-                  style={{ cursor: 'crosshair' }}
-                />
-              ))}
-            </svg>
-            {tooltip && (
-              <div style={{ position: 'fixed', left: tooltip.mx + 14, top: tooltip.my - 14, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: '0.4rem 0.7rem', fontSize: '0.8rem', zIndex: 1000, pointerEvents: 'none' }}>
-                <div style={{ color: '#888', fontSize: '0.72rem', marginBottom: '0.1rem' }}>Session {tooltip.sessionNum} · {tooltip.date}</div>
-                <div style={{ color: YELLOW, fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{formatTime(tooltip.time)}</div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Total Time Analysis ──────────────────────────────────────────────────────
-
-    function TotalTimeAnalysis({ sessions, profile }) {
-      const [expanded, setExpanded] = useState(false);
-      if (!profile.gender || !profile.age) return null;
-      const gender = profile.gender || 'male';
-      const ageGroup = getAgeGroup(profile.age);
-      const af = AGE_FACTORS[ageGroup] || 1.0;
-      const bms = BASE_BENCHMARKS[gender] || BASE_BENCHMARKS.male;
-
-      const totalBMs = {};
-      ['elite','advanced','intermediate','beginner'].forEach(tier => {
-        let total = 0;
-        Object.entries(bms).forEach(([sid, bm]) => {
-          const val = Math.round(bm[tier] * af);
-          total += sid === 'run-1km' ? val * 8 : val;
-        });
-        totalBMs[tier] = total;
-      });
-
-      const runTotalFn = (ss) => {
-        if (!ss.length) return 0;
-        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
-        if (sorted.length >= 8) return sorted.slice(-8).reduce((s, r) => s + r.timeInSeconds, 0);
-        const avg = sorted.reduce((s, r) => s + r.timeInSeconds, 0) / sorted.length;
-        return Math.round(avg * 8);
-      };
-
-      const stationsWithData = STATIONS.map(st => {
-        const ss = sessions.filter(s => s.stationId === st.id);
-        if (!ss.length) return null;
-        const pb = st.id === 'run-1km' ? runTotalFn(ss) : Math.min(...ss.map(s => s.timeInSeconds));
-        return { st, pb };
-      }).filter(Boolean);
-
-      const totalPB = stationsWithData.reduce((sum, d) => sum + d.pb, 0);
-      const stationCount = stationsWithData.length;
-      const complete = stationCount === STATIONS.length;
-
-      if (!complete) return (
-        <div style={{ ...cardBase, padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ fontSize: '1.5rem', opacity: 0.25 }}>🏁</div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#555' }}>Total Time Analysis</div>
-            <div style={{ fontSize: '0.72rem', color: '#444', marginTop: '0.2rem' }}>
-              Log all {STATIONS.length} stations to unlock your full race time breakdown
-            </div>
-            <div style={{ fontSize: '0.68rem', color: '#333', marginTop: '0.3rem' }}>
-              {stationCount}/{STATIONS.length} stations tracked
-            </div>
-          </div>
-        </div>
-      );
-      const tier = getTier(totalPB, totalBMs);
-      const tc = tier ? TIER_CONFIG[tier] : null;
-      const pct = Math.round(Math.abs(totalPB - totalBMs.intermediate) / totalBMs.intermediate * 100);
-      const faster = totalPB < totalBMs.intermediate;
-
-      // How far to next tier
-      const tierOrder = ['elite','advanced','intermediate','beginner'];
-      const tierIdx = tierOrder.indexOf(tier);
-      const nextTier = tierIdx > 0 ? tierOrder[tierIdx - 1] : null;
-      const toNext = nextTier ? totalPB - totalBMs[nextTier] : null;
-
-      return (
-        <div style={{ ...cardBase, padding: '1.25rem', cursor: 'pointer' }} onClick={() => setExpanded(e => !e)}>
-          {/* Header row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Total Time Analysis</div>
-              <div style={{ fontSize: '0.7rem', color: '#555', marginTop: '0.15rem' }}>
-                {ageGroup} · {gender === 'male' ? 'Male' : 'Female'} · All stations
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {tc && (
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.2rem 0.6rem', borderRadius: 20, whiteSpace: 'nowrap' }}>
-                  {tc.icon} {tc.label}
-                </span>
-              )}
-              <span style={{ fontSize: '0.75rem', color: '#555' }}>{expanded ? '▲' : '▼'}</span>
-            </div>
-          </div>
-
-          {/* Summary row — always visible */}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.75rem' }}>
-            <div style={{ fontWeight: 900, fontSize: '1.9rem', letterSpacing: '-0.02em', lineHeight: 1 }}>{formatDuration(totalPB)}</div>
-            <div style={{ fontSize: '0.72rem', color: faster ? '#4ade80' : '#f87171' }}>
-              {pct}% {faster ? 'faster' : 'slower'} than intermediate
-            </div>
-          </div>
-          {toNext && (
-            <div style={{ fontSize: '0.7rem', color: '#555', marginTop: '0.3rem' }}>
-              {formatTime(toNext)} to reach <span style={{ color: TIER_CONFIG[nextTier].color }}>{TIER_CONFIG[nextTier].label}</span>
-            </div>
-          )}
-
-          {/* Expandable detail */}
-          {expanded && (
-            <div style={{ marginTop: '1rem', borderTop: '1px solid #1a1a1a', paddingTop: '1rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {['elite','advanced','intermediate','beginner'].map(t => {
-                  const tc2 = TIER_CONFIG[t];
-                  const isUser = tier === t;
-                  return (
-                    <div key={t} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.65rem', borderRadius: 8, background: isUser ? tc2.bg : '#0d0d0d', border: `1px solid ${isUser ? tc2.border : '#1a1a1a'}` }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: isUser ? tc2.color : '#555' }}>{tc2.icon} {tc2.label}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {isUser && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc2.color, opacity: 0.8 }}>you</span>}
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: isUser ? tc2.color : '#444', fontVariantNumeric: 'tabular-nums' }}>
-                          {t === 'beginner' ? '> ' : '≤ '}{formatDuration(totalBMs[t])}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              {/* Per-station breakdown */}
-              <div style={{ marginTop: '1rem' }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>Station breakdown</div>
-                {stationsWithData.map(({ st, pb }) => {
-                  const bm = getBenchmark(st.id, gender, ageGroup);
-                  const t = getTier(pb, bm);
-                  const tc3 = t ? TIER_CONFIG[t] : null;
-                  return (
-                    <div key={st.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem 0', borderBottom: '1px solid #151515' }}>
-                      <span style={{ fontSize: '0.72rem', color: '#666' }}>{st.name}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {tc3 && <span style={{ fontSize: '0.62rem', fontWeight: 700, color: tc3.color }}>{tc3.icon}</span>}
-                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#aaa', fontVariantNumeric: 'tabular-nums' }}>{formatTime(pb)}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // ─── Weakness Radar Chart (pure SVG) ─────────────────────────────────────────
-
-    function WeaknessRadar({ sessions, profile }) {
-      const [tooltip, setTooltip] = useState(null);
-      const hasProfile = profile.gender && profile.age;
-
-      if (!hasProfile) return (
-        <div style={{ ...cardBase, padding: '2rem', textAlign: 'center', color: '#888' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>📡</div>
-          <div style={{ fontSize: '0.88rem', marginBottom: '0.4rem' }}>Radar analysis requires your profile.</div>
-          <div style={{ fontSize: '0.78rem', color: '#777' }}>Add your gender and age in Setup to unlock.</div>
-        </div>
-      );
-
-      const radarData = STATIONS.map(station => {
-        const ss = sessions.filter(s => s.stationId === station.id);
-        const pb = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
-        return { label: station.short, score: pb != null ? getRadarScore(pb, bm) : 0, hasData: pb != null };
-      });
-
-      const n = radarData.length;
-      const avgScore = Math.round(
-        radarData.filter(d => d.hasData).reduce((s, d) => s + d.score, 0) /
-        Math.max(1, radarData.filter(d => d.hasData).length)
-      );
-
-      // SVG polar helpers
-      const cx = 200, cy = 190, r = 120, labelR = 148;
-      const angleOf = i => -Math.PI / 2 + i * 2 * Math.PI / n;
-      const polar = (radius, angle) => [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
-
-      // Grid ring polygon path
-      const ringPath = pct => {
-        const pts = radarData.map((_, i) => polar(r * pct, angleOf(i)));
-        return pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ') + ' Z';
-      };
-
-      // Data polygon
-      const dataPath = radarData.map((d, i) => {
-        const [x, y] = polar(r * (d.score / 100), angleOf(i));
-        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ') + ' Z';
-
-      return (
-        <div style={{ ...cardBase, padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Performance Radar</div>
-              <div style={{ fontSize: '0.75rem', color: '#777', marginTop: '0.15rem' }}>
-                {profile.gender === 'male' ? 'Male' : 'Female'} · {getAgeGroup(profile.age)} · {profile.division || 'Open'}
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.62rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Avg Score</div>
-              <div style={{ fontWeight: 900, fontSize: '1.4rem', color: avgScore >= 70 ? '#4ade80' : avgScore >= 40 ? YELLOW : '#f87171' }}>{avgScore}</div>
-            </div>
-          </div>
-          <div style={{ position: 'relative' }}>
-            <svg viewBox="0 0 400 380" style={{ width: '100%', display: 'block' }}>
-              {/* Grid rings */}
-              {[0.33, 0.66, 1].map((pct, i) => (
-                <path key={i} d={ringPath(pct)} fill="none" stroke="#1e1e1e" strokeWidth={1} />
-              ))}
-              {/* Ring % labels at top spoke */}
-              {[{ pct: 0.33, label: '33' }, { pct: 0.66, label: '66' }, { pct: 1, label: '100' }].map(({ pct, label }) => (
-                <text key={label} x={cx + 3} y={cy - r * pct - 3} fill="#2e2e2e" fontSize={8} textAnchor="start">{label}</text>
-              ))}
-              {/* Spokes */}
-              {radarData.map((_, i) => {
-                const [ex, ey] = polar(r, angleOf(i));
-                return <line key={i} x1={cx} y1={cy} x2={ex.toFixed(1)} y2={ey.toFixed(1)} stroke="#1e1e1e" strokeWidth={1} />;
-              })}
-              {/* Data fill */}
-              <path d={dataPath} fill={YELLOW} fillOpacity={0.13} stroke={YELLOW} strokeWidth={2} strokeLinejoin="round" />
-              {/* Data dots + hover */}
-              {radarData.map((d, i) => {
-                const [dx, dy] = polar(r * (d.score / 100), angleOf(i));
-                return (
-                  <circle key={i} cx={dx.toFixed(1)} cy={dy.toFixed(1)} r={4}
-                    fill={d.hasData ? YELLOW : '#2a2a2a'} stroke={d.hasData ? 'none' : '#444'} strokeWidth={1}
-                    onMouseEnter={e => setTooltip({ label: d.label, score: d.score, hasData: d.hasData, mx: e.clientX, my: e.clientY })}
-                    onMouseLeave={() => setTooltip(null)}
-                    style={{ cursor: 'default' }}
-                  />
-                );
-              })}
-              {/* Station labels */}
-              {radarData.map((d, i) => {
-                const a = angleOf(i);
-                const [lx, ly] = polar(labelR, a);
-                const anchor = Math.cos(a) > 0.2 ? 'start' : Math.cos(a) < -0.2 ? 'end' : 'middle';
-                return (
-                  <text key={i} x={lx.toFixed(1)} y={(ly + 4).toFixed(1)}
-                    textAnchor={anchor} fill={d.hasData ? '#666' : '#333'}
-                    fontSize={9} fontFamily="-apple-system, Arial, sans-serif" fontWeight={600}
-                  >{d.label}</text>
-                );
-              })}
-            </svg>
-            {tooltip && (
-              <div style={{ position: 'fixed', left: tooltip.mx + 14, top: tooltip.my - 14, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: '0.4rem 0.7rem', fontSize: '0.8rem', zIndex: 1000, pointerEvents: 'none' }}>
-                <div style={{ color: '#888', fontSize: '0.72rem', marginBottom: '0.1rem' }}>{tooltip.label}</div>
-                <div style={{ color: YELLOW, fontWeight: 800 }}>{tooltip.hasData ? `${tooltip.score}/100` : 'No data yet'}</div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Training Tips Section ────────────────────────────────────────────────────
-
-    function TrainingTips({ sessions, profile }) {
-      const [expanded, setExpanded] = useState(null);
-      const hasProfile = profile.gender && profile.age;
-
-      const analyses = STATIONS.map(station => {
-        const ss = sessions.filter(s => s.stationId === station.id);
-        if (ss.length === 0) return null;
-        const pb = Math.min(...ss.map(s => s.timeInSeconds));
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
-        const tier = getTier(pb, bm);
-        const pct = getPctVsAvg(pb, bm);
-        const tips = TRAINING_TIPS[station.id];
-        const tip = tips?.[tier] || tips?.intermediate;
-        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
-        const score = bm ? getRadarScore(pb, bm) : null;
-        return { station, pb, bm, tier, pct, tip, trend, score };
-      }).filter(Boolean).sort((a, b) => (a.score ?? 100) - (b.score ?? 100));
-
-      if (analyses.length === 0) return null;
-
-      return (
-        <div>
-          <h3 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.02em', color: '#777' }}>
-            Station Analysis {hasProfile ? '' : <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 400, textTransform: 'none' }}>— add profile for tier benchmarks</span>}
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-            {analyses.map(({ station, pb, bm, tier, pct, tip, trend, score }) => {
-              const isOpen = expanded === station.id;
-              const c = tier ? TIER_CONFIG[tier] : null;
-              return (
-                <div key={station.id} style={{ ...cardBase, overflow: 'hidden', border: `1px solid ${isOpen ? '#2a2a2a' : '#1e1e1e'}` }}>
-                  {/* Row */}
-                  <button
-                    onClick={() => setExpanded(isOpen ? null : station.id)}
-                    style={{
-                      width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-                      padding: '0.75rem 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.45rem', textAlign: 'left',
-                    }}
-                  >
-                    {/* Top line: number + name + chevron */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <div style={{ width: 22, height: 22, borderRadius: '50%', background: tier ? `${c.color}15` : '#1a1a1a', border: `1px solid ${tier ? `${c.color}30` : '#2a2a2a'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 800, color: tier ? c.color : '#555', flexShrink: 0 }}>
-                        {station.num}
-                      </div>
-                      <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#ddd', flex: 1 }}>{station.name}</span>
-                      <span style={{ fontSize: '0.62rem', color: '#888' }}>{station.detail}</span>
-                      <span style={{ color: '#555', fontSize: '0.7rem', flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
-                    </div>
-
-                    {/* Bottom line: stats */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', paddingLeft: '1.7rem' }}>
-                      {trend != null && (
-                        <span style={{ fontSize: '0.8rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
-                      )}
-                      {bm && pct != null && (
-                        <span style={{ fontSize: '0.72rem', color: pb <= bm.intermediate ? '#4ade80' : '#888', whiteSpace: 'nowrap' }}>
-                          {pb < bm.intermediate ? (pct > 0 ? `${pct}% faster` : '~mid') : pb > bm.intermediate ? (pct > 0 ? `${pct}% slower` : '~mid') : 'mid'}
-                        </span>
-                      )}
-                      <span style={{ fontWeight: 800, fontSize: '1rem', fontVariantNumeric: 'tabular-nums', color: YELLOW }}>{formatTime(pb)}</span>
-                      {tier && <TierBadge tier={tier} />}
-                      {score != null && (
-                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#0f0f0f', border: '1px solid #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.63rem', fontWeight: 800, color: score >= 70 ? '#4ade80' : score >= 40 ? YELLOW : '#f87171' }}>
-                          {score}
-                        </div>
-                      )}
-                    </div>
-                  </button>
-
-                  {/* Expanded tip + benchmark */}
-                  {isOpen && (
-                    <div style={{ borderTop: '1px solid #1a1a1a', padding: '0.85rem 1.1rem', background: '#0d0d0d' }}>
-                      {tip && (
-                        <div style={{ marginBottom: bm ? '0.85rem' : 0 }}>
-                          <div style={{ fontSize: '0.68rem', fontWeight: 700, color: tier ? c.color : '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>
-                            {tier ? `${c.icon} ${c.label} Tip` : '💡 Training Tip'}
-                          </div>
-                          <div style={{ fontSize: '0.85rem', color: '#bbb', lineHeight: 1.55 }}>{tip}</div>
-                        </div>
-                      )}
-                      {bm && (() => {
-                        const span = bm.beginner - bm.elite;
-                        const sMid = Math.round((bm.beginner - bm.intermediate) / span * 100);
-                        const sAdv = Math.round((bm.beginner - bm.advanced)     / span * 100);
-                        const tiers = [
-                          { label: 'Beginner',     val: bm.beginner,     col: '#666',    scoreRange: `0 – ${sMid - 1}` },
-                          { label: 'Intermediate', val: bm.intermediate, col: '#60a5fa', scoreRange: `${sMid} – ${sAdv - 1}` },
-                          { label: 'Advanced',     val: bm.advanced,     col: '#4ade80', scoreRange: `${sAdv} – 99` },
-                          { label: 'Elite',        val: bm.elite,        col: '#FFD700', scoreRange: '100' },
-                        ];
-                        return (
-                          <div className="tier-grid">
-                            {tiers.map(({ label, val, col, scoreRange }) => (
-                              <div key={label} style={{ background: '#111', border: '1px solid #222', borderRadius: 6, padding: '0.4rem 0.7rem' }}>
-                                <div style={{ fontSize: '0.62rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.15rem' }}>{label}</div>
-                                <div style={{ fontWeight: 700, fontSize: '0.85rem', color: col, fontVariantNumeric: 'tabular-nums' }}>{formatTime(val)}</div>
-                                <div style={{ fontSize: '0.6rem', color: '#444', marginTop: '0.2rem' }}>score {scoreRange}</div>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Setup Page ───────────────────────────────────────────────────────────────
-
-    const COUNTRIES = [
-      { code: 'AU', name: 'Australia', flag: '🇦🇺' }, { code: 'AT', name: 'Austria', flag: '🇦🇹' },
-      { code: 'BE', name: 'Belgium', flag: '🇧🇪' }, { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
-      { code: 'CA', name: 'Canada', flag: '🇨🇦' }, { code: 'CN', name: 'China', flag: '🇨🇳' },
-      { code: 'HR', name: 'Croatia', flag: '🇭🇷' }, { code: 'CZ', name: 'Czech Republic', flag: '🇨🇿' },
-      { code: 'DK', name: 'Denmark', flag: '🇩🇰' }, { code: 'FI', name: 'Finland', flag: '🇫🇮' },
-      { code: 'FR', name: 'France', flag: '🇫🇷' }, { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-      { code: 'GR', name: 'Greece', flag: '🇬🇷' }, { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
-      { code: 'HU', name: 'Hungary', flag: '🇭🇺' }, { code: 'IN', name: 'India', flag: '🇮🇳' },
-      { code: 'ID', name: 'Indonesia', flag: '🇮🇩' }, { code: 'IE', name: 'Ireland', flag: '🇮🇪' },
-      { code: 'IL', name: 'Israel', flag: '🇮🇱' }, { code: 'IT', name: 'Italy', flag: '🇮🇹' },
-      { code: 'JP', name: 'Japan', flag: '🇯🇵' }, { code: 'MY', name: 'Malaysia', flag: '🇲🇾' },
-      { code: 'MX', name: 'Mexico', flag: '🇲🇽' }, { code: 'NL', name: 'Netherlands', flag: '🇳🇱' },
-      { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' }, { code: 'NO', name: 'Norway', flag: '🇳🇴' },
-      { code: 'PH', name: 'Philippines', flag: '🇵🇭' }, { code: 'PL', name: 'Poland', flag: '🇵🇱' },
-      { code: 'PT', name: 'Portugal', flag: '🇵🇹' }, { code: 'RO', name: 'Romania', flag: '🇷🇴' },
-      { code: 'SG', name: 'Singapore', flag: '🇸🇬' }, { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
-      { code: 'KR', name: 'South Korea', flag: '🇰🇷' }, { code: 'ES', name: 'Spain', flag: '🇪🇸' },
-      { code: 'SE', name: 'Sweden', flag: '🇸🇪' }, { code: 'CH', name: 'Switzerland', flag: '🇨🇭' },
-      { code: 'TH', name: 'Thailand', flag: '🇹🇭' }, { code: 'TR', name: 'Turkey', flag: '🇹🇷' },
-      { code: 'AE', name: 'UAE', flag: '🇦🇪' }, { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-      { code: 'US', name: 'United States', flag: '🇺🇸' }, { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
-    ].sort((a, b) => a.name.localeCompare(b.name));
-
-    function SetupPage({ profile, onSave }) {
-      const [name,       setName]       = useState(profile.name || '');
-      const [date,       setDate]       = useState(profile.competitionDate || '');
-      const [gender,     setGender]     = useState(profile.gender || '');
-      const [age,        setAge]        = useState(profile.age || '');
-      const [weight,     setWeight]     = useState(profile.weight || '');
-      const [division,   setDivision]   = useState(profile.division || 'open');
-      const [country,    setCountry]    = useState(profile.country || '');
-      const [countrySearch, setCountrySearch] = useState('');
-      const [showCountryDrop, setShowCountryDrop] = useState(false);
-      const [saved,      setSaved]      = useState(false);
-
-      const selectedCountry = COUNTRIES.find(c => c.code === country);
-      const filteredCountries = countrySearch
-        ? COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
-        : COUNTRIES;
-
-      const ageGroup = getAgeGroup(age);
-      const days     = getDaysUntil(date);
-
-      const save = () => {
-        onSave({ name: name.trim(), competitionDate: date, gender, age, weight, division, country });
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      };
-
-      const focus = e => e.target.style.borderColor = YELLOW;
-      const blur  = e => e.target.style.borderColor = '#333';
-
-      const selectStyle = { ...inputBase, backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' fill=\'%23666\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'calc(100% - 12px) center', paddingRight: '2.25rem' };
-
-      return (
-        <div className="fade-in" style={{ maxWidth: 520 }}>
-          <h2 style={{ fontWeight: 900, fontSize: '1.6rem', marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>Athlete Setup</h2>
-          <p style={{ color: '#777', fontSize: '0.88rem', marginBottom: '2rem' }}>Configure your profile to unlock benchmark analysis and race countdown.</p>
-
-          {/* Section: Identity */}
-          <div style={{ marginBottom: '0.5rem', fontSize: '0.68rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Identity</div>
-          <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-            <div>
-              <label style={labelBase}>Athlete Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && save()} placeholder="Your name" style={inputBase} onFocus={focus} onBlur={blur} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={labelBase}>Gender</label>
-                <select value={gender} onChange={e => setGender(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
-                  <option value="">Select…</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-              <div>
-                <label style={labelBase}>Age</label>
-                <input type="number" value={age} onChange={e => setAge(e.target.value)} placeholder="e.g. 32" min={16} max={99} style={inputBase} onFocus={focus} onBlur={blur} />
-                {ageGroup && <div style={{ fontSize: '0.72rem', color: YELLOW, marginTop: '0.35rem', fontWeight: 600 }}>Age group: {ageGroup}</div>}
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={labelBase}>Weight (kg)</label>
-                <input type="number" value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 70" min={30} max={200} style={inputBase} onFocus={focus} onBlur={blur} />
-              </div>
-              <div>
-                <label style={labelBase}>Division</label>
-                <select value={division} onChange={e => setDivision(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
-                  <option value="open">Open</option>
-                  <option value="pro">Pro</option>
-                  <option value="60+">60+</option>
-                </select>
-              </div>
-            </div>
-            <div style={{ position: 'relative' }}>
-              <label style={labelBase}>Representing Country</label>
-              <div onClick={() => setShowCountryDrop(v => !v)}
-                style={{ ...inputBase, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', userSelect: 'none', borderColor: showCountryDrop ? YELLOW : '#333' }}>
-                {selectedCountry
-                  ? <><span style={{ fontSize: '1.1rem' }}>{selectedCountry.flag}</span><span style={{ color: '#ccc' }}>{selectedCountry.name}</span></>
-                  : <span style={{ color: '#444' }}>Select country…</span>}
-              </div>
-              {showCountryDrop && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, background: '#161616', border: '1px solid #333', borderRadius: 10, marginTop: 4, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
-                  <input autoFocus type="text" placeholder="Search…" value={countrySearch} onChange={e => setCountrySearch(e.target.value)}
-                    style={{ width: '100%', background: '#1a1a1a', border: 'none', borderBottom: '1px solid #222', color: '#ccc', padding: '0.6rem 0.9rem', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box' }} />
-                  <div style={{ maxHeight: 200, overflowY: 'auto' }}>
-                    {country && <div onClick={() => { setCountry(''); setShowCountryDrop(false); setCountrySearch(''); }}
-                      style={{ padding: '0.55rem 0.9rem', fontSize: '0.82rem', color: '#555', cursor: 'pointer' }}>— None</div>}
-                    {filteredCountries.map(c => (
-                      <div key={c.code} onClick={() => { setCountry(c.code); setShowCountryDrop(false); setCountrySearch(''); }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 0.9rem', fontSize: '0.82rem', color: c.code === country ? YELLOW : '#ccc', background: c.code === country ? '#1a1400' : 'transparent', cursor: 'pointer' }}>
-                        <span style={{ fontSize: '1.1rem' }}>{c.flag}</span>{c.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Section: Race */}
-          <div style={{ marginBottom: '0.5rem', fontSize: '0.68rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Race</div>
-          <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1.5rem' }}>
-            <label style={labelBase}>Competition Date</label>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} style={inputBase} onFocus={focus} onBlur={blur} />
-            {date && days !== null && (
-              <div style={{ marginTop: '0.6rem', padding: '0.65rem 1rem', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 8, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '1.2rem' }}>{days > 0 ? '🏁' : days === 0 ? '🔥' : '✅'}</span>
-                <div>
-                  <div style={{ fontWeight: 700, color: days >= 0 ? YELLOW : '#aaa', fontSize: '0.88rem' }}>
-                    {days > 0 ? `${days} days to race day` : days === 0 ? 'Race day is today!' : `Race was ${Math.abs(days)} days ago`}
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#888' }}>{formatDate(date)}</div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={save}
-            disabled={!name.trim()}
-            style={{
-              background: saved ? '#16a34a' : YELLOW, color: saved ? '#fff' : '#000', border: 'none',
-              padding: '0.9rem', borderRadius: 8, fontWeight: 800, fontSize: '0.95rem',
-              cursor: name.trim() ? 'pointer' : 'not-allowed', opacity: name.trim() ? 1 : 0.5,
-              transition: 'all 0.2s', width: '100%', letterSpacing: '0.02em',
-            }}
-          >
-            {saved ? '✓ Saved!' : 'Save Profile'}
-          </button>
-
-        </div>
-      );
-    }
-
-    // ─── Station Detail Page ──────────────────────────────────────────────────────
-
-    function StationDetailPage({ station, sessions, profile, onAdd, onDelete, onBack }) {
-      const [date,      setDate]      = useState(today());
-      const [timeInput, setTimeInput] = useState('');
-      const [error,     setError]     = useState('');
-      const [success,   setSuccess]   = useState(false);
-
-      // Stopwatch
-      const [swRunning,  setSwRunning]  = useState(false);
-      const [swElapsed,  setSwElapsed]  = useState(0);   // ms
-      const swStart = React.useRef(null);
-      const swTick  = React.useRef(null);
-
-      const swBegin = () => {
-        swStart.current = Date.now() - swElapsed;
-        swTick.current  = setInterval(() => setSwElapsed(Date.now() - swStart.current), 100);
-        setSwRunning(true);
-      };
-      const swPause = () => {
-        clearInterval(swTick.current);
-        setSwRunning(false);
-      };
-      const swFinish = () => {
-        clearInterval(swTick.current);
-        setSwRunning(false);
-        // auto-fill + immediately log
-        const totalSecs = Math.round(swElapsed / 1000);
-        const m = Math.floor(totalSecs / 60);
-        const s = totalSecs % 60;
-        const filled = `${m}.${String(s).padStart(2, '0')}`;
-        setTimeInput(filled);
-        setError('');
-        // log immediately
-        if (totalSecs > 0) {
-          onAdd({ stationId: station.id, date, timeInSeconds: totalSecs });
-          setSuccess(true);
-          setTimeout(() => { setSuccess(false); setSwElapsed(0); setTimeInput(''); }, 2500);
+    document.querySelectorAll('.section-label').forEach(function(el) { reveal(el); });
+    document.querySelectorAll('.section-title').forEach(function(el) { reveal(el, 60); });
+    document.querySelectorAll('.section > p').forEach(function(el) { reveal(el, 100); });
+    document.querySelectorAll('.feature-card').forEach(function(el, i) { reveal(el, 80 + i * 70); });
+    document.querySelectorAll('.section > img').forEach(function(el) { reveal(el, 100); });
+    document.querySelectorAll('.how-card').forEach(function(el, i) { reveal(el, 60 + i * 100); });
+    document.querySelectorAll('.hyrox-explainer').forEach(function(el) { reveal(el); });
+    document.querySelectorAll('.footer-cta h2').forEach(function(el) { reveal(el); });
+    document.querySelectorAll('.footer-cta .btn-primary').forEach(function(el) { reveal(el, 120); });
+    document.querySelectorAll('.kofi-section').forEach(function(el) { reveal(el); });
+
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          io.unobserve(e.target);
         }
-      };
-      const swReset = () => {
-        clearInterval(swTick.current);
-        setSwRunning(false);
-        setSwElapsed(0);
-        setTimeInput('');
-      };
-      React.useEffect(() => () => clearInterval(swTick.current), []);
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-      const swSecs = Math.floor(swElapsed / 1000);
-      const swMins = Math.floor(swSecs / 60);
-      const swDisp = `${String(swMins).padStart(2,'0')}:${String(swSecs % 60).padStart(2,'0')}.${String(Math.floor((swElapsed % 1000) / 100))}`;
+    document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+  })();
+</script>
 
-
-      const stationSessions = sessions.filter(s => s.stationId === station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
-      const displaySessions = [...stationSessions].reverse();
-      const pb       = stationSessions.length > 0 ? Math.min(...stationSessions.map(s => s.timeInSeconds)) : null;
-      const latest   = stationSessions.length > 0 ? stationSessions[stationSessions.length - 1].timeInSeconds : null;
-      const vsPrev   = stationSessions.length >= 2 ? stationSessions[stationSessions.length - 1].timeInSeconds - stationSessions[stationSessions.length - 2].timeInSeconds : null;
-
-      const handleSubmit = () => {
-        if (!timeInput.trim()) { setError('Please enter a time.'); return; }
-        const secs = parseTime(timeInput);
-        if (isNaN(secs) || secs <= 0) { setError('Invalid — use mm:ss or seconds'); return; }
-        setError('');
-        onAdd({ stationId: station.id, date, timeInSeconds: secs });
-        setTimeInput('');
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 2000);
-      };
-
-      const focus = e => e.target.style.borderColor = YELLOW;
-      const blur  = e => e.target.style.borderColor = '#333';
-
-      return (
-        <div className="fade-in">
-          {/* Back + header */}
-          <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#777', cursor: 'pointer', fontSize: '0.82rem', marginBottom: '1.25rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            ← Back to Stations
-          </button>
-          {/* Station header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-            <span style={{ fontSize: '2rem' }}>{station.icon}</span>
-            <div>
-              <h2 style={{ fontWeight: 900, fontSize: '1.6rem', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{station.name}</h2>
-              <div style={{ fontSize: '0.78rem', color: '#777', marginTop: '0.2rem' }}>{station.detail} · {station.num === '↺' ? 'Run between stations' : `Station ${station.num}`}</div>
-            </div>
-          </div>
-
-          {/* Equipment weight */}
-          {(() => {
-            const division = (profile && profile.division) || 'open';
-            const gender   = (profile && profile.gender)   || 'male';
-            const weight   = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
-            if (!weight) return null;
-            return (
-              <div style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.68rem', color: '#777', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Equipment</span>
-                  <span style={{ fontSize: '0.72rem', color: '#aaa', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.15rem 0.55rem', fontWeight: 600 }}>{weight}</span>
-                  <span style={{ fontSize: '0.65rem', color: '#444' }}>{division === '60+' ? '60+ div' : division === 'pro' ? 'Pro div' : 'Open div'} · {gender === 'male' ? 'Male' : 'Female'}</span>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* 1km run note */}
-          {station.id === 'run-1km' && (() => {
-            const runCount = stationSessions.length;
-            return (
-              <div style={{ background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 8, padding: '0.7rem 1rem', marginBottom: '1rem', fontSize: '0.75rem', color: '#666', lineHeight: 1.55 }}>
-                🏃 <strong style={{ color: '#888' }}>Log each 1km run separately.</strong> Total race run time is calculated as{' '}
-                {runCount >= 8
-                  ? <span style={{ color: '#4ade80' }}>the sum of your last 8 logged splits ({runCount} logged).</span>
-                  : <span>average × 8 until you have 8 splits logged <span style={{ color: '#4ade80' }}>({runCount}/8)</span>.</span>
-                }
-              </div>
-            );
-          })()}
-
-          {/* Log form */}
-          <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Date</div>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ ...inputBase, fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time (mm.ss)</div>
-                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="00.00" style={{ ...inputBase, fontVariantNumeric: 'tabular-nums', fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
-              </div>
-            </div>
-            {(() => { const swActive = swElapsed > 0 && !success;
-              return <button onClick={handleSubmit} disabled={swActive} style={{ width: '100%', background: success ? '#16a34a' : swActive ? '#222' : YELLOW, color: success ? '#fff' : swActive ? '#555' : '#000', border: swActive ? '1px solid #333' : 'none', padding: '0.85rem', borderRadius: 8, fontWeight: 800, fontSize: '1rem', cursor: swActive ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }}>
-              {success ? '✓ Logged!' : swActive ? '⏱ Stopwatch running…' : '+ LOG SESSION'}
-            </button>; })()}
-          </div>
-          {/* Stopwatch */}
-          <div style={{ ...cardBase, padding: '1.5rem', marginBottom: '1.5rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Stopwatch</div>
-            <div style={{ fontWeight: 900, fontSize: '3rem', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', color: success ? '#4ade80' : swRunning ? YELLOW : swElapsed > 0 ? '#aaa' : '#fff', lineHeight: 1, marginBottom: '1.25rem', fontFamily: 'monospace' }}>
-              {success ? '✓ Logged!' : swDisp}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
-              {!swRunning && swElapsed === 0 && !success && (
-                <button onClick={swBegin} style={{ background: YELLOW, color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 2.5rem', fontWeight: 800, fontSize: '1rem', cursor: 'pointer' }}>▶ Start</button>
-              )}
-              {swRunning && (
-                <>
-                  <button onClick={swPause} style={{ background: '#333', color: '#fff', border: '1px solid #444', borderRadius: 8, padding: '0.75rem 1.5rem', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer' }}>⏸ Pause</button>
-                  <button onClick={swFinish} style={{ background: '#4ade80', color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.5rem', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer' }}>⏹ Stop & Log</button>
-                </>
-              )}
-              {!swRunning && swElapsed > 0 && !success && (
-                <>
-                  <button onClick={swBegin} style={{ background: YELLOW, color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.25rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer' }}>▶ Resume</button>
-                  <button onClick={swFinish} style={{ background: '#4ade80', color: '#000', border: 'none', borderRadius: 8, padding: '0.75rem 1.25rem', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer' }}>⏹ Stop & Log</button>
-                  <button onClick={swReset} style={{ background: '#1a1a1a', color: '#666', border: '1px solid #333', borderRadius: 8, padding: '0.75rem 1rem', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>↺</button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {error && <p style={{ color: '#f87171', fontSize: '0.78rem', marginBottom: '0.75rem' }}>{error}</p>}
-
-          {/* Stats row */}
-          {stationSessions.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.7rem', marginBottom: '1.5rem' }}>
-              {/* PB card with vs-prev inline */}
-              <div style={{ ...cardBase, padding: '1.25rem' }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Personal Best</div>
-                <div style={{ fontWeight: 900, fontSize: '1.9rem', color: YELLOW, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{formatTime(pb)}</div>
-                {vsPrev !== null && (
-                  <div style={{ fontSize: '0.72rem', color: vsPrev < 0 ? '#4ade80' : '#f87171', marginTop: '0.35rem', fontWeight: 600 }}>
-                    {vsPrev < 0 ? `↑ ${formatTime(Math.abs(vsPrev))} faster` : vsPrev > 0 ? `↓ ${formatTime(Math.abs(vsPrev))} slower` : 'same as prev'}
-                  </div>
-                )}
-              </div>
-              <StatCard label="Last Session"   value={formatTime(latest)} />
-              <StatCard label="Total Sessions" value={stationSessions.length} />
-            </div>
-          )}
-
-          {/* Chart */}
-          {stationSessions.length >= 2 && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Progress Over Time</div>
-              <StationChart station={station} sessions={sessions} />
-            </div>
-          )}
-
-          {/* Session history */}
-          {displaySessions.length > 0 && (
-            <div>
-              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Session History</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                {displaySessions.map((session, i) => {
-                  const prevSession = displaySessions[i + 1];
-                  const delta = prevSession ? session.timeInSeconds - prevSession.timeInSeconds : null;
-                  const isPB = session.timeInSeconds === pb;
-                  const isLatest = i === 0;
-                  return (
-                    <div key={session.id} style={{ background: isLatest ? '#161616' : '#0d0d0d', border: `1px solid ${isLatest ? '#2a2a2a' : '#1a1a1a'}`, borderRadius: 8, padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#444', minWidth: '1.2rem' }}>#{displaySessions.length - i}</span>
-                          <span style={{ fontSize: '0.78rem', color: '#777' }}>{formatDate(session.date)}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.12rem', paddingLeft: '1.7rem' }}>
-                          {isLatest && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: '#000', background: YELLOW, padding: '0.1rem 0.3rem', borderRadius: 3 }}>LATEST</span>}
-                          {isPB    && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: YELLOW, border: `1px solid ${YELLOW}`, padding: '0.1rem 0.3rem', borderRadius: 3 }}>PB</span>}
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
-                        <span style={{ fontWeight: 800, fontSize: '1rem', fontVariantNumeric: 'tabular-nums' }}>{formatTime(session.timeInSeconds)}</span>
-                        <ImprovementBadge delta={delta} />
-                        <button onClick={() => onDelete(session.id)} style={{ background: 'none', border: 'none', color: '#2a2a2a', cursor: 'pointer', fontSize: '0.9rem', padding: '0.1rem 0.25rem', borderRadius: 4, transition: 'color 0.12s' }} onMouseEnter={e => e.target.style.color = '#f87171'} onMouseLeave={e => e.target.style.color = '#2a2a2a'} title="Delete">×</button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // ─── History / Calendar Page ─────────────────────────────────────────────────
-
-    const LS_STRENGTH = 'hyrox_strength';
-
-    function CalendarPage({ sessions, profile, onDelete }) {
-      const today = new Date();
-      const [viewYear,  setViewYear]  = useState(today.getFullYear());
-      const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
-      const [selectedDate, setSelectedDate] = useState(null);
-
-      // Strength log
-      const LS_CARDIO = 'hyrox_cardio';
-
-      const [strengthLog, setStrengthLog] = React.useState(() => { try { return JSON.parse(localStorage.getItem(LS_STRENGTH) || '[]'); } catch(e) { return []; } });
-      const [showStrengthForm, setShowStrengthForm] = React.useState(false);
-      const [strDate, setStrDate] = React.useState(today.toISOString().slice(0,10));
-      const [strType, setStrType] = React.useState('');
-      const [strDuration, setStrDuration] = React.useState('');
-
-      const [cardioLog, setCardioLog] = React.useState(() => { try { return JSON.parse(localStorage.getItem(LS_CARDIO) || '[]'); } catch(e) { return []; } });
-      const [showCardioForm, setShowCardioForm] = React.useState(false);
-      const [cdDate, setCdDate] = React.useState(today.toISOString().slice(0,10));
-      const [cdType, setCdType] = React.useState('');
-      const [cdDuration, setCdDuration] = React.useState('');
-
-      // Unified workout modal
-      const [showWorkoutForm, setShowWorkoutForm] = React.useState(false);
-      const [workoutCategory, setWorkoutCategory] = React.useState(''); // 'weight' | 'cardio'
-
-      React.useEffect(() => { localStorage.setItem(LS_STRENGTH, JSON.stringify(strengthLog)); }, [strengthLog]);
-      React.useEffect(() => { localStorage.setItem(LS_CARDIO,   JSON.stringify(cardioLog));   }, [cardioLog]);
-
-      const addStrength = () => {
-        if (!strType || !strDuration) return;
-        setStrengthLog(prev => [...prev, { id: Date.now(), date: strDate, type: strType, duration: strDuration }]);
-        setShowStrengthForm(false);
-        setStrType(''); setStrDuration('');
-      };
-      const deleteStrength = (id) => setStrengthLog(prev => prev.filter(s => s.id !== id));
-
-      const addCardio = () => {
-        if (!cdType || !cdDuration) return;
-        setCardioLog(prev => [...prev, { id: Date.now(), date: cdDate, type: cdType, duration: cdDuration }]);
-        setShowCardioForm(false);
-        setCdType(''); setCdDuration('');
-      };
-      const deleteCardio = (id) => setCardioLog(prev => prev.filter(s => s.id !== id));
-
-      const strengthMap = useMemo(() => {
-        const map = {};
-        strengthLog.forEach(s => { if (!map[s.date]) map[s.date] = []; map[s.date].push(s); });
-        return map;
-      }, [strengthLog]);
-
-      const cardioMap = useMemo(() => {
-        const map = {};
-        cardioLog.forEach(s => { if (!map[s.date]) map[s.date] = []; map[s.date].push(s); });
-        return map;
-      }, [cardioLog]);
-
-      const gender   = profile.gender || 'male';
-      const ageGroup = getAgeGroup(profile.age);
-
-      // Map of "YYYY-MM-DD" → sessions[]
-      const sessionMap = useMemo(() => {
-        const map = {};
-        sessions.forEach(s => {
-          if (!map[s.date]) map[s.date] = [];
-          map[s.date].push(s);
-        });
-        return map;
-      }, [sessions]);
-
-      // Build calendar grid for current month
-      const firstDay = new Date(viewYear, viewMonth, 1);
-      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-      // Start week on Monday (0=Mon…6=Sun)
-      const startDow = (firstDay.getDay() + 6) % 7;
-      const cells = [];
-      for (let i = 0; i < startDow; i++) cells.push(null);
-      for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
-      const pad = n => String(n).padStart(2, '0');
-      const dateKey = (d) => `${viewYear}-${pad(viewMonth + 1)}-${pad(d)}`;
-      const todayKey = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-
-      const monthLabel = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      const daysTrainedThisMonth = Object.keys(sessionMap).filter(k => k.startsWith(`${viewYear}-${pad(viewMonth + 1)}`)).length;
-      const totalDaysTrained = Object.keys(sessionMap).length;
-      const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-      const prevMonth = () => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); } else setViewMonth(m => m-1); setSelectedDate(null); };
-      const nextMonth = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); } else setViewMonth(m => m+1); setSelectedDate(null); };
-
-      const selectedSessions = selectedDate ? (sessionMap[selectedDate] || []) : [];
-      const fmtDateLong = (key) => new Date(key + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
-      // Daily view state
-      const [viewMode, setViewMode] = React.useState('day'); // 'day' | 'calendar'
-      const [dayDateStr, setDayDateStr] = React.useState(todayKey);
-
-      const prevDay = () => {
-        const d = new Date(dayDateStr + 'T00:00:00');
-        d.setDate(d.getDate() - 1);
-        setDayDateStr(d.toISOString().slice(0, 10));
-      };
-      const nextDay = () => {
-        const d = new Date(dayDateStr + 'T00:00:00');
-        d.setDate(d.getDate() + 1);
-        const next = d.toISOString().slice(0, 10);
-        if (next <= todayKey) setDayDateStr(next);
-      };
-
-      const restQuotes = [
-        "Rest is where champions are built.",
-        "Your muscles grow when you rest, not when you train.",
-        "Recovery is part of the plan.",
-        "Even the best athletes take rest days.",
-        "Tomorrow's performance starts with today's recovery.",
-      ];
-      const activeQuotes = [
-        "That's what champions are made of.",
-        "One more day closer.",
-        "You showed up. That's everything.",
-        "The work is done. Be proud.",
-        "Consistency beats perfection every time.",
-      ];
-
-      const dayLoggedWeights = (strengthMap[dayDateStr] || []).length > 0;
-      const dayLoggedCardio  = (cardioMap[dayDateStr]   || []).length > 0;
-      const dayLoggedHyrox   = (sessionMap[dayDateStr]  || []).length > 0;
-      const dayDidAnything   = dayLoggedWeights || dayLoggedCardio || dayLoggedHyrox;
-      const dayQuotePool = dayDidAnything ? activeQuotes : restQuotes;
-      const dayQuote = dayQuotePool[new Date(dayDateStr + 'T00:00:00').getDate() % dayQuotePool.length];
-      const dayLabel = new Date(dayDateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      const isToday = dayDateStr === todayKey;
-
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* Heading */}
-          <div style={{ fontWeight: 900, fontSize: '1.55rem', letterSpacing: '-0.03em', color: '#fff' }}>
-            Day <span style={{ color: '#FFE600', margin: '0 0.3rem' }}>{totalDaysTrained}</span> Road to Hyrox
-          </div>
-
-          {viewMode === 'day' ? (<>
-            {/* Day navigator card */}
-            <div style={{ ...cardBase, padding: '1rem 1.25rem' }}>
-              {/* Nav row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
-                <button onClick={prevDay} style={{ background: 'none', border: 'none', color: '#666', fontSize: '1.3rem', cursor: 'pointer', padding: '0 0.3rem', lineHeight: 1 }}>‹</button>
-                <div style={{ fontSize: '1rem', color: '#fff', fontWeight: 700 }}>{isToday ? `Today · ${dayLabel}` : dayLabel}</div>
-                <button onClick={nextDay} disabled={isToday} style={{ background: 'none', border: 'none', color: isToday ? '#333' : '#666', fontSize: '1.3rem', cursor: isToday ? 'default' : 'pointer', padding: '0 0.3rem', lineHeight: 1 }}>›</button>
-              </div>
-              {/* Quote */}
-              <div style={{ fontSize: '0.72rem', color: dayDidAnything ? '#4ade80' : '#444', marginBottom: '0.75rem', fontStyle: 'italic', textAlign: 'center' }}>{dayQuote}</div>
-              {/* Log button */}
-              <button onClick={() => { setStrDate(dayDateStr); setStrType(''); setStrDuration(''); setCdType(''); setCdDuration(''); setWorkoutCategory(''); setShowWorkoutForm(true); }}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', padding: '0.7rem', background: '#1a1a1a', border: `1px solid ${(dayLoggedWeights || dayLoggedCardio) ? '#1a4a1a' : '#2a2a2a'}`, borderRadius: 10, cursor: 'pointer', width: '100%' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#ccc' }}>+ Workout</span>
-                {(dayLoggedWeights || dayLoggedCardio) && <span style={{ fontSize: '0.65rem', color: '#4ade80' }}>✓</span>}
-              </button>
-            </div>
-
-            {/* Sessions for this day */}
-            {(() => {
-              const daySessions = sessionMap[dayDateStr] || [];
-              const dayStrength = strengthMap[dayDateStr] || [];
-              const dayCardio   = cardioMap[dayDateStr]   || [];
-              const hasAnything = daySessions.length > 0 || dayStrength.length > 0 || dayCardio.length > 0;
-              if (!hasAnything) return (
-                <div style={{ fontSize: '0.75rem', color: '#333', textAlign: 'center', padding: '0.5rem 0' }}>No activity logged this day.</div>
-              );
-              return (
-                <div style={{ ...cardBase, overflow: 'hidden' }} className="fade-in">
-                  {daySessions.map((s) => {
-                    const st = STATIONS.find(x => x.id === s.stationId);
-                    const bm = getBenchmark(s.stationId, gender, ageGroup);
-                    const tier = getTier(s.timeInSeconds, bm);
-                    const tc = tier ? TIER_CONFIG[tier] : null;
-                    return (
-                      <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                          <span style={{ fontSize: '1rem' }}>{st?.icon || '🏋️'}</span>
-                          <div>
-                            <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{st?.name || s.stationId}</div>
-                            {st?.detail && <div style={{ fontSize: '0.65rem', color: '#555' }}>{st.detail}</div>}
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                          {tc && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.15rem 0.45rem', borderRadius: 12 }}>{tc.icon} {tc.label}</span>}
-                          <span style={{ fontWeight: 800, fontSize: '1rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(s.timeInSeconds)}</span>
-                          <button onClick={() => onDelete(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {dayStrength.map((s) => (
-                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                        <span style={{ fontSize: '1rem' }}>🏋️</span>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
-                          <div style={{ fontSize: '0.65rem', color: '#555' }}>Weight Training{s.duration ? ` · ${s.duration}` : ''}</div>
-                        </div>
-                      </div>
-                      <button onClick={() => deleteStrength(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
-                    </div>
-                  ))}
-                  {dayCardio.map((s) => (
-                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                        <span style={{ fontSize: '1rem' }}>🏃</span>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
-                          <div style={{ fontSize: '0.65rem', color: '#555' }}>Cardio{s.duration ? ` · ${s.duration}` : ''}</div>
-                        </div>
-                      </div>
-                      <button onClick={() => deleteCardio(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }}>✕</button>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-
-            {/* Calendar toggle */}
-            <button onClick={() => setViewMode('calendar')} style={{ background: 'none', border: '1px solid #2a2a2a', borderRadius: 8, color: '#555', fontSize: '0.78rem', fontWeight: 700, padding: '0.55rem', cursor: 'pointer', letterSpacing: '0.03em' }}>
-              📅 View Calendar
-            </button>
-
-          </>) : (<>
-            {/* Back to day view */}
-            <button onClick={() => { setViewMode('day'); setDayDateStr(todayKey); }} style={{ background: 'none', border: 'none', color: '#666', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', padding: '0', textAlign: 'left', letterSpacing: '0.03em' }}>
-              ← Back to Today
-            </button>
-
-          {/* Month nav */}
-          <div style={{ ...cardBase, padding: '1.1rem 1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <button onClick={prevMonth} style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.1rem', cursor: 'pointer', padding: '0.2rem 0.5rem' }}>‹</button>
-              <span style={{ fontWeight: 800, fontSize: '0.95rem' }}>{monthLabel}</span>
-              <button onClick={nextMonth} style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.1rem', cursor: 'pointer', padding: '0.2rem 0.5rem' }}>›</button>
-            </div>
-
-            {/* Day-of-week headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', marginBottom: '4px' }}>
-              {DOW.map(d => (
-                <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', fontWeight: 700, color: '#444', padding: '0.2rem 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d}</div>
-              ))}
-            </div>
-
-            {/* Day cells */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px' }}>
-              {cells.map((day, i) => {
-                if (!day) return <div key={`e${i}`} />;
-                const key = dateKey(day);
-                const hasSessions = !!sessionMap[key];
-                const isToday = key === todayKey;
-                const isSelected = key === selectedDate;
-                return (
-                  <div key={key} onClick={() => setSelectedDate(isSelected ? null : key)}
-                    style={{
-                      textAlign: 'center', padding: '0.4rem 0.2rem', borderRadius: 8, cursor: hasSessions ? 'pointer' : 'default',
-                      background: isSelected ? YELLOW : hasSessions ? '#1a1400' : 'transparent',
-                      border: `1px solid ${isSelected ? YELLOW : isToday ? '#555' : hasSessions ? '#3a2e00' : 'transparent'}`,
-                      position: 'relative', transition: 'all 0.15s',
-                    }}>
-                    <div style={{ fontSize: '0.78rem', fontWeight: isToday || hasSessions ? 700 : 400, color: isSelected ? '#000' : hasSessions ? YELLOW : isToday ? '#fff' : '#444' }}>
-                      {day}
-                    </div>
-                    {hasSessions && !isSelected && (
-                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: YELLOW, margin: '2px auto 0' }} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Selected day detail */}
-          {selectedDate && (() => {
-            const strEntries = strengthMap[selectedDate] || [];
-            const hasAnything = selectedSessions.length > 0 || strEntries.length > 0;
-            return (
-            <div style={{ ...cardBase, overflow: 'hidden' }} className="fade-in">
-              <div style={{ padding: '0.9rem 1.1rem', borderBottom: '1px solid #1a1a1a' }}>
-                <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{fmtDateLong(selectedDate)}</div>
-                {!hasAnything && <div style={{ fontSize: '0.75rem', color: '#444', marginTop: '0.3rem' }}>No sessions logged this day.</div>}
-              </div>
-              {selectedSessions.map((s, i) => {
-                const st = STATIONS.find(x => x.id === s.stationId);
-                const bm = getBenchmark(s.stationId, gender, ageGroup);
-                const tier = getTier(s.timeInSeconds, bm);
-                const tc = tier ? TIER_CONFIG[tier] : null;
-                return (
-                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <span style={{ fontSize: '1rem' }}>{st?.icon || '🏋️'}</span>
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{st?.name || s.stationId}</div>
-                        {st?.detail && <div style={{ fontSize: '0.65rem', color: '#555' }}>{st.detail}</div>}
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      {tc && <span style={{ fontSize: '0.65rem', fontWeight: 700, color: tc.color, background: tc.bg, border: `1px solid ${tc.border}`, padding: '0.15rem 0.45rem', borderRadius: 12 }}>{tc.icon} {tc.label}</span>}
-                      <span style={{ fontWeight: 800, fontSize: '1rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(s.timeInSeconds)}</span>
-                      <button onClick={() => onDelete(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
-                    </div>
-                  </div>
-                );
-              })}
-              {strEntries.map((s) => (
-                <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '1rem' }}>🏋️</span>
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
-                      <div style={{ fontSize: '0.65rem', color: '#555' }}>Weight Training{s.duration ? ` · ${s.duration}` : ''}</div>
-                    </div>
-                  </div>
-                  <button onClick={() => deleteStrength(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
-                </div>
-              ))}
-              {(cardioMap[selectedDate] || []).map((s) => (
-                <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 1.1rem', borderBottom: '1px solid #151515' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '1rem' }}>🏃</span>
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>{s.type}</div>
-                      <div style={{ fontSize: '0.65rem', color: '#555' }}>Cardio{s.duration ? ` · ${s.duration}` : ''}</div>
-                    </div>
-                  </div>
-                  <button onClick={() => deleteCardio(s.id)} style={{ background: 'none', border: 'none', color: '#333', cursor: 'pointer', fontSize: '0.9rem', padding: '0.2rem', lineHeight: 1 }} title="Delete">✕</button>
-                </div>
-              ))}
-            </div>
-            );
-          })()}
-          </>)}
-
-          {/* Unified workout modal */}
-          {showWorkoutForm && (
-            <div onClick={() => setShowWorkoutForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 360 }} className="fade-in">
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>Log Workout</div>
-
-                {/* Date */}
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Date</div>
-                  <input type="date" value={strDate} onChange={e => { setStrDate(e.target.value); setCdDate(e.target.value); }} style={{ ...inputBase, width: '100%' }} />
-                </div>
-
-                {/* Category */}
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Category</div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {[{ val: 'weight', label: 'Weight' }, { val: 'cardio', label: 'Cardio' }].map(c => (
-                      <button key={c.val} onClick={() => { setWorkoutCategory(c.val); setStrType(''); setCdType(''); }} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${workoutCategory === c.val ? YELLOW : '#333'}`, background: workoutCategory === c.val ? '#1a1400' : '#1a1a1a', color: workoutCategory === c.val ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Weight fields */}
-                {workoutCategory === 'weight' && (<>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {['Upper Body', 'Lower Body'].map(t => (
-                        <button key={t} onClick={() => setStrType(t)} style={{ flex: 1, padding: '0.6rem 0.5rem', borderRadius: 8, border: `1px solid ${strType === t ? YELLOW : '#333'}`, background: strType === t ? '#1a1400' : '#1a1a1a', color: strType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
-                        <button key={d} onClick={() => setStrDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${strDuration === d ? YELLOW : '#333'}`, background: strDuration === d ? '#1a1400' : '#1a1a1a', color: strDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>)}
-
-                {/* Cardio fields */}
-                {workoutCategory === 'cardio' && (<>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Type</div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {['Run', 'Walk', 'Cycling', 'Other'].map(t => (
-                        <button key={t} onClick={() => setCdType(t)} style={{ flex: 1, padding: '0.5rem 0.25rem', borderRadius: 8, border: `1px solid ${cdType === t ? YELLOW : '#333'}`, background: cdType === t ? '#1a1400' : '#1a1a1a', color: cdType === t ? YELLOW : '#666', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}>
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.68rem', color: '#666', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Duration</div>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      {['< 30 mins', '45 – 60 mins', '60+ mins'].map(d => (
-                        <button key={d} onClick={() => setCdDuration(d)} style={{ flex: 1, padding: '0.55rem 0.4rem', borderRadius: 8, border: `1px solid ${cdDuration === d ? YELLOW : '#333'}`, background: cdDuration === d ? '#1a1400' : '#1a1a1a', color: cdDuration === d ? YELLOW : '#666', fontWeight: 700, fontSize: '0.72rem', cursor: 'pointer', textAlign: 'center' }}>
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>)}
-
-                {/* Actions */}
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => setShowWorkoutForm(false)} style={{ background: 'none', border: '1px solid #333', color: '#666', borderRadius: 8, padding: '0.7rem 1.1rem', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>Cancel</button>
-                  <button
-                    onClick={() => {
-                      if (workoutCategory === 'weight') { addStrength(); setShowWorkoutForm(false); }
-                      else if (workoutCategory === 'cardio') { addCardio(); setShowWorkoutForm(false); }
-                    }}
-                    disabled={!(workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false)}
-                    style={{
-                      flex: 1,
-                      background: (workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false) ? YELLOW : '#222',
-                      color: (workoutCategory === 'weight' ? (strType && strDuration) : workoutCategory === 'cardio' ? (cdType && cdDuration) : false) ? '#000' : '#555',
-                      border: 'none', borderRadius: 8, padding: '0.7rem', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer'
-                    }}>
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    // ─── Log Page ─────────────────────────────────────────────────────────────────
-
-    function LogPage({ sessions, profile, onAdd, onDelete }) {
-      const [selected, setSelected] = useState(null);
-
-      if (selected) {
-        const station = STATIONS.find(s => s.id === selected);
-        return <StationDetailPage station={station} sessions={sessions} profile={profile} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
-      }
-
-      const division = (profile && profile.division) || 'open';
-      const gender   = (profile && profile.gender)   || 'male';
-
-      return (
-        <div className="fade-in">
-          <h2 style={{ fontWeight: 900, fontSize: '1.6rem', marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>Log a Session</h2>
-          <p style={{ color: '#777', fontSize: '0.88rem', marginBottom: '1.75rem' }}>Select a station to log your time or view history.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.7rem' }}>
-            {[...STATIONS].sort((a, b) => a.id === 'run-1km' ? -1 : b.id === 'run-1km' ? 1 : 0).map(station => {
-              const ss = sessions.filter(s => s.stationId === station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
-              const pb     = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
-              const latest = ss.length > 0 ? ss[ss.length - 1].timeInSeconds : null;
-              const trend  = ss.length >= 2 ? ss[ss.length - 1].timeInSeconds - ss[ss.length - 2].timeInSeconds : null;
-              const weight = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
-              return (
-                <button key={station.id} onClick={() => { setSelected(station.id); if (typeof gtag !== 'undefined') gtag('event', 'view_benchmark', { station_id: station.id }); }}
-                  style={{ ...cardBase, padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', border: '1px solid #222', transition: 'border-color 0.15s', background: '#111' }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = YELLOW}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '1.3rem' }}>{station.icon}</span>
-                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{station.name}</span>
-                    </div>
-                    {trend !== null && (
-                      <span style={{ fontSize: '0.9rem', color: trend < 0 ? '#4ade80' : '#f87171' }}>{trend < 0 ? '↑' : '↓'}</span>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#777' }}>{station.detail}</span>
-                    {weight && (
-                      <span style={{ fontSize: '0.65rem', color: '#888', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.1rem 0.45rem' }}>{weight}</span>
-                    )}
-                  </div>
-                  {pb !== null ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                      <div>
-                        <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>PB</div>
-                        <div style={{ fontWeight: 900, fontSize: '1.2rem', color: YELLOW, fontVariantNumeric: 'tabular-nums' }}>{formatTime(pb)}</div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sessions</div>
-                        <div style={{ fontWeight: 700, fontSize: '1rem' }}>{ss.length}</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: '0.78rem', color: '#444', fontStyle: 'italic' }}>No sessions yet</div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Weekly Progress ─────────────────────────────────────────────────────────
-
-    function WeeklyProgress({ sessions }) {
-      // Monday-anchored calendar weeks
-      const now = new Date();
-      const dow = now.getDay(); // 0 = Sun
-      const startThis = new Date(now);
-      startThis.setDate(now.getDate() - ((dow + 6) % 7));
-      startThis.setHours(0, 0, 0, 0);
-      const startLast = new Date(startThis);
-      startLast.setDate(startThis.getDate() - 7);
-
-      const inThis = s => { const d = new Date(s.date + 'T00:00:00'); return d >= startThis; };
-      const inLast = s => { const d = new Date(s.date + 'T00:00:00'); return d >= startLast && d < startThis; };
-
-      const rows = STATIONS.map(station => {
-        const tw = sessions.filter(s => s.stationId === station.id && inThis(s));
-        const lw = sessions.filter(s => s.stationId === station.id && inLast(s));
-        if (!tw.length || !lw.length) return null;
-        const bestThis = Math.min(...tw.map(s => s.timeInSeconds));
-        const bestLast = Math.min(...lw.map(s => s.timeInSeconds));
-        const delta = bestThis - bestLast;          // negative = faster = good
-        const pct   = Math.round(Math.abs(delta) / bestLast * 100);
-        return { station, bestThis, bestLast, delta, pct };
-      }).filter(Boolean);
-
-      if (!rows.length) return null;
-
-      const improved = rows.filter(r => r.delta < 0);
-      const avgPct   = improved.length
-        ? Math.round(improved.reduce((s, r) => s + r.pct, 0) / improved.length)
-        : 0;
-
-      const weekLabel = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-      const range = `${weekLabel(startLast)} – ${weekLabel(new Date(startThis.getTime() - 86400000))} vs ${weekLabel(startThis)} – ${weekLabel(now)}`;
-
-      return (
-        <div style={{ ...cardBase, padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.1rem' }}>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Weekly Progress</div>
-              <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '0.2rem' }}>{range}</div>
-            </div>
-            {improved.length > 0 && (
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.6rem', color: '#777', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>Avg gain</div>
-                <div style={{ fontWeight: 900, fontSize: '1.5rem', color: '#4ade80', lineHeight: 1 }}>+{avgPct}%</div>
-              </div>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            {rows.map(({ station, bestThis, bestLast, delta, pct }) => {
-              const faster = delta < 0;
-              const barW   = Math.min(pct, 50); // cap bar at 50% visual
-              return (
-                <div key={station.id} style={{ padding: '0.6rem 0.85rem', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '0.95rem', flexShrink: 0 }}>{station.icon}</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.82rem', marginBottom: '0.15rem' }}>{station.name}</div>
-                      <div style={{ fontSize: '0.68rem', color: '#777', fontVariantNumeric: 'tabular-nums' }}>
-                        {formatTime(bestLast)} → {formatTime(bestThis)}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: faster ? '#4ade80' : '#f87171' }}>
-                        {faster ? '↑' : '↓'} {pct}% · {formatTime(Math.abs(delta))}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: faster ? '#4ade80' : '#f87171' }}>
-                        {faster ? 'faster' : 'slower'}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Progress bar */}
-                  <div style={{ marginTop: '0.45rem', height: 3, background: '#1a1a1a', borderRadius: 2, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${barW * 2}%`, background: faster ? '#4ade80' : '#f87171', borderRadius: 2, opacity: 0.6 }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    // ─── Dashboard Page ───────────────────────────────────────────────────────────
-
-    function DashboardPage({ sessions, profile, onTabChange }) {
-      const totalSessions   = sessions.length;
-      const sortedByDate    = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
-      const lastActive      = sortedByDate[0]?.date ?? null;
-      const days            = getDaysUntil(profile.competitionDate);
-      const hasProfile      = profile.gender && profile.age;
-
-      const stationData = useMemo(() => STATIONS.map(station => {
-        const ss = sessions.filter(s => s.stationId === station.id);
-        if (ss.length === 0) return { station, pb: null, count: 0, trend: null, bm: null, tier: null, score: null };
-        const pb = Math.min(...ss.map(s => s.timeInSeconds));
-        const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
-        const tier = getTier(pb, bm);
-        const score = bm ? getRadarScore(pb, bm) : null;
-        return { station, pb, count: ss.length, trend, bm, tier, score };
-      }), [sessions, profile]);
-
-      const stationsWithData = stationData.filter(d => d.pb !== null);
-      const stationsComplete = stationsWithData.length;
-
-      // Weekly stations: unique stations logged Mon–Sun of current week
-      const weeklyStations = useMemo(() => {
-        const now = new Date();
-        const dow = (now.getDay() + 6) % 7; // 0=Mon
-        const weekStart = new Date(now); weekStart.setDate(now.getDate() - dow); weekStart.setHours(0,0,0,0);
-        const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 7);
-        const ids = new Set(sessions.filter(s => {
-          const d = new Date(s.date + 'T00:00:00');
-          return d >= weekStart && d < weekEnd;
-        }).map(s => s.stationId));
-        return ids.size;
-      }, [sessions]);
-
-      if (totalSessions === 0) {
-        return (
-          <div className="fade-in" style={{ textAlign: 'center', padding: '5rem 1rem' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏋️</div>
-            <h2 style={{ fontWeight: 900, fontSize: '1.8rem', marginBottom: '0.75rem', letterSpacing: '-0.03em' }}>No sessions yet</h2>
-            <p style={{ color: '#777', fontSize: '0.9rem', marginBottom: '2rem' }}>Start logging training sessions to see your analysis here.</p>
-            <button onClick={() => onTabChange('log')} style={{ background: YELLOW, color: '#000', border: 'none', padding: '0.9rem 2rem', borderRadius: 8, fontWeight: 800, cursor: 'pointer', fontSize: '0.95rem' }}>Log First Session →</button>
-          </div>
-        );
-      }
-
-      const QUOTES = [
-        "Every rep is a deposit in the bank of race day.",
-        "You're not just training your body — you're training your mind to never quit.",
-        "The sled doesn't care how tired you are. Neither should you.",
-        "Progress is made in the sessions nobody sees.",
-        "Race day is just another training day — you've already ✓ done the hard part.",
-        "Fatigue is temporary. A finish line crossed is forever.",
-        "You showed up. That's already more than most.",
-        "Train hard enough that race day feels like a relief.",
-        "Eight stations. Eight chances to prove something to yourself.",
-        "The only bad session is the one you didn't do.",
-        "Strong enough to start. Tough enough to finish.",
-        "Your future self is cheering for you right now.",
-      ];
-      const quote = QUOTES[Math.floor(new Date().getDate() % QUOTES.length)];
-
-      return (
-        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-
-          {/* Greeting */}
-          <div>
-            <h2 style={{ fontWeight: 900, fontSize: '1.55rem', letterSpacing: '-0.03em', marginBottom: '0.4rem' }}>
-              Welcome back{profile.name ? `, ${profile.name}` : ''}. {profile.country ? COUNTRIES.find(c => c.code === profile.country)?.flag : '👊'}
-            </h2>
-            <p style={{ fontSize: '0.88rem', color: '#666', fontStyle: 'italic', lineHeight: 1.5 }}>"{quote}"</p>
-          </div>
-
-          {/* Summary stats */}
-          {(() => {
-            // For 1km run: sum last 8 logged times if available, else average × 8
-            const runTotal = (ss) => {
-              if (!ss.length) return 0;
-              const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
-              if (sorted.length >= 8) return sorted.slice(-8).reduce((s, r) => s + r.timeInSeconds, 0);
-              const avg = sorted.reduce((s, r) => s + r.timeInSeconds, 0) / sorted.length;
-              return Math.round(avg * 8);
-            };
-            const totalPB = stationsWithData.reduce((sum, d) => {
-              if (d.station.id === 'run-1km') {
-                const ss = sessions.filter(s => s.stationId === 'run-1km');
-                return sum + runTotal(ss);
-              }
-              return sum + d.pb;
-            }, 0);
-            // Previous total: per station, PB from all sessions except the most recent one
-            const prevPB = stationsWithData.reduce((sum, d) => {
-              const ss = sessions.filter(s => s.stationId === d.station.id).sort((a, b) => new Date(a.date) - new Date(b.date));
-              const withoutLatest = ss.slice(0, -1);
-              if (d.station.id === 'run-1km') return sum + runTotal(withoutLatest);
-              if (!withoutLatest.length) return sum + d.pb;
-              const prev = Math.min(...withoutLatest.map(s => s.timeInSeconds));
-              return sum + prev;
-            }, 0);
-            const delta = totalPB - prevPB; // negative = faster = improved
-            const absDelta = Math.abs(Math.round(delta / 60)); // in minutes
-            return (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.7rem' }}>
-                <StatCard label="Total Sessions" value={totalSessions} />
-                <StatCard label="This Week" value={weeklyStations} suffix={`/ ${STATIONS.length}`} sub="stations" />
-                {stationsWithData.length > 0 && delta !== 0 && (
-                  <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: '1.25rem' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Prev Total</div>
-                    <div style={{ fontWeight: 900, fontSize: '1.9rem', color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                      {delta < 0 ? '-' : '+'}{absDelta}m
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: delta < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>{delta < 0 ? 'faster overall' : 'slower overall'}</div>
-                  </div>
-                )}
-                {(() => { const runSessions = sessions.filter(s => s.stationId === 'run-1km');
-                  const runNote = runSessions.length >= 8 ? 'run: last 8 splits' : runSessions.length > 0 ? `run: avg×8 (${runSessions.length}/8 logged)` : null;
-                  return <StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={runNote || `${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} accent />;
-                })()}
-              </div>
-            );
-          })()}
-
-          {/* Weekly Progress */}
-          <WeeklyProgress sessions={sessions} />
-
-          {/* Profile pill */}
-          {hasProfile && (
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {(() => {
-                const pillStyle = { fontSize: '0.75rem', fontWeight: 600, color: '#888', background: '#141414', border: '1px solid #222', padding: '0.25rem 0.6rem', borderRadius: 20 };
-                const countryObj = profile.country ? COUNTRIES.find(c => c.code === profile.country) : null;
-                return [
-                  profile.gender === 'male'
-                    ? <span key="gender" style={pillStyle}>Male</span>
-                    : <span key="gender" style={pillStyle}>Female</span>,
-                  <span key="age" style={pillStyle}>{getAgeGroup(profile.age)} age group</span>,
-                  <span key="div" style={pillStyle}>{profile.division === 'pro' ? '⭐ Pro' : profile.division === '60+' ? '60+' : 'Open'}</span>,
-                  profile.weight ? <span key="wt" style={pillStyle}>{profile.weight} kg</span> : null,
-                  countryObj ? <span key="country" style={{ ...pillStyle, fontSize: '1rem', padding: '0.15rem 0.5rem' }} title={countryObj.name}>{countryObj.flag}</span> : null,
-                ].filter(Boolean);
-              })()}
-            </div>
-          )}
-
-          {/* Total Time Analysis */}
-          <TotalTimeAnalysis sessions={sessions} profile={profile} />
-
-          {/* Station Analysis (enhanced PB table) */}
-          <TrainingTips sessions={sessions} profile={profile} />
-
-          {/* Radar + weakest tips row */}
-          {stationsWithData.length >= 3 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 0.9fr)', gap: '1rem', alignItems: 'start' }}>
-              <WeaknessRadar sessions={sessions} profile={profile} />
-
-              {/* Weakest stations tips */}
-              <div style={{ ...cardBase, padding: '1.25rem' }}>
-                <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Focus Areas</div>
-                <div style={{ fontSize: '0.75rem', color: '#777', marginBottom: '0.5rem' }}>Your 3 lowest-scoring logged stations</div>
-                <div style={{ fontSize: '0.68rem', color: '#444', background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 6, padding: '0.5rem 0.7rem', marginBottom: '1rem', lineHeight: 1.5 }}>
-                  Score = how close your PB is to Elite (0 = Beginner, 100 = Elite). Only stations you've logged appear here — log more stations to get a fuller picture.
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {stationsWithData
-                    .sort((a, b) => (a.score ?? 100) - (b.score ?? 100))
-                    .slice(0, 3)
-                    .map(({ station, pb, bm, tier, score }) => {
-                      const pct = getPctVsAvg(pb, bm);
-                      const tip = TRAINING_TIPS[station.id]?.[tier || 'beginner'];
-                      return (
-                        <div key={station.id} style={{ paddingBottom: '0.75rem', borderBottom: '1px solid #1a1a1a' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <span style={{ fontSize: '0.85rem' }}>{station.icon}</span>
-                              <span style={{ fontWeight: 700, fontSize: '0.82rem' }}>{station.name}</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
-                              {score != null && <span style={{ fontSize: '0.7rem', fontWeight: 700, color: score < 40 ? '#f87171' : YELLOW }}>{score}/100</span>}
-                              {tier && <TierBadge tier={tier} />}
-                            </div>
-                          </div>
-                          {bm && pct != null && (
-                            <div style={{ fontSize: '0.72rem', color: pb <= bm.intermediate ? '#4ade80' : '#888', marginBottom: '0.35rem' }}>
-                              {pb < bm.intermediate ? (pct > 0 ? `${pct}% faster than intermediate` : '~intermediate') : pct > 0 ? `${pct}% slower than intermediate` : '~intermediate'}
-                            </div>
-                          )}
-                          {tip && <div style={{ fontSize: '0.78rem', color: '#888', lineHeight: 1.5 }}>{tip.split('.')[0]}.</div>}
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Progress Charts */}
-          {stationsWithData.length > 0 && (
-            <div>
-              <h3 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.02em', color: '#777' }}>Progress Charts</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '0.7rem' }}>
-                {stationsWithData.map(({ station }) => <StationChart key={station.id} station={station} sessions={sessions} />)}
-              </div>
-              <p style={{ marginTop: '0.6rem', fontSize: '0.72rem', color: '#2a2a2a', textAlign: 'right' }}>Y-axis reversed — line going up = faster ↑</p>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // ─── Root App ─────────────────────────────────────────────────────────────────
-
-    function App() {
-      const [profile,  setProfile]  = useState(() => loadLS(LS_PROFILE, {}));
-      const [sessions, setSessions] = useState(() => loadLS(LS_SESSIONS, []));
-      const [tab,      setTab]      = useState(profile.name ? 'dashboard' : 'setup');
-
-      useEffect(() => { localStorage.setItem(LS_PROFILE,  JSON.stringify(profile));  }, [profile]);
-      useEffect(() => { localStorage.setItem(LS_SESSIONS, JSON.stringify(sessions)); }, [sessions]);
-
-      const addSession    = useCallback((s) => {
-        setSessions(prev => [...prev, { ...s, id: Date.now() + Math.random() }]);
-        if (typeof gtag !== 'undefined') gtag('event', 'log_session', { station_id: s.stationId, time_seconds: s.timeInSeconds });
-      }, []);
-      const deleteSession = useCallback((id) => setSessions(prev => prev.filter(s => s.id !== id)), []);
-
-      return (
-        <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', display: 'flex', flexDirection: 'column' }}>
-          {/* Sticky top bar + nav */}
-          <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-            <TopBar profile={profile} onEdit={() => setTab('setup')} />
-            <nav style={{ background: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '0 1rem' }}>
-              <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex' }}>
-                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }, { id: 'calendar', label: 'Journal' }].map(t => (
-                  <button key={t.id} onClick={() => setTab(t.id)}
-                    style={{ padding: '0.72rem 1.1rem', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? YELLOW : 'transparent'}`, color: tab === t.id ? YELLOW : '#555', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', fontSize: '0.86rem', transition: 'all 0.15s', outline: 'none', letterSpacing: '0.02em' }}>
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </nav>
-          </div>
-
-          <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem', flex: 1, width: '100%' }}>
-            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (typeof gtag !== 'undefined') gtag('event', 'profile_save', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null }); if (p.name) setTab('dashboard'); }} />}
-            {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
-            {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
-            {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
-          </main>
-
-          <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.7rem', color: '#444', marginBottom: '0.5rem' }}>isurvivehyrox · data stored locally in your browser</p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.82rem', color: '#666' }}>Made with 💛 by Pie Prapawuttikul</span>
-              <a href="https://linkedin.com/in/pirpie/" target="_blank" rel="noopener noreferrer" title="LinkedIn" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452H17.21v-5.569c0-1.328-.024-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.99V9h3.114v1.561h.046c.434-.822 1.492-1.689 3.07-1.689 3.284 0 3.89 2.163 3.89 4.976v6.604zM5.337 7.433a1.808 1.808 0 1 1 0-3.616 1.808 1.808 0 0 1 0 3.616zm1.558 13.019H3.78V9h3.115v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-              <a href="https://www.pirpie.com" target="_blank" rel="noopener noreferrer" title="Portfolio" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                </svg>
-              </a>
-            </div>
-            <p style={{ fontSize: '0.75rem', color: '#555' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Support us</a> or <a href="https://venmo.com/u/pirpie" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Venmo</a> :)</p>
-          </div>
-        </div>
-      );
-    }
-
-    // Responsive log page grid
-    const styleEl = document.createElement('style');
-    styleEl.textContent = `@media (max-width: 680px) { .fade-in > div[style*="grid-template-columns: minmax"] { grid-template-columns: 1fr !important; } }`;
-    document.head.appendChild(styleEl);
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
 </body>
 </html>
