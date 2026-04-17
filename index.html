@@ -6,6 +6,7 @@
   <title>isurvivehyrox — HYROX Training Tracker</title>
   <meta name="description" content="Track every HYROX station, benchmark your splits, and countdown to race day. Free, offline-first PWA." />
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D0BJRSWTY7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -113,7 +114,7 @@
     }
 
     .hero h1 {
-      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-size: clamp(1.2rem, 3vw, 1.75rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       line-height: 1.1;
@@ -127,7 +128,7 @@
 
     .hero-sub {
       font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-      color: #777;
+      color: #999;
       line-height: 1.75;
       margin-bottom: 2.75rem;
       max-width: 480px;
@@ -154,7 +155,7 @@
       align-items: center;
       gap: 8px;
       background: transparent;
-      color: #777;
+      color: #999;
       font-weight: 600;
       font-size: 0.9rem;
       text-decoration: none;
@@ -237,7 +238,7 @@
       background: none;
       border: 1px solid var(--border);
       border-radius: 8px;
-      color: #555;
+      color: #888;
       font-size: 0.85rem;
       font-weight: 600;
       letter-spacing: 0.04em;
@@ -334,9 +335,10 @@
 
     .feature-desc {
       font-size: 0.875rem;
-      color: #666;
+      color: #888;
       line-height: 1.65;
     }
+
 
     /* ── How to use ── */
     .how-grid {
@@ -391,7 +393,7 @@
       display: flex;
       gap: 0.7rem;
       font-size: 0.84rem;
-      color: #777;
+      color: #999;
       line-height: 1.5;
     }
 
@@ -406,22 +408,11 @@
       justify-content: center;
       font-size: 0.65rem;
       font-weight: 700;
-      color: #666;
+      color: #aaa;
       margin-top: 2px;
     }
 
     .how-steps li b { color: #bbb; font-weight: 600; }
-
-    /* ── Yellow band ── */
-    .band-yellow {
-      background: var(--yellow);
-    }
-    .band-yellow .section-label { color: rgba(0,0,0,0.45); }
-    .band-yellow .section-title { color: #000; }
-    .band-yellow .features-grid { background: rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.12); }
-    .band-yellow .feature-card { background: #000; }
-    .band-yellow .feature-title { color: #fff; }
-    .band-yellow .feature-desc  { color: #666; }
 
     /* ── Tinted band ── */
     .band-tinted {
@@ -479,7 +470,7 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #444;
+      color: #888;
     }
 
     .kofi-title {
@@ -491,7 +482,7 @@
 
     .kofi-desc {
       font-size: 0.88rem;
-      color: #555;
+      color: #888;
       max-width: 400px;
       line-height: 1.6;
       margin-bottom: 0.75rem;
@@ -525,12 +516,12 @@
       margin: 0 auto;
     }
 
-    .footer-note { font-size: 0.75rem; color: #444; }
+    .footer-note { font-size: 0.75rem; color: #888; }
 
     .footer-links { display: flex; gap: 1.25rem; }
     .footer-links a {
       font-size: 0.75rem;
-      color: #444;
+      color: #888;
       text-decoration: none;
       transition: color 0.15s;
     }
@@ -542,6 +533,28 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .hero { animation: fadeUp 0.35s ease both; }
+
+    /* ── Hero station icons ── */
+    .hero { position: relative; }
+    .hero-icons {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .hero-icons svg {
+      position: absolute;
+      filter: blur(2px);
+    }
+
+    /* ── Hero logo ── */
+    .lottie-wrap {
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: 1rem;
+    }
+    #lottie-hero { width: 100%; }
 
     /* ── Scroll reveal ── */
     .reveal {
@@ -587,6 +600,9 @@
 
 <!-- ── Hero ── -->
 <div class="hero">
+  <div class="lottie-wrap">
+    <div id="lottie-hero"></div>
+  </div>
   <h1>Every emotion. Every station.<br><em>One finish line.</em></h1>
   <p class="hero-sub">
     (you'll survive. they all do.)
@@ -601,8 +617,8 @@
 <!-- ── What is HYROX — collapsible ── -->
 <div class="hyrox-explainer" style="padding-top: 2rem; padding-bottom: 2rem;">
   <button class="hyrox-toggle" aria-expanded="false" onclick="toggleHyrox(this)">
-    <span style="color:#666; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:700;">New to HYROX?</span>
-    <span style="color:#555; font-weight:400; margin-left:0.5rem;">Never heard of it? Here's the quick version.</span>
+    <span style="color:#888; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:700;">New to HYROX?</span>
+    <span style="color:#888; font-weight:400; margin-left:0.5rem;">Never heard of it? Here's the quick version.</span>
     <span class="toggle-icon">▾</span>
   </button>
   <div class="hyrox-body" id="hyrox-body">
@@ -620,8 +636,6 @@
     <p class="hyrox-kicker">It's not just a race. It's a test of everything. And the only way to get better is to track where you're losing time.</p>
   </div>
 </div>
-
-<div class="band-yellow">
 
 <!-- ── Features ── -->
 <div class="section">
@@ -653,16 +667,14 @@
   <img src="985shots_so.png" alt="isurvivehyrox app screens" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;margin-top:2.5rem" />
 </div>
 
-</div>
-
 <div class="band-tinted">
 <!-- ── How to use ── -->
 <div class="section">
   <div class="section-label">How to use</div>
   <h2 class="section-title">No download. No login.<br>No subscription.</h2>
-  <p style="color:#666; font-size:1rem; line-height:1.65; margin-top:0.5rem;">
+  <p style="color:#888; font-size:1rem; line-height:1.65; margin-top:0.5rem;">
     Open the app → Set your race date → Start logging your sessions.<br>
-    <span style="color:#555;">Want it on your home screen? Install it like an app — completely free.</span>
+    <span style="color:#888;">Want it on your home screen? Install it like an app — completely free.</span>
   </p>
 
   <div class="how-grid">
@@ -708,9 +720,9 @@
   <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener" class="kofi-btn">
     ☕ Buy us a coffee
   </a>
-  <p style="margin-top:1.25rem; font-size:0.82rem; color:#444;">
+  <p style="margin-top:1.25rem; font-size:0.82rem; color:#888;">
     Open to partnerships &amp; funding →
-    <a href="mailto:pirpiep@gmail.com" style="color:#666; text-decoration:none; border-bottom: 1px solid #333;">pirpiep@gmail.com</a>
+    <a href="mailto:pirpiep@gmail.com" style="color:#aaa; text-decoration:none; border-bottom: 1px solid #555;">pirpiep@gmail.com</a>
   </p>
 </div>
 
@@ -737,6 +749,35 @@
       btn.style.borderBottomColor = '';
     }
   }
+
+  // Load Lottie animation with selective yellow recolor on "viv" layers
+  (function() {
+    var YELLOW = [1, 0.902, 0];
+    // ln IDs to recolor yellow — everything except isur (75) and hyrox (76)
+    var YELLOW_LAYERS = {'77':1,'78':1,'79':1,'80':1,'81':1,'82':1,'83':1,'84':1,'85':1,'86':1,'87':1,'88':1,'89':1};
+
+    function setFills(shapes) {
+      shapes.forEach(function(s) {
+        if (s.ty === 'fl') s.c = { a: 0, k: YELLOW };
+        else if (s.ty === 'gr' && s.it) setFills(s.it);
+      });
+    }
+
+    fetch('isurvivehyrox.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        data.assets[0].layers.forEach(function(layer) {
+          if (YELLOW_LAYERS[layer.ln] && layer.shapes) setFills(layer.shapes);
+        });
+        lottie.loadAnimation({
+          container: document.getElementById('lottie-hero'),
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          animationData: data
+        });
+      });
+  })();
 
   (function() {
     function reveal(el, delayMs) {
