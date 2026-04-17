@@ -2,7 +2,7 @@
 > A free HYROX training tracker. Built for athletes, by someone cheering from the sideline.
 
 ## 🔗 Live App
-https://pirpie.github.io/isurvivehyrox
+https://isurvivehyrox.com
 
 ## Features
 - Track progress for all 8 HYROX stations
