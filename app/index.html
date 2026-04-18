@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>isurvivehyrox — HYROX Training Tracker</title>
 
   <!-- Google tag (gtag.js) -->
@@ -259,21 +259,42 @@
 
     function parseTime(input) {
       const s = String(input).trim();
-      // Support both "6:59" and "6.59" as 6 min 59 sec
       const sep = s.includes(':') ? ':' : s.includes('.') ? '.' : null;
       if (sep) {
-        const [m, sec] = s.split(sep);
-        const mins = parseInt(m, 10), secs = parseInt(sec, 10);
-        if (!isNaN(mins) && !isNaN(secs) && secs < 60) return mins * 60 + secs;
-        return NaN;
+        const parts = s.split(sep);
+        if (parts.length === 3) {
+          // h:mm:ss — right-pad single digits: "1.2.3" → 1:20:30
+          const hrs = parseInt(parts[0], 10);
+          const minStr = parts[1].length === 1 ? parts[1] + '0' : parts[1];
+          const secStr = parts[2].length === 1 ? parts[2] + '0' : parts[2];
+          const mins = parseInt(minStr, 10), secs = parseInt(secStr, 10);
+          if (!isNaN(hrs) && !isNaN(mins) && !isNaN(secs) && mins < 60 && secs < 60)
+            return hrs * 3600 + mins * 60 + secs;
+          return NaN;
+        }
+        if (parts.length === 2) {
+          // m:ss — right-pad single digit: "5.3" → 5:30, "5.03" → 5:03
+          const mins = parseInt(parts[0], 10);
+          const secStr = parts[1].length === 1 ? parts[1] + '0' : parts[1];
+          const secs = parseInt(secStr, 10);
+          if (!isNaN(mins) && !isNaN(secs) && secs < 60) return mins * 60 + secs;
+          return NaN;
+        }
       }
+      // Bare integer → treat as minutes (e.g. "5" → 5:00 = 300s)
       const n = parseInt(s, 10);
-      return isNaN(n) ? NaN : n;
+      return isNaN(n) ? NaN : n * 60;
     }
 
     function formatTime(secs) {
       if (secs == null || isNaN(secs)) return '--:--';
       const t = Math.round(Math.abs(secs));
+      if (t >= 3600) {
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
       return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
     }
 
@@ -1047,7 +1068,7 @@
               {showCountryDrop && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, background: '#161616', border: '1px solid #333', borderRadius: 10, marginTop: 4, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
                   <input autoFocus type="text" placeholder="Search…" value={countrySearch} onChange={e => setCountrySearch(e.target.value)}
-                    style={{ width: '100%', background: '#1a1a1a', border: 'none', borderBottom: '1px solid #222', color: '#ccc', padding: '0.6rem 0.9rem', fontSize: '0.82rem', outline: 'none', boxSizing: 'border-box' }} />
+                    style={{ width: '100%', background: '#1a1a1a', border: 'none', borderBottom: '1px solid #222', color: '#ccc', padding: '0.6rem 0.9rem', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }} />
                   <div style={{ maxHeight: 200, overflowY: 'auto' }}>
                     {country && <div onClick={() => { setCountry(''); setShowCountryDrop(false); setCountrySearch(''); }}
                       style={{ padding: '0.55rem 0.9rem', fontSize: '0.82rem', color: '#888', cursor: 'pointer' }}>— None</div>}
@@ -1181,9 +1202,29 @@
       const prevPaceSecs   = paceSessions.length >= 2 ? getPaceSecsPerKm(paceSessions[paceSessions.length - 2]) : null;
       const vsPrevPace = latestPaceSecs !== null && prevPaceSecs !== null ? latestPaceSecs - prevPaceSecs : null;
 
+      // ── Run totals (1km station only) ────────────────────────────────────────
+      const getDistKm = (session) => {
+        if (!session.distance) return null;
+        const [d, u] = session.distance.split(' ');
+        const dist = parseFloat(d);
+        if (!dist || dist <= 0) return null;
+        return u === 'mi' ? dist * 1.60934 : dist;
+      };
+      const runSessions = isRunStation ? stationSessions.filter(s => getDistKm(s) !== null) : [];
+      const totalDistKm  = runSessions.reduce((sum, s) => sum + getDistKm(s), 0);
+      const totalTimeSecs = runSessions.reduce((sum, s) => sum + s.timeInSeconds, 0);
+      const avgPaceSecs  = totalDistKm > 0 ? totalTimeSecs / totalDistKm : null;
+      // This week (Mon–Sun)
+      const _now = new Date(); _now.setHours(0,0,0,0);
+      const _monday = new Date(_now); _monday.setDate(_now.getDate() - ((_now.getDay() + 6) % 7));
+      const weekSessions  = runSessions.filter(s => new Date(s.date + 'T00:00:00') >= _monday);
+      const weekDistKm    = weekSessions.reduce((sum, s) => sum + getDistKm(s), 0);
+      const weekTimeSecs  = weekSessions.reduce((sum, s) => sum + s.timeInSeconds, 0);
+      const weekPaceSecs  = weekDistKm > 0 ? weekTimeSecs / weekDistKm : null;
+
       const handleSubmit = () => {
         if (!timeInput.trim()) { setError('Please enter a time.'); return; }
-        const secs = parseTime(timeInput);
+        let secs = parseTime(timeInput);
         if (isNaN(secs) || secs <= 0) { setError('Invalid — use mm:ss or seconds'); return; }
         if (isRunStation && !distanceInput) { setError('Please enter a distance.'); return; }
         setError('');
@@ -1265,8 +1306,8 @@
                 <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ ...inputBase, fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
               </div>
               <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Time (mm.ss)</div>
-                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="00.00" style={{ ...inputBase, fontVariantNumeric: 'tabular-nums', fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
+                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>{isRunStation ? 'Time (h:mm:ss or mm:ss)' : 'Time (mm.ss)'}</div>
+                <input type="text" inputMode="decimal" value={timeInput} onChange={e => { setTimeInput(e.target.value); setError(''); }} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder={isRunStation ? '00:00:00' : '00.00'} style={{ ...inputBase, fontVariantNumeric: 'tabular-nums', fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
               </div>
             </div>
             {isRunStation && (
@@ -1316,7 +1357,7 @@
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.7rem', marginBottom: '1.5rem' }}>
               {/* PB card with vs-prev inline */}
               <div style={{ ...cardBase, padding: '1.25rem' }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Best Pace</div>
+                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{isRunStation ? 'Best Pace' : 'Personal Best'}</div>
                 <div style={{ fontWeight: 900, fontSize: '1.6rem', color: YELLOW, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{isRunStation ? (pbPaceSecs ? formatPaceSecs(pbPaceSecs) : '—') : formatTime(pb)}</div>
                 {isRunStation ? (vsPrevPace !== null && (
                   <div style={{ fontSize: '0.72rem', color: vsPrevPace < 0 ? '#4ade80' : '#f87171', marginTop: '0.35rem', fontWeight: 600 }}>
@@ -1333,6 +1374,33 @@
             </div>
           )}
 
+          {/* Run summary — weekly + total */}
+          {isRunStation && runSessions.length > 0 && (
+            <div style={{ ...cardBase, padding: '1.25rem', marginBottom: '1.5rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>Run Summary</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                {/* This week */}
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>This Week</div>
+                  <div style={{ fontWeight: 900, fontSize: '1.5rem', color: '#fff', letterSpacing: '-0.02em' }}>{weekDistKm.toFixed(1)} <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 400 }}>km</span></div>
+                  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '0.3rem' }}>
+                    {weekSessions.length} run{weekSessions.length !== 1 ? 's' : ''}
+                    {weekPaceSecs && <span style={{ color: '#666' }}> · avg <span style={{ color: '#aaa', fontWeight: 600 }}>{formatPaceSecs(weekPaceSecs)}</span></span>}
+                  </div>
+                </div>
+                {/* All time */}
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>Total</div>
+                  <div style={{ fontWeight: 900, fontSize: '1.5rem', color: YELLOW, letterSpacing: '-0.02em' }}>{totalDistKm.toFixed(1)} <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 400 }}>km</span></div>
+                  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '0.3rem' }}>
+                    {runSessions.length} run{runSessions.length !== 1 ? 's' : ''}
+                    {avgPaceSecs && <span style={{ color: '#666' }}> · avg <span style={{ color: '#aaa', fontWeight: 600 }}>{formatPaceSecs(avgPaceSecs)}</span></span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Chart */}
           {stationSessions.length >= 2 && (
             <div style={{ marginBottom: '1.5rem' }}>
@@ -1341,7 +1409,70 @@
             </div>
           )}
 
-          {/* Session history */}
+          {/* ── Progress Analysis ── */}
+          {stationSessions.length >= 2 && (() => {
+            const vals = isRunStation
+              ? stationSessions.map(s => getPaceSecsPerKm(s)).filter(v => v !== null)
+              : stationSessions.map(s => s.timeInSeconds);
+            if (vals.length < 2) return null;
+
+            const fmt       = isRunStation ? formatPaceSecs : formatTime;
+            const first     = vals[0];
+            const last      = vals[vals.length - 1];
+            const best      = Math.min(...vals);
+            const bestIdx   = vals.indexOf(best);
+            const totalDelta = last - first;            // negative = improved
+            const totalPct  = Math.round(Math.abs(totalDelta) / first * 100);
+            const improved  = totalDelta < 0;
+
+            // Avg gain per session
+            const avgDelta  = totalDelta / (vals.length - 1);
+
+            // Consecutive improving streak from end
+            let streak = 0;
+            for (let i = vals.length - 1; i > 0; i--) {
+              if (vals[i] < vals[i - 1]) streak++; else break;
+            }
+
+            // Recent momentum: compare last-2-session rate to overall rate
+            const recentDelta = vals.length >= 3 ? vals[vals.length - 1] - vals[vals.length - 2] : totalDelta;
+            let momentum, momentumColor;
+            if (!improved) {
+              momentum = 'needs more work'; momentumColor = '#f87171';
+            } else if (recentDelta < avgDelta * 1.2) {
+              momentum = 'accelerating 🚀'; momentumColor = '#4ade80';
+            } else if (recentDelta < 0) {
+              momentum = 'steady ✅'; momentumColor = YELLOW;
+            } else {
+              momentum = 'hit a plateau'; momentumColor = '#f87171';
+            }
+
+            const spanDays = Math.round(
+              (new Date(stationSessions[stationSessions.length - 1].date + 'T00:00:00') -
+               new Date(stationSessions[0].date + 'T00:00:00')) / 86400000
+            );
+            const pbDate = stationSessions[bestIdx]?.date;
+
+            const uniqueDays = new Set(stationSessions.map(s => s.date)).size;
+            const lastTwo = vals.slice(-2);
+            const stillImproving = lastTwo.length === 2 && lastTwo[1] < lastTwo[0];
+            const plateauing     = lastTwo.length === 2 && lastTwo[1] === lastTwo[0];
+            const trendLabel  = stillImproving ? '↑ still improving' : plateauing ? '→ plateauing' : '↓ declining';
+            const trendColor  = stillImproving ? '#4ade80' : plateauing ? YELLOW : '#f87171';
+            return (
+              <div style={{ padding: '0.6rem 0', marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '0.85rem', color: '#555' }}>
+                  You progressed{' '}
+                  <span style={{ color: improved ? '#4ade80' : '#f87171', fontWeight: 700 }}>{improved ? '+' : ''}{totalPct}%</span>
+                  {' '}over{' '}
+                  <span style={{ color: '#ddd', fontWeight: 600 }}>{uniqueDays} day{uniqueDays !== 1 ? 's' : ''}</span>
+                  {' '}of training.
+                </div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: trendColor, marginTop: '0.25rem' }}>{trendLabel}</div>
+              </div>
+            );
+          })()}
+
           {displaySessions.length > 0 && (
             <div>
               <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>Session History</div>
@@ -1366,7 +1497,7 @@
                           <span style={{ fontSize: '0.78rem', color: '#999' }}>{formatDate(session.date)}</span>
                         </div>
                         <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.12rem', paddingLeft: '1.7rem' }}>
-                          {isLatest && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: '#000', background: YELLOW, padding: '0.1rem 0.3rem', borderRadius: 3 }}>LATEST</span>}
+                          {isLatest && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: '#000', background: YELLOW, padding: '0.1rem 0.3rem', borderRadius: 3, display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle', lineHeight: 1 }}>LATEST</span>}
                           {isPB     && <span style={{ fontSize: '0.58rem', fontWeight: 700, color: YELLOW, border: `1px solid ${YELLOW}`, padding: '0.1rem 0.3rem', borderRadius: 3 }}>PB</span>}
                         </div>
                       </div>
@@ -2280,18 +2411,15 @@
 
           <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
             <p style={{ fontSize: '0.7rem', color: '#888', marginBottom: '0.5rem' }}>isurvivehyrox · data stored locally in your browser</p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.82rem', color: '#888' }}>Made with 💛 by Pie Prapawuttikul</span>
-              <a href="https://linkedin.com/in/pirpie/" target="_blank" rel="noopener noreferrer" title="LinkedIn" style={{ color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452H17.21v-5.569c0-1.328-.024-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.99V9h3.114v1.561h.046c.434-.822 1.492-1.689 3.07-1.689 3.284 0 3.89 2.163 3.89 4.976v6.604zM5.337 7.433a1.808 1.808 0 1 1 0-3.616 1.808 1.808 0 0 1 0 3.616zm1.558 13.019H3.78V9h3.115v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-              <a href="https://www.pirpie.com" target="_blank" rel="noopener noreferrer" title="Portfolio" style={{ color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                </svg>
-              </a>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.82rem', color: '#666' }}>
+                Made with 💛 by{' '}
+                <a href="https://pirpie.com" target="_blank" rel="noopener noreferrer" style={{ color: '#888', textDecoration: 'none', borderBottom: '1px solid #444' }}>Pie</a>
+                {' '}&amp;{' '}
+                <a href="https://www.instagram.com/mvngkcrn/" target="_blank" rel="noopener noreferrer" style={{ color: '#888', textDecoration: 'none', borderBottom: '1px solid #444' }}>Korn</a>
+                <span style={{ color: '#333', margin: '0 0.5rem' }}>|</span>
+                <a href="mailto:hello@isurvivehyrox.com" style={{ color: '#888', textDecoration: 'none', borderBottom: '1px solid #444' }}>hello@isurvivehyrox.com</a>
+              </span>
             </div>
             <p style={{ fontSize: '0.75rem', color: '#888' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Support us</a> :)</p>
           </div>
