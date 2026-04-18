@@ -22,4 +22,4 @@ My boyfriend is training for HYROX DC. Existing apps were too complex. So I desi
 
 ## Made by
 Pie Prapawuttikul — Product Designer  
-[LinkedIn] · [Portfolio] · ☕ venmo.com/u/pirpie
+www.pirpie.com · ☕ venmo.com/u/pirpie
