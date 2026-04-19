@@ -721,7 +721,7 @@
       <path d='M770.58,64.9l-22.12-35.63h21.79l12.78,23.97h.4l12.58-23.97h21.06l-22.18,35.1,21.99,35.89h-20.99l-13.51-24.64h-.4l-13.31,24.64h-20.33l22.25-35.36Z'/>
     </svg>
   </a>
-  <a href="/app/" class="nav-cta">Open App →</a>
+  <a href="/app/" class="nav-cta" onclick="typeof gtag!=='undefined'&&gtag('event','cta_click',{cta:'nav_open_app'})">Open App →</a>
 </nav>
 
 <!-- ── Hero ── -->
@@ -743,7 +743,7 @@
     (you'll survive. they all do.)
   </p>
   <div class="hero-actions">
-    <a href="/app/" class="btn-primary">Start Tracking — It's Free →</a>
+    <a href="/app/" class="btn-primary" onclick="typeof gtag!=='undefined'&&gtag('event','cta_click',{cta:'hero_start_tracking'})">Start Tracking — It's Free →</a>
   </div>
 </div>
 
@@ -777,31 +777,46 @@
   </div>
 </div>
 
+<!-- ── What it is ── -->
+<div class="section">
+  <div class="section-label reveal">What it is</div>
+  <h2 class="section-title">HYROX will break you down.<br><em>That's the point.</em></h2>
+  <p style="color:#888; font-size:1rem; line-height:1.75; margin-top:0.75rem;">
+    isurvivehyrox is your personal training diary —<br>
+    a place to record every session,<br>
+    track every second,<br>
+    and prove to yourself you're getting better.
+  </p>
+  <p style="color:#555; font-size:0.95rem; line-height:1.65; margin-top:1rem;">
+    Not a coach. Not a plan.<br>
+    Just you, your data, and the race ahead.
+  </p>
+</div>
+
 <!-- ── Features ── -->
 <div class="section">
-  <div class="section-label">Features</div>
-  <h2 class="section-title">Built to make you faster.</h2>
+  <div class="section-label">What it does</div>
 
   <div class="features-grid">
     <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Track all 8 stations</div>
-      <div class="feature-desc">Log your times after every session. See yourself get faster week by week.</div>
+      <div class="feature-icon">📓</div>
+      <div class="feature-title">Write your story, one session at a time</div>
+      <div class="feature-desc">Every time you log a session, you're building evidence that you showed up.</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">Visualize your progress</div>
-      <div class="feature-desc">Charts that show improvement over time — so you know your training is actually working.</div>
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">Watch yourself survive better</div>
+      <div class="feature-desc">Charts don't lie. See the sessions where you suffered less. That's progress.</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon">🏆</div>
-      <div class="feature-title">Real benchmarks</div>
-      <div class="feature-desc">Compare against 700,000+ real HYROX race results. Know if you're Beginner, Intermediate, Advanced, or Elite — for your age and gender.</div>
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">Find what's slowing you down</div>
+      <div class="feature-desc">Benchmark against 700,000+ real race results. Your weakest station is your next target.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon">📅</div>
-      <div class="feature-title">Race day countdown</div>
-      <div class="feature-desc">Your race date. Always front and center. Every session logged is one step closer.</div>
+      <div class="feature-title">Feel the race getting closer</div>
+      <div class="feature-desc">Every session logged. Every day counted. Race day is coming — are you ready?</div>
     </div>
   </div>
   <img src="985shots_so.png" alt="isurvivehyrox app screens" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;margin-top:2.5rem" />
@@ -849,7 +864,7 @@
 <!-- ── Footer CTA ── -->
 <div class="footer-cta">
   <h2>Ready to stop guessing<br>and start tracking?</h2>
-  <a href="/app/" class="btn-dark">Open App →</a>
+  <a href="/app/" class="btn-dark" onclick="typeof gtag!=='undefined'&&gtag('event','cta_click',{cta:'footer_open_app'})">Open App →</a>
 </div>
 
 <!-- ── Ko-fi ── -->
