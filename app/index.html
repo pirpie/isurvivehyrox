@@ -2401,7 +2401,14 @@
 
       const addSession    = useCallback((s) => {
         setSessions(prev => [...prev, { ...s, id: Date.now() + Math.random() }]);
-        if (typeof gtag !== 'undefined') gtag('event', 'log_session', { station_id: s.stationId, time_seconds: s.timeInSeconds });
+        if (typeof gtag !== 'undefined') {
+          const st = STATIONS.find(x => x.id === s.stationId);
+          gtag('event', 'log_session', {
+            station:      st ? st.name : s.stationId,
+            station_id:   s.stationId,
+            time_seconds: s.timeInSeconds,
+          });
+        }
       }, []);
       const deleteSession = useCallback((id) => setSessions(prev => prev.filter(s => s.id !== id)), []);
 
@@ -2423,7 +2430,17 @@
           </div>
 
           <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1rem 4rem', flex: 1, width: '100%' }}>
-            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => { setProfile(p); if (typeof gtag !== 'undefined') gtag('event', 'profile_save', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null }); if (p.name) setTab('dashboard'); }} />}
+            {tab === 'setup'     && <SetupPage    profile={profile}   onSave={p => {
+              const isFirstProfile = !profile.name && !!p.name;
+              const dateChanged    = !!p.competitionDate && p.competitionDate !== profile.competitionDate;
+              setProfile(p);
+              if (typeof gtag !== 'undefined') {
+                gtag('event', 'profile_save', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null });
+                if (isFirstProfile) gtag('event', 'create_profile', { gender: p.gender, age_group: getAgeGroup(p.age), division: p.division, country: p.country || null });
+                if (dateChanged)    gtag('event', 'set_race_date',  { days_until: getDaysUntil(p.competitionDate) });
+              }
+              if (p.name) setTab('dashboard');
+            }} />}
             {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
             {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
