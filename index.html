@@ -595,6 +595,93 @@
     }
     #lottie-hero { width: 100%; }
 
+    .sc-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 1rem;
+    }
+
+    .sc-bar {
+      display: block;
+      border-radius: 100px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ── Race strip ── */
+    .race-strip {
+      width: 100%;
+      overflow: hidden;
+      padding: 0.7rem 0;
+      background: #0c0c0c;
+      border-bottom: 1px solid #1a1a1a;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .race-track {
+      display: flex;
+      gap: 0.6rem;
+      width: max-content;
+      animation: race-marquee var(--race-dur, 60s) linear infinite;
+    }
+
+    .race-strip:hover .race-track { animation-play-state: paused; }
+
+    @keyframes race-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .race-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 8px;
+      padding: 0.4rem 0.9rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .race-flag { font-size: 1rem; line-height: 1; }
+
+    .race-city {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #777;
+    }
+
+    .race-dot {
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: #333;
+      flex-shrink: 0;
+    }
+
+    .race-cd {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #FFE600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .race-cd-unit {
+      font-size: 0.65rem;
+      font-weight: 400;
+      color: #666;
+    }
+
+    .race-today {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #4ade80;
+    }
+
     /* ── Scroll reveal ── */
     .reveal {
       opacity: 0;
@@ -661,6 +748,11 @@
 </div>
 
 <hr class="divider" />
+
+<!-- ── Race strip ── -->
+<div class="race-strip" id="race-strip" style="display:none;" aria-label="Upcoming HYROX races">
+  <div class="race-track" id="race-track"></div>
+</div>
 
 <!-- ── What is HYROX — collapsible ── -->
 <div class="hyrox-explainer" style="padding-top: 2rem; padding-bottom: 2rem;">
@@ -855,6 +947,96 @@
 
     document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
   })();
+
+  // ── Upcoming races countdown strip ──
+  (function() {
+    var RACES = [
+      { city: "Rotterdam",            country: "🇳🇱", date: "2026-04-15" },
+      { city: "Warsaw",               country: "🇵🇱", date: "2026-04-16" },
+      { city: "Cologne",              country: "🇩🇪", date: "2026-04-16" },
+      { city: "Málaga",               country: "🇪🇸", date: "2026-04-16" },
+      { city: "Monterrey",            country: "🇲🇽", date: "2026-04-18" },
+      { city: "Paris",                country: "🇫🇷", date: "2026-04-23" },
+      { city: "São Paulo",            country: "🇧🇷", date: "2026-04-25" },
+      { city: "Cardiff",              country: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", date: "2026-04-29" },
+      { city: "Lisboa",               country: "🇵🇹", date: "2026-05-01" },
+      { city: "Hong Kong",            country: "🇭🇰", date: "2026-05-08" },
+      { city: "Helsinki",             country: "🇫🇮", date: "2026-05-09" },
+      { city: "Barcelona",            country: "🇪🇸", date: "2026-05-14" },
+      { city: "Heerenveen",           country: "🇳🇱", date: "2026-05-14" },
+      { city: "Ottawa",               country: "🇨🇦", date: "2026-05-14" },
+      { city: "Incheon",              country: "🇰🇷", date: "2026-05-15" },
+      { city: "Shanghai",             country: "🇨🇳", date: "2026-05-16" },
+      { city: "Puebla",               country: "🇲🇽", date: "2026-05-16" },
+      { city: "Lyon",                 country: "🇫🇷", date: "2026-05-20" },
+      { city: "Berlin",               country: "🇩🇪", date: "2026-05-22" },
+      { city: "New York",             country: "🇺🇸", date: "2026-05-28" },
+      { city: "Rimini",               country: "🇮🇹", date: "2026-05-28" },
+      { city: "Riga",                 country: "🇱🇻", date: "2026-05-30" },
+      { city: "Buenos Aires",         country: "🇦🇷", date: "2026-06-13" },
+      { city: "World Champs Stockholm", country: "🏆", date: "2026-06-18" },
+      { city: "Jakarta",              country: "🇮🇩", date: "2026-06-27" },
+    ];
+
+    function raceEndMs(dateStr) {
+      // Treat race day as ending at 23:59 local time
+      var d = new Date(dateStr);
+      d.setHours(23, 59, 59, 999);
+      return d.getTime();
+    }
+
+    function countdownHtml(dateStr) {
+      var diff = raceEndMs(dateStr) - Date.now();
+      if (diff <= 0) return null;
+      var totalSecs = Math.floor(diff / 1000);
+      var d = Math.floor(totalSecs / 86400);
+      var h = Math.floor((totalSecs % 86400) / 3600);
+      var m = Math.floor((totalSecs % 3600) / 60);
+      if (d === 0 && h < 12) {
+        return '<span class="race-today">Today 🔥</span>';
+      }
+      return '<span class="race-cd">' +
+        (d > 0 ? d + '<span class="race-cd-unit">d </span>' : '') +
+        h + '<span class="race-cd-unit">h </span>' +
+        m + '<span class="race-cd-unit">m</span>' +
+        '</span>';
+    }
+
+    function buildHtml() {
+      return RACES.reduce(function(html, r) {
+        var cd = countdownHtml(r.date);
+        if (!cd) return html; // past — skip
+        return html +
+          '<div class="race-card">' +
+            '<span class="race-flag">' + r.country + '</span>' +
+            '<span class="race-city">' + r.city + '</span>' +
+            '<span class="race-dot"></span>' +
+            cd +
+          '</div>';
+      }, '');
+    }
+
+    function render() {
+      var strip = document.getElementById('race-strip');
+      var track = document.getElementById('race-track');
+      var html = buildHtml();
+      if (!html) { strip.style.display = 'none'; return; }
+
+      // Duplicate for seamless loop
+      track.innerHTML = html + html;
+      strip.style.display = '';
+
+      // Speed: ~180px per card, adjust so scroll feels comfortable
+      var count = track.querySelectorAll('.race-card').length / 2;
+      var dur = Math.max(30, count * 3.2);
+      track.style.setProperty('--race-dur', dur + 's');
+      strip.querySelector('.race-track').style.animationDuration = dur + 's';
+    }
+
+    render();
+    setInterval(render, 60000); // refresh every minute
+  })();
+
 </script>
 
 </body>

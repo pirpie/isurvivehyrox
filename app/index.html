@@ -500,40 +500,65 @@
 
     function StationChart({ station, sessions }) {
       const [tooltip, setTooltip] = useState(null);
+      const isRun = station.id === 'run-1km';
 
-      const data = sessions
+      // Pace helpers (run only)
+      const getPaceVal = (s) => {
+        if (!s.distance) return null;
+        const [d, u] = s.distance.split(' ');
+        const dist = parseFloat(d);
+        if (!dist || dist <= 0) return null;
+        const distKm = u === 'mi' ? dist * 1.60934 : dist;
+        return s.timeInSeconds / distKm; // seconds per km
+      };
+      const fmtPace = (v) => {
+        const m = Math.floor(v / 60);
+        const s = Math.round(v % 60);
+        return `${m}:${String(s).padStart(2,'0')}/km`;
+      };
+
+      const raw = sessions
         .filter(s => s.stationId === station.id)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .map((s, i) => ({ sessionNum: i + 1, time: s.timeInSeconds, date: s.date }));
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // For run: only include sessions that have a distance logged (needed for pace)
+      const data = raw
+        .map((s, i) => {
+          const val = isRun ? getPaceVal(s) : s.timeInSeconds;
+          if (val === null) return null;
+          return { sessionNum: i + 1, val, time: s.timeInSeconds, date: s.date };
+        })
+        .filter(Boolean);
 
       if (data.length < 2) return (
         <div style={{ ...cardBase, padding: '1.25rem' }}>
           <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{station.name}</div>
           <div style={{ fontSize: '0.72rem', color: '#999', marginBottom: '0.75rem' }}>{station.detail}</div>
-          <div style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem 0', border: '1px dashed #1e1e1e', borderRadius: 8 }}>Log 2+ sessions to see chart</div>
+          <div style={{ color: '#999', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem 0', border: '1px dashed #1e1e1e', borderRadius: 8 }}>
+            {isRun ? 'Log 2+ runs with distance to see pace chart' : 'Log 2+ sessions to see chart'}
+          </div>
         </div>
       );
 
-      const times = data.map(d => d.time);
-      const minT = Math.min(...times), maxT = Math.max(...times);
+      const vals = data.map(d => d.val);
+      const minV = Math.min(...vals), maxV = Math.max(...vals);
+      const fmt = isRun ? fmtPace : formatTime;
 
       // SVG layout
       const W = 400, H = 155;
-      const padL = 46, padR = 8, padT = 8, padB = 20;
+      const padL = isRun ? 54 : 46, padR = 8, padT = 8, padB = 20;
       const plotW = W - padL - padR, plotH = H - padT - padB;
 
-      // Lower time = higher position (line goes up as you improve)
-      const toY = t => maxT === minT
+      // Lower value = faster/better = higher on chart
+      const toY = v => maxV === minV
         ? padT + plotH / 2
-        : padT + plotH * (t - minT) / (maxT - minT);
+        : padT + plotH * (v - minV) / (maxV - minV);
       const toX = i => padL + (i / (data.length - 1)) * plotW;
 
-      // 3 y-axis ticks
-      const yTicks = maxT === minT
-        ? [minT]
-        : [maxT, Math.round((minT + maxT) / 2), minT];
+      // 3 y-axis ticks (top = minV/best, bottom = maxV/worst)
+      const yTicks = maxV === minV ? [minV] : [maxV, (minV + maxV) / 2, minV];
 
-      const polyPts = data.map((d, i) => `${toX(i)},${toY(d.time)}`).join(' ');
+      const polyPts = data.map((d, i) => `${toX(i)},${toY(d.val)}`).join(' ');
 
       return (
         <div style={{ ...cardBase, padding: '1.25rem' }}>
@@ -543,8 +568,8 @@
               <div style={{ fontSize: '0.72rem', color: '#999' }}>{station.detail}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.62rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Best</div>
-              <div style={{ fontWeight: 800, color: YELLOW, fontSize: '0.9rem', fontVariantNumeric: 'tabular-nums' }}>{formatTime(minT)}</div>
+              <div style={{ fontSize: '0.62rem', color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Best{isRun ? ' Pace' : ''}</div>
+              <div style={{ fontWeight: 800, color: YELLOW, fontSize: '0.9rem', fontVariantNumeric: 'tabular-nums' }}>{fmt(minV)}</div>
             </div>
           </div>
           <div style={{ position: 'relative' }}>
@@ -555,9 +580,9 @@
               ))}
               {/* Y-axis labels */}
               {yTicks.map((t, i) => (
-                <text key={i} x={padL - 4} y={toY(t) + 4} textAnchor="end" fill="#444" fontSize={9} fontFamily="monospace">{formatTime(t)}</text>
+                <text key={i} x={padL - 4} y={toY(t) + 4} textAnchor="end" fill="#444" fontSize={9} fontFamily="monospace">{fmt(t)}</text>
               ))}
-              {/* X-axis labels */}
+              {/* X-axis session numbers */}
               {data.map((d, i) => (
                 <text key={i} x={toX(i)} y={H - 4} textAnchor="middle" fill="#444" fontSize={9}>{d.sessionNum}</text>
               ))}
@@ -565,7 +590,7 @@
               <polyline points={polyPts} fill="none" stroke={YELLOW} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
               {/* Dots */}
               {data.map((d, i) => (
-                <circle key={i} cx={toX(i)} cy={toY(d.time)} r={4} fill={YELLOW}
+                <circle key={i} cx={toX(i)} cy={toY(d.val)} r={4} fill={YELLOW}
                   onMouseEnter={e => setTooltip({ ...d, mx: e.clientX, my: e.clientY })}
                   onMouseLeave={() => setTooltip(null)}
                   style={{ cursor: 'crosshair' }}
@@ -575,7 +600,8 @@
             {tooltip && (
               <div style={{ position: 'fixed', left: tooltip.mx + 14, top: tooltip.my - 14, background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, padding: '0.4rem 0.7rem', fontSize: '0.8rem', zIndex: 1000, pointerEvents: 'none' }}>
                 <div style={{ color: '#888', fontSize: '0.72rem', marginBottom: '0.1rem' }}>Session {tooltip.sessionNum} · {tooltip.date}</div>
-                <div style={{ color: YELLOW, fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{formatTime(tooltip.time)}</div>
+                <div style={{ color: YELLOW, fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{fmt(tooltip.val)}</div>
+                {isRun && <div style={{ color: '#666', fontSize: '0.7rem', marginTop: '0.1rem' }}>{formatTime(tooltip.time)} total</div>}
               </div>
             )}
           </div>
