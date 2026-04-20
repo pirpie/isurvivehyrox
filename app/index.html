@@ -208,12 +208,89 @@
     // ─── Equipment weights per division / gender ─────────────────────────────────
 
     const EQUIPMENT_WEIGHTS = {
-      'sled-push':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
-      'sled-pull':      { open: { male: '152kg', female: '102kg' }, pro: { male: '152kg', female: '102kg' }, '60+': { male: '102kg', female: '72kg' } },
-      'farmers-carry':  { open: { male: '2×24kg', female: '2×16kg' }, pro: { male: '2×24kg', female: '2×16kg' }, '60+': { male: '2×16kg', female: '2×12kg' } },
-      'wallballs':      { open: { male: '9kg', female: '6kg' }, pro: { male: '9kg', female: '6kg' }, '60+': { male: '6kg', female: '4kg' } },
-      'lunges':         { open: { male: '20kg', female: '10kg' }, pro: { male: '20kg', female: '10kg' }, '60+': { male: '10kg', female: '5kg' } },
+      'sled-push':     { open: { male: '152kg',  female: '102kg' }, pro: { male: '152kg',  female: '102kg' }, '60+': { male: '102kg', female: '72kg'  } },
+      'sled-pull':     { open: { male: '103kg',  female: '78kg'  }, pro: { male: '103kg',  female: '78kg'  }, '60+': { male: '78kg',  female: '58kg'  } },
+      'farmers-carry': { open: { male: '2×24kg', female: '2×16kg'}, pro: { male: '2×24kg', female: '2×16kg'}, '60+': { male: '2×16kg',female: '2×12kg'} },
+      'wallballs':     { open: { male: '9kg',    female: '6kg'   }, pro: { male: '9kg',    female: '6kg'   }, '60+': { male: '6kg',   female: '4kg'   } },
+      'lunges':        { open: { male: '20kg',   female: '10kg'  }, pro: { male: '20kg',   female: '10kg'  }, '60+': { male: '10kg',  female: '5kg'   } },
     };
+
+    // Maps new division values → equipment weight tier key
+    function getDivWeightKey(division) {
+      if (division === '60+') return '60+';
+      if (division === 'single-pro' || division === 'doubles-pro') return 'pro';
+      return 'open';
+    }
+
+    function getDivisionLabel(division) {
+      const map = {
+        'single-open': 'Single Open', 'single-pro': 'Single Pro',
+        'doubles-open': 'Doubles Open', 'doubles-open-mixed': 'Doubles Open (Mixed)',
+        'doubles-pro': 'Doubles Pro', '60+': 'Age Group 60+',
+        'open': 'Open', 'pro': 'Pro', // legacy
+      };
+      return map[division] || division || 'Open';
+    }
+
+    function isDoublesDivision(division) {
+      return division && division.startsWith('doubles');
+    }
+
+    // ─── Doubles finish time benchmarks (seconds) ─────────────────────────────────
+    // Source: official HYROX doubles age-group data
+
+    const DOUBLES_TOTAL_BM = {
+      men: {
+        '18-24': { beginner: 5700, intermediate: 4920, advanced: 4320, elite: 3720 },
+        '25-29': { beginner: 5700, intermediate: 4920, advanced: 4200, elite: 3720 },
+        '30-34': { beginner: 6120, intermediate: 5280, advanced: 4440, elite: 3840 },
+        '35-39': { beginner: 6240, intermediate: 5160, advanced: 4380, elite: 3780 },
+        '40-44': { beginner: 6360, intermediate: 5520, advanced: 4800, elite: 4200 },
+        '45-49': { beginner: 6120, intermediate: 5520, advanced: 4680, elite: 4080 },
+        '50+':   { beginner: 6360, intermediate: 5700, advanced: 4920, elite: 4200 },
+      },
+      women: {
+        '18-24': { beginner: 6300, intermediate: 5580, advanced: 4920, elite: 4440 },
+        '25-29': { beginner: 6840, intermediate: 6120, advanced: 4980, elite: 4140 },
+        '30-34': { beginner: 7320, intermediate: 6240, advanced: 5040, elite: 4320 },
+        '35-39': { beginner: 7380, intermediate: 6300, advanced: 5220, elite: 4620 },
+        '40-44': { beginner: 7380, intermediate: 6120, advanced: 5280, elite: 4500 },
+        '45-49': { beginner: 7440, intermediate: 6420, advanced: 5340, elite: 4680 },
+        '50+':   { beginner: 7920, intermediate: 6180, advanced: 5520, elite: 4500 },
+      },
+      mixed: {
+        '18-29': { beginner: 6000, intermediate: 5220, advanced: 4560, elite: 3960 },
+        '30-39': { beginner: 6180, intermediate: 5400, advanced: 4680, elite: 4080 },
+        '40-49': { beginner: 6300, intermediate: 5640, advanced: 4920, elite: 4320 },
+        '50+':   { beginner: 6600, intermediate: 5880, advanced: 5160, elite: 4560 },
+      },
+    };
+
+    // Age group helpers for doubles benchmarks
+    function getDoublesAgeGroupMW(age) {
+      const a = parseInt(age, 10);
+      if (isNaN(a)) return null;
+      if (a < 25) return '18-24'; if (a < 30) return '25-29'; if (a < 35) return '30-34';
+      if (a < 40) return '35-39'; if (a < 45) return '40-44'; if (a < 50) return '45-49';
+      return '50+';
+    }
+    function getDoublesAgeGroupMixed(age) {
+      const a = parseInt(age, 10);
+      if (isNaN(a)) return null;
+      if (a < 30) return '18-29'; if (a < 40) return '30-39'; if (a < 50) return '40-49';
+      return '50+';
+    }
+
+    function getDoublesTotalBM(division, gender, age) {
+      if (division === 'doubles-open-mixed' || division === 'doubles-pro') {
+        const ag = getDoublesAgeGroupMixed(age);
+        return ag ? DOUBLES_TOTAL_BM.mixed[ag] : null;
+      }
+      // doubles-open: use gender from profile (men/women)
+      const key = gender === 'female' ? 'women' : 'men';
+      const ag = getDoublesAgeGroupMW(age);
+      return ag ? DOUBLES_TOTAL_BM[key][ag] : null;
+    }
 
 
     // ─── Training tips ────────────────────────────────────────────────────────────
@@ -354,17 +431,19 @@
       if (a < 55) return '50-54'; if (a < 60) return '55-59'; return '60+';
     }
 
-    function getBenchmark(gender, age, stationId) {
+    function getBenchmark(gender, age, stationId, division) {
       if (!gender || !age) return null;
       const base = BASE_BENCHMARKS[gender]?.[stationId];
       if (!base) return null;
       const ageGroup = getAgeGroup(age);
       const f = AGE_FACTORS[ageGroup] || 1.0;
+      // Doubles athletes share each station (~55% of singles effort per partner)
+      const scale = isDoublesDivision(division) ? 0.55 : 1.0;
       return {
-        elite:        Math.round(base.elite * f),
-        advanced:     Math.round(base.advanced * f),
-        intermediate: Math.round(base.intermediate * f),
-        beginner:     Math.round(base.beginner * f),
+        elite:        Math.round(base.elite * f * scale),
+        advanced:     Math.round(base.advanced * f * scale),
+        intermediate: Math.round(base.intermediate * f * scale),
+        beginner:     Math.round(base.beginner * f * scale),
         ageGroup,
       };
     }
@@ -615,19 +694,28 @@
       const [expanded, setExpanded] = useState(false);
       if (!profile.gender || !profile.age) return null;
       const gender = profile.gender || 'male';
+      const division = profile.division || 'single-open';
       const ageGroup = getAgeGroup(profile.age);
       const af = AGE_FACTORS[ageGroup] || 1.0;
       const bms = BASE_BENCHMARKS[gender] || BASE_BENCHMARKS.male;
 
-      const totalBMs = {};
-      ['elite','advanced','intermediate','beginner'].forEach(tier => {
-        let total = 0;
-        Object.entries(bms).forEach(([sid, bm]) => {
-          const val = Math.round(bm[tier] * af);
-          total += sid === 'run-1km' ? val * 8 : val;
-        });
-        totalBMs[tier] = total;
-      });
+      // For doubles divisions, use official doubles total time benchmarks
+      const doubles = isDoublesDivision(division);
+      const totalBMs = doubles
+        ? (getDoublesTotalBM(division, gender, profile.age) || (() => {
+            const bm = {}; ['elite','advanced','intermediate','beginner'].forEach(t => {
+              let total = 0;
+              Object.entries(bms).forEach(([sid, b]) => { const v = Math.round(b[t] * af * 0.55); total += sid === 'run-1km' ? v * 8 : v; });
+              bm[t] = total;
+            }); return bm;
+          })())
+        : (() => {
+            const bm = {}; ['elite','advanced','intermediate','beginner'].forEach(t => {
+              let total = 0;
+              Object.entries(bms).forEach(([sid, b]) => { const v = Math.round(b[t] * af); total += sid === 'run-1km' ? v * 8 : v; });
+              bm[t] = total;
+            }); return bm;
+          })();
 
       const runPaceSecsPerKm = (session) => {
         if (!session.distance) return null;
@@ -781,7 +869,7 @@
       const radarData = STATIONS.map(station => {
         const ss = sessions.filter(s => s.stationId === station.id);
         const pb = ss.length > 0 ? Math.min(...ss.map(s => s.timeInSeconds)) : null;
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        const bm = getBenchmark(profile.gender, profile.age, station.id, profile.division);
         return { label: station.short, score: pb != null ? getRadarScore(pb, bm) : 0, hasData: pb != null };
       });
 
@@ -814,7 +902,7 @@
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Performance Radar</div>
               <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '0.15rem' }}>
-                {profile.gender === 'male' ? 'Male' : 'Female'} · {getAgeGroup(profile.age)} · {profile.division || 'Open'}
+                {profile.gender === 'male' ? 'Male' : 'Female'} · {getAgeGroup(profile.age)} · {getDivisionLabel(profile.division)}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -894,7 +982,7 @@
         const pb = Math.min(...ss.map(s => s.timeInSeconds));
         const withPace = ss.filter(s => getSessionPace(s) !== null);
         const bestPaceSecs = withPace.length > 0 ? Math.min(...withPace.map(s => getSessionPace(s))) : null;
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        const bm = getBenchmark(profile.gender, profile.age, station.id, profile.division);
         const tier = getTier(pb, bm);
         const pct = getPctVsAvg(pb, bm);
         const tips = TRAINING_TIPS[station.id];
@@ -1037,7 +1125,7 @@
       const [gender,     setGender]     = useState(profile.gender || '');
       const [age,        setAge]        = useState(profile.age || '');
       const [weight,     setWeight]     = useState(profile.weight || '');
-      const [division,   setDivision]   = useState(profile.division || 'open');
+      const [division,   setDivision]   = useState(profile.division || 'single-open');
       const [country,    setCountry]    = useState(profile.country || '');
       const [countrySearch, setCountrySearch] = useState('');
       const [showCountryDrop, setShowCountryDrop] = useState(false);
@@ -1097,9 +1185,12 @@
               <div>
                 <label style={labelBase}>Division</label>
                 <select value={division} onChange={e => setDivision(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
-                  <option value="open">Open</option>
-                  <option value="pro">Pro</option>
-                  <option value="60+">60+</option>
+                  <option value="single-open">Single Open</option>
+                  <option value="single-pro">Single Pro</option>
+                  <option value="doubles-open">Doubles Open</option>
+                  <option value="doubles-open-mixed">Doubles Open (Mixed)</option>
+                  <option value="doubles-pro">Doubles Pro</option>
+                  <option value="60+">Age Group 60+</option>
                 </select>
               </div>
             </div>
@@ -1315,9 +1406,9 @@
 
           {/* Equipment weight */}
           {(() => {
-            const division = (profile && profile.division) || 'open';
+            const division = (profile && profile.division) || 'single-open';
             const gender   = (profile && profile.gender)   || 'male';
-            const weight   = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
+            const weight   = EQUIPMENT_WEIGHTS[station.id]?.[getDivWeightKey(division)]?.[gender];
             if (!weight) return null;
             return (
               <div style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -2039,7 +2130,7 @@
         return <StationDetailPage station={station} sessions={sessions} profile={profile} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
       }
 
-      const division = (profile && profile.division) || 'open';
+      const division = (profile && profile.division) || 'single-open';
       const gender   = (profile && profile.gender)   || 'male';
 
       return (
@@ -2065,7 +2156,7 @@
               const pbDisplay = station.id === 'run-1km' && bestPaceSecs
                 ? (() => { const m = Math.floor(bestPaceSecs/60); const s = Math.round(bestPaceSecs%60); return `${m}:${String(s).padStart(2,'0')}/km`; })()
                 : pb !== null ? formatTime(pb) : null;
-              const weight = EQUIPMENT_WEIGHTS[station.id]?.[division]?.[gender];
+              const weight = EQUIPMENT_WEIGHTS[station.id]?.[getDivWeightKey(division)]?.[gender];
               return (
                 <button key={station.id} onClick={() => { setSelected(station.id); if (typeof gtag !== 'undefined') gtag('event', 'view_benchmark', { station_id: station.id }); }}
                   style={{ ...cardBase, padding: '1.1rem 1.25rem', cursor: 'pointer', textAlign: 'left', border: '1px solid #222', transition: 'border-color 0.15s', background: '#111' }}
@@ -2210,7 +2301,7 @@
         const pb = Math.min(...ss.map(s => s.timeInSeconds));
         const sorted = [...ss].sort((a, b) => new Date(a.date) - new Date(b.date));
         const trend = sorted.length >= 2 ? sorted[sorted.length - 1].timeInSeconds - sorted[sorted.length - 2].timeInSeconds : null;
-        const bm = getBenchmark(profile.gender, profile.age, station.id);
+        const bm = getBenchmark(profile.gender, profile.age, station.id, profile.division);
         const tier = getTier(pb, bm);
         const score = bm ? getRadarScore(pb, bm) : null;
         return { station, pb, count: ss.length, trend, bm, tier, score };
@@ -2311,18 +2402,9 @@
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.7rem' }}>
                 <StatCard label="Total Sessions" value={totalSessions} />
                 <StatCard label="This Week" value={weeklyStations} suffix={`/ ${STATIONS.length}`} sub="stations" />
-                {stationsWithData.length > 0 && delta !== 0 && (
-                  <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, padding: '1.25rem' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>vs Prev Total</div>
-                    <div style={{ fontWeight: 900, fontSize: '1.9rem', color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                      {delta < 0 ? '-' : '+'}{absDelta}m
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: delta < 0 ? '#4ade80' : '#f87171', marginTop: '0.3rem' }}>{delta < 0 ? 'faster overall' : 'slower overall'}</div>
-                  </div>
-                )}
                 {(() => { const runSessions = sessions.filter(s => s.stationId === 'run-1km');
                   const runNote = runSessions.length >= 8 ? 'run: last 8 splits' : runSessions.length > 0 ? `run: avg×8 (${runSessions.length}/8 logged)` : null;
-                  return <StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={runNote || `${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} accent />;
+                  return <div style={{ gridColumn: '1 / -1' }}><StatCard label="Total PB Time" value={stationsWithData.length > 0 ? formatDuration(totalPB) : '—'} sub={runNote || `${stationsWithData.length} station${stationsWithData.length !== 1 ? 's' : ''} combined`} accent /></div>;
                 })()}
               </div>
             );
@@ -2342,7 +2424,7 @@
                     ? <span key="gender" style={pillStyle}>Male</span>
                     : <span key="gender" style={pillStyle}>Female</span>,
                   <span key="age" style={pillStyle}>{getAgeGroup(profile.age)} age group</span>,
-                  <span key="div" style={pillStyle}>{profile.division === 'pro' ? '⭐ Pro' : profile.division === '60+' ? '60+' : 'Open'}</span>,
+                  <span key="div" style={pillStyle}>{getDivisionLabel(profile.division)}</span>,
                   profile.weight ? <span key="wt" style={pillStyle}>{profile.weight} kg</span> : null,
                   countryObj ? <span key="country" style={{ ...pillStyle, fontSize: '1rem', padding: '0.15rem 0.5rem' }} title={countryObj.name}>{countryObj.flag}</span> : null,
                 ].filter(Boolean);
