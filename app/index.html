@@ -437,13 +437,11 @@
       if (!base) return null;
       const ageGroup = getAgeGroup(age);
       const f = AGE_FACTORS[ageGroup] || 1.0;
-      // Doubles athletes share each station (~55% of singles effort per partner)
-      const scale = isDoublesDivision(division) ? 0.55 : 1.0;
       return {
-        elite:        Math.round(base.elite * f * scale),
-        advanced:     Math.round(base.advanced * f * scale),
-        intermediate: Math.round(base.intermediate * f * scale),
-        beginner:     Math.round(base.beginner * f * scale),
+        elite:        Math.round(base.elite * f),
+        advanced:     Math.round(base.advanced * f),
+        intermediate: Math.round(base.intermediate * f),
+        beginner:     Math.round(base.beginner * f),
         ageGroup,
       };
     }
