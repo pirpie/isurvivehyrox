@@ -1256,12 +1256,13 @@
 
     // ─── Station Detail Page ──────────────────────────────────────────────────────
 
-    function StationDetailPage({ station, sessions, profile, onAdd, onDelete, onBack }) {
-      const [date,          setDate]          = useState(today());
+    function StationDetailPage({ station, sessions, profile, onAdd, onDelete, onBack, initialDate }) {
+      const [date,          setDate]          = useState(initialDate || today());
       const [timeInput,     setTimeInput]     = useState('');
       const [distanceInput, setDistanceInput] = useState('');
       const [distUnit,      setDistUnit]      = useState('km');
       const [error,         setError]         = useState('');
+      const [distError,     setDistError]     = useState(false);
       const [success,       setSuccess]       = useState(false);
       const isRunStation = station.id === 'run-1km';
 
@@ -1290,7 +1291,9 @@
         const filled = `${m}.${String(s).padStart(2, '0')}`;
         setTimeInput(filled);
         setError('');
-        // log immediately
+        // for run station, just fill the time — user must enter distance then submit
+        if (isRunStation) { if (!distanceInput) setDistError(true); return; }
+        // log immediately for non-run stations
         if (totalSecs > 0) {
           onAdd({ stationId: station.id, date, timeInSeconds: totalSecs });
           setSuccess(true);
@@ -1361,8 +1364,8 @@
         if (!timeInput.trim()) { setError('Please enter a time.'); return; }
         let secs = parseTime(timeInput);
         if (isNaN(secs) || secs <= 0) { setError('Invalid — use mm:ss or seconds'); return; }
-        if (isRunStation && !distanceInput) { setError('Please enter a distance.'); return; }
-        setError('');
+        if (isRunStation && !distanceInput) { setDistError(true); return; }
+        setError(''); setDistError(false);
         const entry = { stationId: station.id, date, timeInSeconds: secs };
         if (isRunStation) entry.distance = `${distanceInput} ${distUnit}`;
         onAdd(entry);
@@ -1447,14 +1450,16 @@
             </div>
             {isRunStation && (
               <div style={{ marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Distance</div>
+                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: distError ? '#f87171' : '#999', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Distance{distError && <span style={{ fontWeight: 600, textTransform: 'none', letterSpacing: 0, marginLeft: '0.4rem' }}>— required</span>}</div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input type="number" min="0" step="0.01" placeholder="e.g. 5" value={distanceInput} onChange={e => setDistanceInput(e.target.value)} style={{ ...inputBase, flex: 1, fontSize: '1rem' }} onFocus={focus} onBlur={blur} />
+                  <input type="number" min="0" step="0.01" placeholder="e.g. 5" value={distanceInput}
+                    onChange={e => { setDistanceInput(e.target.value); if (e.target.value) setDistError(false); }}
+                    style={{ ...inputBase, flex: 1, fontSize: '1rem', borderColor: distError ? '#f87171' : undefined }} onFocus={focus} onBlur={blur} />
                   <button onClick={() => setDistUnit(distUnit === 'km' ? 'mi' : 'km')} style={{ padding: '0.5rem 0.85rem', borderRadius: 8, border: '1px solid #333', background: '#1a1a1a', color: YELLOW, fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', minWidth: 44 }}>{distUnit}</button>
                 </div>
               </div>
             )}
-            {(() => { const swActive = swElapsed > 0 && !success;
+            {(() => { const swActive = swRunning && !success;
               return <button onClick={handleSubmit} disabled={swActive} style={{ width: '100%', background: success ? '#16a34a' : swActive ? '#222' : YELLOW, color: success ? '#fff' : swActive ? '#555' : '#000', border: swActive ? '1px solid #333' : 'none', padding: '0.85rem', borderRadius: 8, fontWeight: 800, fontSize: '1rem', cursor: swActive ? 'not-allowed' : 'pointer', transition: 'all 0.2s' }}>
               {success ? '✓ Logged!' : swActive ? '⏱ Stopwatch running…' : '+ LOG SESSION'}
             </button>; })()}
@@ -1668,7 +1673,7 @@
 
     const LS_STRENGTH = 'hyrox_strength';
 
-    function CalendarPage({ sessions, profile, onDelete }) {
+    function CalendarPage({ sessions, profile, onDelete, onLogDate }) {
       const today = new Date();
       const [viewYear,  setViewYear]  = useState(today.getFullYear());
       const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
@@ -2120,12 +2125,13 @@
 
     // ─── Log Page ─────────────────────────────────────────────────────────────────
 
-    function LogPage({ sessions, profile, onAdd, onDelete }) {
+    function LogPage({ sessions, profile, onAdd, onDelete, initialDate }) {
       const [selected, setSelected] = useState(null);
+      const [logDate,  setLogDate]  = useState(initialDate || today());
 
       if (selected) {
         const station = STATIONS.find(s => s.id === selected);
-        return <StationDetailPage station={station} sessions={sessions} profile={profile} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} />;
+        return <StationDetailPage station={station} sessions={sessions} profile={profile} onAdd={onAdd} onDelete={onDelete} onBack={() => setSelected(null)} initialDate={logDate} />;
       }
 
       const division = (profile && profile.division) || 'single-open';
@@ -2133,7 +2139,11 @@
 
       return (
         <div className="fade-in">
-          <h2 style={{ fontWeight: 900, fontSize: '1.6rem', marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>Log a Session</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <h2 style={{ fontWeight: 900, fontSize: '1.6rem', letterSpacing: '-0.03em', margin: 0 }}>Log a Session</h2>
+            <input type="date" value={logDate} max={today()} onChange={e => setLogDate(e.target.value)}
+              style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, color: logDate === today() ? '#888' : YELLOW, fontSize: '0.88rem', padding: '0.45rem 0.7rem', outline: 'none', fontFamily: 'inherit', cursor: 'pointer' }} />
+          </div>
           <p style={{ color: '#999', fontSize: '0.88rem', marginBottom: '1.75rem' }}>Select a station to log your time or view history.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.7rem' }}>
             {[...STATIONS].sort((a, b) => a.id === 'run-1km' ? -1 : b.id === 'run-1km' ? 1 : 0).map(station => {
@@ -2501,6 +2511,7 @@
       const [profile,  setProfile]  = useState(() => loadLS(LS_PROFILE, {}));
       const [sessions, setSessions] = useState(() => loadLS(LS_SESSIONS, []));
       const [tab,      setTab]      = useState(profile.name ? 'dashboard' : 'setup');
+      const [logDate,  setLogDate]  = useState(today());
 
       useEffect(() => { localStorage.setItem(LS_PROFILE,  JSON.stringify(profile));  }, [profile]);
       useEffect(() => { localStorage.setItem(LS_SESSIONS, JSON.stringify(sessions)); }, [sessions]);
@@ -2547,9 +2558,9 @@
               }
               if (p.name) setTab('dashboard');
             }} />}
-            {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} />}
+            {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} initialDate={logDate} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
-            {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} />}
+            {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} onLogDate={(d) => { setLogDate(d); setTab('log'); }} />}
           </main>
 
           <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
