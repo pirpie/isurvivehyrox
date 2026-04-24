@@ -780,16 +780,12 @@
 <!-- ── What it is ── -->
 <div class="section">
   <div class="section-label reveal">What it is</div>
-  <h2 class="section-title">HYROX will break you down.<br><em>That's the point.</em></h2>
+  <h2 class="section-title">isurvivehyrox is your personal training diary.</h2>
   <p style="color:#888; font-size:1rem; line-height:1.75; margin-top:0.75rem;">
-    isurvivehyrox is your personal training diary —<br>
-    a place to record every session,<br>
-    track every second,<br>
-    and prove to yourself you're getting better.
+    A place to record every session, track every second, and prove to yourself you're getting better.
   </p>
-  <p style="color:#555; font-size:0.95rem; line-height:1.65; margin-top:1rem;">
-    Not a coach. Not a plan.<br>
-    Just you, your data, and the race ahead.
+  <p style="color:#888; font-size:1rem; line-height:1.75; margin-top:0.75rem;">
+    Not a coach. Not a plan. Just you, your data, and the race ahead.
   </p>
 </div>
 
@@ -908,7 +904,6 @@
   // Load Lottie animation with selective yellow recolor on "viv" layers
   (function() {
     var YELLOW = [1, 0.902, 0];
-    // ln IDs to recolor yellow — everything except isur (75) and hyrox (76)
     var YELLOW_LAYERS = {'77':1,'78':1,'79':1,'80':1,'81':1,'82':1,'83':1,'84':1,'85':1,'86':1,'87':1,'88':1,'89':1};
 
     function setFills(shapes) {
@@ -994,7 +989,6 @@
     ];
 
     function raceEndMs(dateStr) {
-      // Treat race day as ending at 23:59 local time
       var d = new Date(dateStr);
       d.setHours(23, 59, 59, 999);
       return d.getTime();
@@ -1020,7 +1014,7 @@
     function buildHtml() {
       return RACES.reduce(function(html, r) {
         var cd = countdownHtml(r.date);
-        if (!cd) return html; // past — skip
+        if (!cd) return html;
         return html +
           '<div class="race-card">' +
             '<span class="race-flag">' + r.country + '</span>' +
@@ -1037,11 +1031,9 @@
       var html = buildHtml();
       if (!html) { strip.style.display = 'none'; return; }
 
-      // Duplicate for seamless loop
       track.innerHTML = html + html;
       strip.style.display = '';
 
-      // Speed: ~180px per card, adjust so scroll feels comfortable
       var count = track.querySelectorAll('.race-card').length / 2;
       var dur = Math.max(30, count * 3.2);
       track.style.setProperty('--race-dur', dur + 's');
@@ -1049,7 +1041,7 @@
     }
 
     render();
-    setInterval(render, 60000); // refresh every minute
+    setInterval(render, 60000);
   })();
 
 </script>
