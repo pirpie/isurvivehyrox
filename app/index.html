@@ -1375,6 +1375,7 @@
 
         // ── PB detection (before adding) ──────────────────────────────────────────
         let isNewPB = false, improvementStr = null, newTimeStr = '', bmLine = '';
+        let newPaceSecs = null; // run station only — seconds per km
         if (!isRunStation) {
           isNewPB = (pb === null || secs < pb);
           if (isNewPB && pb !== null) {
@@ -1385,18 +1386,18 @@
         } else {
           const dist = parseFloat(distanceInput);
           const distKmNew = distUnit === 'mi' ? dist * 1.60934 : dist;
-          const newPace = distKmNew > 0 ? secs / distKmNew : null;
-          isNewPB = newPace !== null && (pbPaceSecs === null || newPace < pbPaceSecs);
-          if (isNewPB && pbPaceSecs !== null && newPace !== null) {
-            const diff = Math.round(pbPaceSecs - newPace);
+          newPaceSecs = distKmNew > 0 ? secs / distKmNew : null;
+          isNewPB = newPaceSecs !== null && (pbPaceSecs === null || newPaceSecs < pbPaceSecs);
+          if (isNewPB && pbPaceSecs !== null && newPaceSecs !== null) {
+            const diff = Math.round(pbPaceSecs - newPaceSecs);
             improvementStr = `↑ ${diff < 60 ? diff + 's' : Math.floor(diff/60) + 'm ' + (diff%60) + 's'}/km faster than your last`;
           }
-          newTimeStr = newPace ? formatPaceSecs(newPace) : formatTime(secs);
+          newTimeStr = newPaceSecs ? formatPaceSecs(newPaceSecs) : formatTime(secs);
         }
         if (isNewPB && profile && profile.gender && profile.age) {
           const bm = getBenchmark(profile.gender, profile.age, station.id, profile.division);
           if (bm) {
-            const compareTime = isRunStation ? (pbPaceSecs !== null ? Math.min(secs, pbPaceSecs) : secs) : secs;
+            const compareTime = isRunStation ? (newPaceSecs !== null ? newPaceSecs : pbPaceSecs) : secs;
             const tier = getTier(compareTime, bm);
             const pctMap = { elite: 95, advanced: 78, intermediate: 52 };
             const pct = pctMap[tier];
