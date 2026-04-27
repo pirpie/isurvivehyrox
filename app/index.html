@@ -1268,6 +1268,7 @@
       const [pbActions,     setPbActions]     = useState(null);  // { blob, url }
       const [pbSharing,     setPbSharing]     = useState(false);
       const [pbCopied,      setPbCopied]      = useState(false);
+      const [igSaved,       setIgSaved]       = useState(false);
       const isRunStation = station.id === 'run-1km';
 
       // Stopwatch
@@ -1560,7 +1561,7 @@
 
       const closePBActions = () => {
         if (pbActions?.url) URL.revokeObjectURL(pbActions.url);
-        setPbActions(null); setPbCopied(false);
+        setPbActions(null); setPbCopied(false); setIgSaved(false);
       };
 
       const canNativeShare = () => {
@@ -1573,6 +1574,17 @@
         const file = new File([pbActions.blob], 'isurvivehyrox-pb.png', { type: 'image/png' });
         try { await navigator.share({ files: [file], title: 'New PB — isurvivehyrox' }); }
         catch(e) { /* AbortError = user cancelled — do nothing */ }
+      };
+
+      const shareToInstagramStory = async () => {
+        if (!pbActions) return;
+        const file = new File([pbActions.blob], 'isurvivehyrox-pb.png', { type: 'image/png' });
+        try {
+          // Save the transparent PNG to Photos first
+          await navigator.share({ files: [file], title: 'isurvivehyrox PB' });
+          // Show instructions on how to add it as a sticker in Stories
+          setIgSaved(true);
+        } catch(e) { /* dismissed */ }
       };
 
       const doSave = () => {
@@ -1677,13 +1689,36 @@
               <div style={{ width: 36, height: 4, background: '#333', borderRadius: 2, margin: '0 auto 0.75rem' }} />
               <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#555', textAlign: 'center', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Share your PB</div>
 
-              {/* Share / Save to Photos — native OS sheet (iOS: Save Image goes to Photos) */}
+              {/* Instagram Story — saves transparent PNG, then shows sticker instructions */}
+              {canNativeShare() && (
+                <button onClick={shareToInstagramStory} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#1a1a1a', border: `1px solid ${igSaved ? '#4ade80' : '#2a2a2a'}`, borderRadius: 12, padding: '0.9rem 1.1rem', cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'border-color 0.2s' }}>
+                  <span style={{ fontSize: '1.4rem' }}>📸</span>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem', color: igSaved ? '#4ade80' : '#fff' }}>{igSaved ? 'Saved! Now open Instagram ↓' : 'Instagram Story'}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#666', marginTop: '0.1rem' }}>Saves card to Photos as transparent overlay</div>
+                  </div>
+                </button>
+              )}
+
+              {/* Step-by-step instruction that appears after saving */}
+              {igSaved && (
+                <div style={{ background: '#0d1f0d', border: '1px solid #1a4a1a', borderRadius: 10, padding: '0.85rem 1rem', fontSize: '0.75rem', color: '#aaa', lineHeight: 1.6 }}>
+                  <div style={{ fontWeight: 700, color: '#4ade80', marginBottom: '0.35rem', fontSize: '0.78rem' }}>How to use as overlay:</div>
+                  <div>1. Open Instagram → tap <strong style={{ color: '#fff' }}>+</strong> → Story</div>
+                  <div>2. Select <strong style={{ color: '#fff' }}>your photo</strong> as the background</div>
+                  <div>3. Tap the <strong style={{ color: '#fff' }}>sticker icon 📎</strong></div>
+                  <div>4. Choose <strong style={{ color: '#fff' }}>Photo</strong> → select the saved PB card</div>
+                  <div>5. Resize &amp; position it on your photo ✨</div>
+                </div>
+              )}
+
+              {/* Save / Share elsewhere */}
               {canNativeShare() && (
                 <button onClick={doShareNative} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 12, padding: '0.9rem 1.1rem', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
                   <span style={{ fontSize: '1.4rem' }}>📤</span>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#fff' }}>Share · Save to Photos</div>
-                    <div style={{ fontSize: '0.72rem', color: '#666', marginTop: '0.1rem' }}>Instagram, Messages, AirDrop, Save Image…</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#fff' }}>Save to Photos · Share</div>
+                    <div style={{ fontSize: '0.72rem', color: '#666', marginTop: '0.1rem' }}>AirDrop, Messages, WhatsApp…</div>
                   </div>
                 </button>
               )}
