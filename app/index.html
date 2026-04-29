@@ -223,7 +223,14 @@
     }
 
     function fmtWeight(w) {
-      // w is like "9kg" or "152kg" — returns "9 kg / 20 lbs"
+      // handles "9kg", "152kg", and "2×24kg" (farmers carry)
+      const dualMatch = w.match(/^(\d+)×(\d+)kg$/);
+      if (dualMatch) {
+        const count = parseInt(dualMatch[1], 10);
+        const each  = parseInt(dualMatch[2], 10);
+        const lbsEach = Math.round(each * 2.20462);
+        return `${count}×${each} kg / ${count}×${lbsEach} lbs`;
+      }
       const kg = parseFloat(w);
       if (isNaN(kg)) return w;
       const lbs = Math.round(kg * 2.20462);
