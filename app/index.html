@@ -222,6 +222,14 @@
       return 'open';
     }
 
+    function fmtWeight(w) {
+      // w is like "9kg" or "152kg" — returns "9 kg / 20 lbs"
+      const kg = parseFloat(w);
+      if (isNaN(kg)) return w;
+      const lbs = Math.round(kg * 2.20462);
+      return `${kg} kg / ${lbs} lbs`;
+    }
+
     function getDivisionLabel(division) {
       const map = {
         'single-open': 'Single Open', 'single-pro': 'Single Pro',
@@ -1746,7 +1754,7 @@
               <div style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{ fontSize: '0.68rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Equipment</span>
-                  <span style={{ fontSize: '0.72rem', color: '#aaa', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.15rem 0.55rem', fontWeight: 600 }}>{weight}</span>
+                  <span style={{ fontSize: '0.72rem', color: '#aaa', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.15rem 0.55rem', fontWeight: 600 }}>{fmtWeight(weight)}</span>
                   <span style={{ fontSize: '0.65rem', color: '#888' }}>{division === '60+' ? '60+ div' : division === 'pro' ? 'Pro div' : 'Open div'} · {gender === 'male' ? 'Male' : 'Female'}</span>
                 </div>
               </div>
@@ -2551,7 +2559,7 @@
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.72rem', color: '#999' }}>{station.detail}</span>
                     {weight && (
-                      <span style={{ fontSize: '0.65rem', color: '#888', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.1rem 0.45rem' }}>{weight}</span>
+                      <span style={{ fontSize: '0.65rem', color: '#888', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '0.1rem 0.45rem' }}>{fmtWeight(weight)}</span>
                     )}
                   </div>
                   {pb !== null ? (
