@@ -31,7 +31,16 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-D0BJRSWTY7');
+    // Persistent user ID — generated once, stored in localStorage
+    (function() {
+      var uid = localStorage.getItem('hyrox_uid');
+      if (!uid) {
+        uid = 'u_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+        localStorage.setItem('hyrox_uid', uid);
+      }
+      window._huid = uid;
+    })();
+    gtag('config', 'G-D0BJRSWTY7', { user_id: window._huid });
   </script>
 
   <!-- Favicon: swoosh mark on yellow (tight crop around the two curved paths) -->
@@ -2904,6 +2913,7 @@
         if (typeof gtag !== 'undefined') {
           const st = STATIONS.find(x => x.id === s.stationId);
           gtag('event', 'log_session', {
+            user_id:      window._huid || null,
             station:      st ? st.name : s.stationId,
             station_id:   s.stationId,
             time_seconds: s.timeInSeconds,
@@ -2920,7 +2930,12 @@
             <nav style={{ background: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '0 1rem' }}>
               <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex' }}>
                 {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }, { id: 'calendar', label: 'Journal' }].map(t => (
-                  <button key={t.id} onClick={() => setTab(t.id)}
+                  <button key={t.id} onClick={() => {
+                    setTab(t.id);
+                    if (typeof gtag !== 'undefined' && (t.id === 'dashboard' || t.id === 'calendar')) {
+                      gtag('event', 'view_history', { user_id: window._huid || null, screen: t.id });
+                    }
+                  }}
                     style={{ padding: '0.72rem 1.1rem', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? YELLOW : 'transparent'}`, color: tab === t.id ? YELLOW : '#555', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', fontSize: '0.86rem', transition: 'all 0.15s', outline: 'none', letterSpacing: '0.02em' }}>
                     {t.label}
                   </button>
