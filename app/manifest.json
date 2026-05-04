@@ -1,0 +1,17 @@
+{
+  "name": "isurvivehyrox",
+  "short_name": "isurvivehyrox",
+  "description": "HYROX training tracker — log stations, track PBs, analyse progress",
+  "start_url": "/app/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#FFE600",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://isurvivehyrox.com/782shots_so.png",
+      "sizes": "1284x2778",
+      "type": "image/png"
+    }
+  ]
+}

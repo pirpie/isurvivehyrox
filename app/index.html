@@ -43,6 +43,15 @@
     gtag('config', 'G-D0BJRSWTY7', { user_id: window._huid });
   </script>
 
+  <!-- Capture Android/Chrome install prompt before it auto-fires -->
+  <script>
+    window._a2hsPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window._a2hsPrompt = e;
+    });
+  </script>
+
   <!-- Favicon: swoosh mark on yellow (tight crop around the two curved paths) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65.67 65.67'><rect width='65.67' height='65.67' fill='%23FFE600'/><g transform='translate(0,21.19)'><path d='M32.89,23.29c-13.33,0-23.88-3.3-32.89-11.1V0c6.52,5.57,20.18,9.89,32.82,9.89S59.04,5.57,65.67,0v12.2c-9.16,7.8-19.67,11.1-32.78,11.1Z'/></g></svg>" />
 
@@ -82,6 +91,7 @@
       img.src = 'data:image/svg+xml,' + encodeURIComponent(svgData);
     })();
   </script>
+  <link rel="manifest" href="/app/manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="isurvivehyrox" />
@@ -2899,6 +2909,108 @@
 
     // ─── Root App ─────────────────────────────────────────────────────────────────
 
+    // ─── Add-to-Home-Screen banner ────────────────────────────────────────────
+    function AddToHomeBanner() {
+      const LS_KEY = 'hyrox_a2hs_dismissed';
+      const [visible, setVisible] = useState(false);
+      const [installed, setInstalled] = useState(false);
+
+      // Detect context
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+      const isAndroid = /android/i.test(navigator.userAgent);
+      const canNativePrompt = !!window._a2hsPrompt;
+
+      useEffect(() => {
+        // Don't show if already installed as app, or already dismissed
+        if (isStandalone) return;
+        if (localStorage.getItem(LS_KEY)) return;
+        // Show after 4 seconds
+        const t = setTimeout(() => setVisible(true), 4000);
+        return () => clearTimeout(t);
+      }, []);
+
+      const dismiss = () => {
+        localStorage.setItem(LS_KEY, '1');
+        setVisible(false);
+      };
+
+      const handleInstall = async () => {
+        if (window._a2hsPrompt) {
+          window._a2hsPrompt.prompt();
+          const { outcome } = await window._a2hsPrompt.userChoice;
+          if (outcome === 'accepted') { setInstalled(true); setTimeout(dismiss, 1500); }
+          window._a2hsPrompt = null;
+        }
+      };
+
+      if (!visible || isStandalone) return null;
+
+      // iOS: manual share-sheet instructions
+      if (isIOS) return (
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999, padding: '0 0 env(safe-area-inset-bottom)' }}>
+          <div style={{ background: '#111', borderTop: '1px solid #2a2a2a', borderRadius: '16px 16px 0 0', padding: '1.1rem 1.25rem 1.25rem', boxShadow: '0 -8px 32px rgba(0,0,0,0.6)' }} className="fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>📲</span>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#fff', marginBottom: '0.1rem' }}>Add to Home Screen</div>
+                  <div style={{ fontSize: '0.72rem', color: '#888' }}>Use it like a native app — no App Store needed</div>
+                </div>
+              </div>
+              <button onClick={dismiss} style={{ background: 'none', border: 'none', color: '#555', fontSize: '1.1rem', cursor: 'pointer', padding: '0 0 0 0.5rem', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#1a1a1a', borderRadius: 10, padding: '0.7rem 0.9rem', border: '1px solid #2a2a2a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, flexWrap: 'wrap', rowGap: '0.3rem' }}>
+                <span style={{ fontSize: '0.78rem', color: '#aaa' }}>1. Tap</span>
+                <span style={{ background: '#2a2a2a', borderRadius: 6, padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#FFE600', fontWeight: 700 }}>Share ⬆</span>
+                <span style={{ fontSize: '0.78rem', color: '#aaa' }}>2. Scroll down and tap</span>
+                <span style={{ background: '#2a2a2a', borderRadius: 6, padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#FFE600', fontWeight: 700 }}>Add to Home Screen</span>
+                <span style={{ fontSize: '0.78rem', color: '#aaa' }}>3. Tap</span>
+                <span style={{ background: '#2a2a2a', borderRadius: 6, padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#FFE600', fontWeight: 700 }}>Add</span>
+              </div>
+            </div>
+            <button onClick={dismiss} style={{ marginTop: '0.75rem', width: '100%', background: 'transparent', border: '1px solid #2a2a2a', borderRadius: 8, color: '#666', fontSize: '0.8rem', fontWeight: 600, padding: '0.55rem', cursor: 'pointer' }}>
+              Maybe later
+            </button>
+          </div>
+        </div>
+      );
+
+      // Android / Chrome: native install prompt
+      return (
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999, padding: '0 0 env(safe-area-inset-bottom)' }}>
+          <div style={{ background: '#111', borderTop: '1px solid #2a2a2a', borderRadius: '16px 16px 0 0', padding: '1.1rem 1.25rem 1.25rem', boxShadow: '0 -8px 32px rgba(0,0,0,0.6)' }} className="fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>📲</span>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#fff', marginBottom: '0.1rem' }}>
+                    {installed ? '✅ Installed!' : 'Add to Home Screen'}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#888' }}>
+                    {installed ? 'Find the app on your home screen' : 'Install as an app — instant access, no browser bar'}
+                  </div>
+                </div>
+              </div>
+              <button onClick={dismiss} style={{ background: 'none', border: 'none', color: '#555', fontSize: '1.1rem', cursor: 'pointer', padding: '0 0 0 0.5rem', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', gap: '0.6rem' }}>
+              <button onClick={dismiss} style={{ flex: 1, background: 'transparent', border: '1px solid #2a2a2a', borderRadius: 8, color: '#666', fontSize: '0.82rem', fontWeight: 600, padding: '0.65rem', cursor: 'pointer' }}>
+                Maybe later
+              </button>
+              {canNativePrompt && (
+                <button onClick={handleInstall} style={{ flex: 2, background: '#FFE600', border: 'none', borderRadius: 8, color: '#000', fontSize: '0.88rem', fontWeight: 800, padding: '0.65rem', cursor: 'pointer' }}>
+                  📲 Install App
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function App() {
       const [profile,  setProfile]  = useState(() => loadLS(LS_PROFILE, {}));
       const [sessions, setSessions] = useState(() => loadLS(LS_SESSIONS, []));
@@ -2976,6 +3088,7 @@
             <p style={{ fontSize: '0.75rem', color: '#888' }}>If this saved your race ☕ <span style={{ color: YELLOW }}>→</span> <a href="https://ko-fi.com/isurvivehyrox" target="_blank" rel="noopener noreferrer" style={{ color: YELLOW, textDecoration: 'none' }}>Support us</a> :)</p>
           </div>
         </div>
+        <AddToHomeBanner />
       );
     }
 
