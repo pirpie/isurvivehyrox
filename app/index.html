@@ -148,7 +148,7 @@
 
     // ─── Demo mode (?demo in URL seeds mock data) ─────────────────────────────────
     if (new URLSearchParams(location.search).has('demo')) {
-      const DEMO_PROFILE = { name: 'Alex Rower', gender: 'male', age: '34', weight: '78', division: 'open', competitionDate: '2026-06-14' };
+      const DEMO_PROFILE = { name: 'Alex Rower', gender: 'male', age: '34', division: 'open', competitionDate: '2026-06-14' };
       const DEMO_SESSIONS = [
         { id:1,  stationId:'ski-erg',           date:'2026-03-01', timeInSeconds:310 },
         { id:2,  stationId:'ski-erg',           date:'2026-03-10', timeInSeconds:295 },
@@ -1156,7 +1156,6 @@
       const [date,       setDate]       = useState(profile.competitionDate || '');
       const [gender,     setGender]     = useState(profile.gender || '');
       const [age,        setAge]        = useState(profile.age || '');
-      const [weight,     setWeight]     = useState(profile.weight || '');
       const [division,   setDivision]   = useState(profile.division || 'single-open');
       const [country,    setCountry]    = useState(profile.country || '');
       const [countrySearch, setCountrySearch] = useState('');
@@ -1172,7 +1171,7 @@
       const days     = getDaysUntil(date);
 
       const save = () => {
-        onSave({ name: name.trim(), competitionDate: date, gender, age, weight, division, country });
+        onSave({ name: name.trim(), competitionDate: date, gender, age, division, country });
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
       };
@@ -1209,11 +1208,7 @@
                 {ageGroup && <div style={{ fontSize: '0.72rem', color: YELLOW, marginTop: '0.35rem', fontWeight: 600 }}>Age group: {ageGroup}</div>}
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={labelBase}>Weight (kg)</label>
-                <input type="number" value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 70" min={30} max={200} style={inputBase} onFocus={focus} onBlur={blur} />
-              </div>
+            <div>
               <div>
                 <label style={labelBase}>Division</label>
                 <select value={division} onChange={e => setDivision(e.target.value)} style={selectStyle} onFocus={focus} onBlur={blur}>
@@ -2835,7 +2830,6 @@
                     : <span key="gender" style={pillStyle}>Female</span>,
                   <span key="age" style={pillStyle}>{getAgeGroup(profile.age)} age group</span>,
                   <span key="div" style={pillStyle}>{getDivisionLabel(profile.division)}</span>,
-                  profile.weight ? <span key="wt" style={pillStyle}>{profile.weight} kg</span> : null,
                   countryObj ? <span key="country" style={{ ...pillStyle, fontSize: '1rem', padding: '0.15rem 0.5rem' }} title={countryObj.name}>{countryObj.flag}</span> : null,
                 ].filter(Boolean);
               })()}
