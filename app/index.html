@@ -2911,7 +2911,8 @@
 
     // ─── Add-to-Home-Screen modal ─────────────────────────────────────────────
     function AddToHomeBanner() {
-      const LS_KEY = 'hyrox_a2hs_dismissed';
+      const LS_KEY  = 'hyrox_a2hs_snoozed'; // stores timestamp of last dismissal
+      const SNOOZE_DAYS = 4;                 // re-show after this many days
       const [visible, setVisible] = useState(false);
       const [installed, setInstalled] = useState(false);
 
@@ -2922,13 +2923,15 @@
 
       useEffect(() => {
         if (isStandalone) return;
-        if (localStorage.getItem(LS_KEY)) return;
+        const last = parseInt(localStorage.getItem(LS_KEY) || '0', 10);
+        const daysSince = (Date.now() - last) / 86400000;
+        if (last && daysSince < SNOOZE_DAYS) return; // snoozed recently
         const t = setTimeout(() => setVisible(true), 3000);
         return () => clearTimeout(t);
       }, []);
 
       const dismiss = () => {
-        localStorage.setItem(LS_KEY, '1');
+        localStorage.setItem(LS_KEY, String(Date.now())); // record snooze time
         setVisible(false);
       };
 
