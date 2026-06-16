@@ -100,6 +100,27 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    // Newer @babel/standalone defaults to automatic JSX runtime, emitting ES
+    // module import statements that break non-module <script> tags.
+    // Disable the built-in auto-transform and re-run it with classic runtime.
+    Babel.disableScriptTags();
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('script[type="text/babel"]').forEach(function (s) {
+        try {
+          var result = Babel.transform(s.textContent, {
+            presets: [['react', { runtime: 'classic' }]],
+            filename: 'app.jsx'
+          });
+          var el = document.createElement('script');
+          el.textContent = result.code;
+          s.parentNode.insertBefore(el, s.nextSibling);
+        } catch (e) {
+          console.error('Babel transform error:', e);
+        }
+      });
+    });
+  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
