@@ -3028,37 +3028,37 @@
     // ─── Simulation ──────────────────────────────────────────────────────────────
 
     const SIM_SEQUENCE = [
-      { type: 'run',     label: 'Run 1',        short: 'Run 1',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Ski Erg',       short: 'Ski',      baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 2',         short: 'Run 2',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Sled Push',     short: 'Push',     baseDist: 50,   unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 3',         short: 'Run 3',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Sled Pull',     short: 'Pull',     baseDist: 50,   unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 4',         short: 'Run 4',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Burpee BJ',     short: 'Burpee',   baseDist: 80,   unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 5',         short: 'Run 5',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Row',           short: 'Row',      baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 6',         short: 'Run 6',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Farmers Carry', short: 'Farmers',  baseDist: 200,  unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 7',         short: 'Run 7',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Lunges',        short: 'Lunges',   baseDist: 100,  unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'run',     label: 'Run 8',         short: 'Run 8',    baseDist: 1000, unit: 'm'    },
-      { type: 'rox',     label: 'Rox',           short: 'Rox'                                    },
-      { type: 'station', label: 'Wall Balls',    short: 'Wallballs', baseDist: 100, unit: 'reps' },
+      { type: 'run',     label: 'Run 1',        short: 'Run 1',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Ski Erg',       short: 'Ski',      baseDist: 1000, unit: 'm',    stationId: 'ski-erg'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 2',         short: 'Run 2',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Sled Push',     short: 'Push',     baseDist: 50,   unit: 'm',    stationId: 'sled-push'         },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 3',         short: 'Run 3',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Sled Pull',     short: 'Pull',     baseDist: 50,   unit: 'm',    stationId: 'sled-pull'         },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 4',         short: 'Run 4',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Burpee BJ',     short: 'Burpee',   baseDist: 80,   unit: 'm',    stationId: 'burpee-broad-jump' },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 5',         short: 'Run 5',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Row',           short: 'Row',      baseDist: 1000, unit: 'm',    stationId: 'row'               },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 6',         short: 'Run 6',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Farmers Carry', short: 'Farmers',  baseDist: 200,  unit: 'm',    stationId: 'farmers-carry'     },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 7',         short: 'Run 7',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Lunges',        short: 'Lunges',   baseDist: 100,  unit: 'm',    stationId: 'lunges'            },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'run',     label: 'Run 8',         short: 'Run 8',    baseDist: 1000, unit: 'm',    stationId: 'run-1km'           },
+      { type: 'rox',     label: 'Rox',           short: 'Rox'                                                                   },
+      { type: 'station', label: 'Wall Balls',    short: 'Wallballs', baseDist: 100, unit: 'reps', stationId: 'wallballs'         },
     ];
 
     function simDist(step, pct) {
@@ -3069,7 +3069,7 @@
 
     const LS_SIMS = 'hyrox_sims';
 
-    function SimulationPage() {
+    function SimulationPage({ onAdd }) {
       const [phase,      setPhase]      = useState('setup');
       const [pct,        setPct]        = useState(50);
       const [laps,       setLaps]       = useState([]);
@@ -3115,6 +3115,18 @@
         });
       }
 
+      function autoLogSessions(completedLaps) {
+        if (!onAdd) return;
+        const d = today();
+        completedLaps.forEach(lap => {
+          const step = SIM_SEQUENCE[lap.idx];
+          if (!step || !step.stationId) return;
+          // Extrapolate to full-distance equivalent: divide by pct fraction
+          const timeInSeconds = Math.round((lap.lapMs / 1000) / (pct / 100));
+          onAdd({ stationId: step.stationId, date: d, timeInSeconds });
+        });
+      }
+
       function startSim() {
         setPhase('running');
         setLaps([]);
@@ -3136,6 +3148,7 @@
           setRunning(false);
           setPhase('done');
           saveToHistory(newLaps, elapsed, true);
+          autoLogSessions(newLaps);
         } else {
           setCurrentIdx(next);
           setLapStart(elapsed);
@@ -3146,6 +3159,7 @@
         setRunning(false);
         setPhase('done');
         saveToHistory(laps, elapsed, false);
+        autoLogSessions(laps);
       }
 
       function reset() {
@@ -3296,6 +3310,13 @@
                 {laps.length === SIM_SEQUENCE.length ? `✓ Complete — ${pct}%` : `Stopped at lap ${laps.length} of ${SIM_SEQUENCE.length}`}
               </div>
             )}
+            {phase === 'done' && laps.filter(l => l.type !== 'rox').length > 0 && (
+              <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#888' }}>
+                {pct < 100
+                  ? `Times extrapolated to 100% and saved to Log Session (${laps.filter(l=>l.type!=='rox').length} entries)`
+                  : `Times saved to Log Session (${laps.filter(l=>l.type!=='rox').length} entries)`}
+              </div>
+            )}
           </div>
 
           {phase === 'running' && (
@@ -3408,7 +3429,7 @@
             {tab === 'log'       && <LogPage      sessions={sessions} profile={profile} onAdd={addSession} onDelete={deleteSession} initialDate={logDate} />}
             {tab === 'dashboard' && <DashboardPage sessions={sessions} profile={profile} onTabChange={setTab} />}
             {tab === 'calendar'  && <CalendarPage sessions={sessions} profile={profile} onDelete={deleteSession} onLogDate={(d) => { setLogDate(d); setTab('log'); }} />}
-            {tab === 'sim'       && <SimulationPage />}
+            {tab === 'sim'       && <SimulationPage onAdd={addSession} />}
           </main>
 
           <div style={{ borderTop: '1px solid #111', padding: '1.25rem 1rem', textAlign: 'center' }}>
