@@ -3305,6 +3305,11 @@
             <div style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '2.8rem', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', color: phase === 'done' ? '#4ade80' : YELLOW, lineHeight: 1 }}>
               {fmtMs(elapsed)}
             </div>
+            {phase === 'running' && (
+              <button onClick={stopSim} style={{ marginTop: '0.9rem', background: 'none', border: 'none', padding: '0.25rem 0.75rem', fontWeight: 600, fontSize: '0.78rem', color: '#555', cursor: 'pointer', letterSpacing: '0.02em' }}>
+                ⏹ Stop simulation
+              </button>
+            )}
             {phase === 'done' && (
               <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: laps.length === SIM_SEQUENCE.length ? '#4ade80' : '#f87171', fontWeight: 700 }}>
                 {laps.length === SIM_SEQUENCE.length ? `✓ Complete — ${pct}%` : `Stopped at lap ${laps.length} of ${SIM_SEQUENCE.length}`}
@@ -3342,20 +3347,11 @@
           )}
 
           {laps.length > 0 && (
-            <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, overflow: 'hidden', marginBottom: '5rem' }}>
+            <div style={{ background: '#111', border: '1px solid #222', borderRadius: 12, overflow: 'hidden', marginBottom: '1.25rem' }}>
               <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #1a1a1a', fontSize: '0.62rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 Completed Laps
               </div>
               <LapList lapsArr={[...laps].reverse()} />
-            </div>
-          )}
-
-          {/* Sticky stop bar — always reachable when scrolled down */}
-          {phase === 'running' && (
-            <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '0.75rem 1rem', background: '#0a0a0a', borderTop: '1px solid #1a1a1a', zIndex: 200 }}>
-              <button onClick={stopSim} style={{ width: '100%', background: 'none', border: '1px solid #333', borderRadius: 10, padding: '0.7rem', fontWeight: 700, fontSize: '0.9rem', color: '#f87171', cursor: 'pointer' }}>
-                ⏹ Stop Simulation
-              </button>
             </div>
           )}
 
