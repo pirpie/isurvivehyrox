@@ -3234,17 +3234,13 @@
               <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #1a1a1a', fontSize: '0.62rem', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 Completed Laps
               </div>
-              {laps.map((lap, i) => {
-                const lapNum = laps.length - i;
-                // Fastest non-rox lap
-                const nonRox = laps.filter(l => l.type !== 'rox');
-                const isFastest = lap.type !== 'rox' && nonRox.length > 1 && lap.lapMs === Math.min(...nonRox.map(l => l.lapMs));
+              {[...laps].reverse().map((lap, i) => {
                 return (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '0.7rem 1rem', borderBottom: i < laps.length - 1 ? '1px solid #1a1a1a' : 'none' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#555', fontWeight: 600, minWidth: 44 }}>Lap {lapNum}</span>
-                    <span style={{ flex: 1, fontWeight: lap.type === 'rox' ? 400 : 700, fontSize: '0.95rem', color: isFastest ? '#4ade80' : stepColor(lap.type) }}>{lap.short}</span>
+                    <span style={{ fontSize: '0.72rem', color: '#555', fontWeight: 600, minWidth: 44 }}>Lap {i + 1}</span>
+                    <span style={{ flex: 1, fontWeight: lap.type === 'rox' ? 400 : 700, fontSize: '0.95rem', color: stepColor(lap.type) }}>{lap.short}</span>
                     {lap.dist && <span style={{ fontSize: '0.7rem', color: '#555', marginRight: '0.75rem' }}>{lap.dist}</span>}
-                    <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.92rem', color: isFastest ? '#4ade80' : '#ccc', fontVariantNumeric: 'tabular-nums' }}>
+                    <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.92rem', color: '#ccc', fontVariantNumeric: 'tabular-nums' }}>
                       {fmtMs(lap.lapMs)}
                     </span>
                   </div>
