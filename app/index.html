@@ -3378,7 +3378,7 @@
             <TopBar profile={profile} onEdit={() => setTab('setup')} />
             <nav style={{ background: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '0 1rem' }}>
               <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex' }}>
-                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }, { id: 'calendar', label: 'Journal' }, { id: 'sim', label: '🏁 Simulation' }].map(t => (
+                {[{ id: 'dashboard', label: 'Dashboard' }, { id: 'log', label: '+ Log Session' }, { id: 'calendar', label: 'Journal' }, { id: 'sim', label: 'Simulation' }].map(t => (
                   <button key={t.id} onClick={() => {
                     setTab(t.id);
                     if (typeof gtag !== 'undefined' && (t.id === 'dashboard' || t.id === 'calendar')) {
